@@ -1,7 +1,7 @@
 {
   "Index": {
-    "meta_title": "SaaS Template - Le template SaaS parfait pour construire et mettre à l'échelle votre entreprise en toute simplicité.",
-    "meta_description": "Un template gratuit et open-source de landing page pour votre entreprise SaaS, construit avec React, TypeScript, Shadcn UI et Tailwind CSS."
+    "meta_title": "Bashly — Organisation d'événements privés pour vos plus beaux moments",
+    "meta_description": "Créez des Sweet 16, Quinceañeras, diplômes et anniversaires inoubliables. Demandes de chansons, invitations QR et export de playlist — tout en un."
   },
   "Navbar": {
     "sign_in": "Se connecter",
@@ -18,9 +18,6 @@
     "description": "Un template gratuit et open-source de landing page pour votre entreprise SaaS, construit avec React, TypeScript, Shadcn UI et Tailwind CSS.",
     "primary_button": "Démarrer",
     "secondary_button": "Mettez une étoile sur GitHub"
-  },
-  "Sponsors": {
-    "title": "Sponsorisé par"
   },
   "Features": {
     "section_subtitle": "Fonctionnalités",
@@ -61,9 +58,9 @@
     "answer": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam aliquam enim dui, id consequat turpis ullamcorper ac. Mauris id quam dolor. Nullam eu egestas turpis. Proin risus elit, sollicitudin in mi a, accumsan euismod turpis. In euismod mi sed diam tristique hendrerit."
   },
   "CTA": {
-    "title": "Vous êtes prêt?",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "button_text": "Mettez une étoile sur GitHub"
+    "title": "Prêt à organiser votre fête ?",
+    "description": "Créez votre premier événement gratuitement. Aucune carte bancaire requise.",
+    "button_text": "Commencer gratuitement"
   },
   "Footer": {
     "product": "Produit",
@@ -73,7 +70,7 @@
     "company": "Entreprise",
     "terms_of_service": "Conditions d'utilisation",
     "privacy_policy": "Politique de confidentialité",
-    "footer_text": "© {year} {name}. Fait avec <author></author>."
+    "footer_text": "© {year} Bashly. Fait avec ♥ pour les célébrations."
   },
   "ProtectFallback": {
     "not_enough_permission": "Vous n'avez pas les permissions pour effectuer cette action"
@@ -88,23 +85,17 @@
   },
   "DashboardLayout": {
     "home": "Accueil",
-    "todos": "Todos",
     "members": "Membres",
     "billing": "Facturation",
     "settings": "Réglages"
   },
   "Dashboard": {
-    "meta_title": "Tableau de bord du SaaS Template",
-    "meta_description": "Un template gratuit et open-source de landing page pour votre entreprise SaaS, construit avec Next.js, TypeScript, Shadcn UI et Tailwind CSS."
+    "meta_title": "Tableau de bord Bashly",
+    "meta_description": "Vos événements en un coup d'œil."
   },
   "DashboardIndex": {
     "title_bar": "Tableau de bord",
-    "title_bar_description": "Bienvenue sur votre tableau de bord",
-    "message_state_title": "C'est parti",
-    "message_state_description": "Vous pouvez personnaliser cette page en modifiant le fichier dans <code>dashboard/page.tsx</code>",
-    "message_state_button": "Mettez une étoile sur GitHub",
-    "message_state_alternative": "Besoin de fonctionnalités avancées ? Next.js 16 & React 19, Multi-tenancy & Équipes, Rôles & Permissions, Shadcn UI,\nTypesafety de bout en bout avec oRPC, Paiement Stripe, Mode clair / sombre. Essayez <url></url>.",
-    "max_message": "Ou, besoin d'une pile d'authentification auto-hébergée (Better Auth) ? Essayez <url></url>."
+    "title_bar_description": "Vos événements en un coup d'œil"
   },
   "UserProfile": {
     "title_bar": "Profil utilisateur",
@@ -133,35 +124,5 @@
   },
   "DataTable": {
     "no_results": "Aucun résultat."
-  },
-  "Todos": {
-    "title_bar": "Liste de Todos",
-    "title_bar_description": "Afficher et gérer votre liste de todos",
-    "add_todo_button": "Nouveau todo"
-  },
-  "TodoTableColumns": {
-    "open_menu": "Ouvrir le menu",
-    "edit": "Modifier",
-    "delete": "Supprimer",
-    "title_header": "Titre",
-    "message_header": "Message",
-    "created_at_header": "Créé le"
-  },
-  "AddTodo": {
-    "title_bar": "Ajouter une todo",
-    "add_todo_section_title": "Créer une nouvelle todo",
-    "add_todo_section_description": "Remplissez le formulaire ci-dessous pour créer une nouvelle todo"
-  },
-  "EditTodo": {
-    "title_bar": "Editer le todo",
-    "edit_todo_section_title": "Modifier le todo",
-    "edit_todo_section_description": "Remplissez le formulaire ci-dessous pour modifier la todo"
-  },
-  "TodoForm": {
-    "title_label": "Titre",
-    "title_description": "Entrez un titre descriptif pour votre todo.",
-    "message_title": "Message",
-    "message_description": "Entrez un message détaillé pour votre todo.",
-    "submit_button": "Envoyer"
   }
 }
