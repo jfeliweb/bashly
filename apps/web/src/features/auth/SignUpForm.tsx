@@ -116,7 +116,8 @@ export function SignUpForm() {
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
-        Already have an account?{' '}
+        Already have an account?
+        {' '}
         <Link href="/sign-in" className="font-medium text-primary hover:underline">
           Sign in
         </Link>

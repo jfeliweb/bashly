@@ -21,7 +21,7 @@ export function UserProfileForm() {
   }
 
   return (
-    <div className="rounded-lg border bg-card p-6 space-y-6">
+    <div className="space-y-6 rounded-lg border bg-card p-6">
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Profile Information</h2>
 
