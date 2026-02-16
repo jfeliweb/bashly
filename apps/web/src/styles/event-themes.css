@@ -1,0 +1,55 @@
+.event-theme-theme1 {
+  --theme-primary: #7c3aed;
+  --theme-primary-light: #ede9fe;
+  --theme-primary-dark: #5b21b6;
+  --theme-accent: #f59e0b;
+  --theme-surface: #ffffff;
+  --theme-surface-raised: #f5f3ff;
+  --theme-text: #1e1b4b;
+  --theme-text-muted: #6b7280;
+  --theme-border: #ddd6fe;
+}
+.event-theme-theme2 {
+  --theme-primary: #0284c7;
+  --theme-primary-light: #e0f2fe;
+  --theme-primary-dark: #0369a1;
+  --theme-accent: #06b6d4;
+  --theme-surface: #ffffff;
+  --theme-surface-raised: #f0f9ff;
+  --theme-text: #0c4a6e;
+  --theme-text-muted: #64748b;
+  --theme-border: #bae6fd;
+}
+.event-theme-theme3 {
+  --theme-primary: #d97706;
+  --theme-primary-light: #fef3c7;
+  --theme-primary-dark: #b45309;
+  --theme-accent: #f59e0b;
+  --theme-surface: #ffffff;
+  --theme-surface-raised: #fffbeb;
+  --theme-text: #78350f;
+  --theme-text-muted: #92400e;
+  --theme-border: #fde68a;
+}
+.event-theme-theme4 {
+  --theme-primary: #16a34a;
+  --theme-primary-light: #dcfce7;
+  --theme-primary-dark: #15803d;
+  --theme-accent: #84cc16;
+  --theme-surface: #ffffff;
+  --theme-surface-raised: #f0fdf4;
+  --theme-text: #14532d;
+  --theme-text-muted: #166534;
+  --theme-border: #bbf7d0;
+}
+.event-theme-theme5 {
+  --theme-primary: #db2777;
+  --theme-primary-light: #fce7f3;
+  --theme-primary-dark: #be185d;
+  --theme-accent: #f43f5e;
+  --theme-surface: #ffffff;
+  --theme-surface-raised: #fdf2f8;
+  --theme-text: #831843;
+  --theme-text-muted: #9d174d;
+  --theme-border: #fbcfe8;
+}
