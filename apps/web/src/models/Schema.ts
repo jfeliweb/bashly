@@ -12,9 +12,9 @@ import {
 
 // Re-export Better-Auth tables
 export {
-  userTable,
-  sessionTable,
   accountTable,
+  sessionTable,
+  userTable,
   verificationTable,
 } from './AuthSchema';
 
@@ -92,7 +92,7 @@ export const eventTable = pgTable(
       .notNull()
       .$onUpdate(() => new Date()),
   },
-  (table) => ({
+  table => ({
     slugIdx: uniqueIndex('event_slug_idx').on(table.slug),
   }),
 );
@@ -135,7 +135,7 @@ export const inviteTable = pgTable(
     createdBy: text('created_by').notNull(),
     createdAt: timestamp('created_at', ts).defaultNow().notNull(),
   },
-  (table) => ({
+  table => ({
     codeIdx: uniqueIndex('invite_code_idx').on(table.code),
   }),
 );
