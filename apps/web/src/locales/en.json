@@ -192,6 +192,21 @@
     "role_vip_guest": "VIP Guest",
     "role_vendor": "Vendor"
   },
+  "GuestEvent": {
+    "event_ended": "This event has ended",
+    "countdown_aria": "Countdown to event",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds",
+    "rsvp_now": "RSVP Now",
+    "rsvp_button_aria": "RSVP for {title}",
+    "schedule_heading": "Schedule",
+    "show_all": "Show all",
+    "show_all_schedule": "Show full schedule",
+    "dress_code_label": "Dress Code",
+    "powered_by": "Powered by Bashly"
+  },
   "InviteLinks": {
     "panel_title": "Invite Links",
     "new_invite": "New Invite Link",
