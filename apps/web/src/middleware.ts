@@ -31,6 +31,19 @@ export default async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // API routes live outside [locale]/ — never run intl middleware on them
+  if (pathname.startsWith('/api')) {
+    // Auth API is public
+    if (pathname.startsWith('/api/auth')) {
+      return NextResponse.next();
+    }
+    // All other API routes require auth
+    if (!sessionToken) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    return NextResponse.next();
+  }
+
   // Redirect unauthenticated users away from protected routes
   if (isProtectedPath(pathname) && !sessionToken) {
     const locale = pathname.match(/^\/([a-z]{2})\//)?.at(1) ?? '';
@@ -43,7 +56,8 @@ export default async function middleware(request: NextRequest) {
 
   // Redirect authenticated users away from sign-in/sign-up pages
   if (
-    (pathname.includes('/sign-in') || pathname.includes('/sign-up'))
+    !pathname.startsWith('/api')
+    && (pathname.includes('/sign-in') || pathname.includes('/sign-up'))
     && sessionToken
   ) {
     const locale = pathname.match(/^\/([a-z]{2})\//)?.at(1) ?? '';
