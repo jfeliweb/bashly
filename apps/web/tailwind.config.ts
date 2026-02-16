@@ -1,7 +1,6 @@
 /* eslint-disable ts/no-require-imports */
-import type { Config } from 'tailwindcss';
-
 import sharedConfig from '@saas/tailwind-config';
+import type { Config } from 'tailwindcss';
 
 const config = {
   darkMode: ['class'],
