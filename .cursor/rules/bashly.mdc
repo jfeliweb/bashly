@@ -1,0 +1,288 @@
+---
+description: Bashly — Event SaaS. Apply to all files in apps/web and apps/mobile.
+alwaysApply: true
+---
+
+# Bashly — Cursor Rules
+
+## Project Identity
+- Product: **Bashly** (`bashly.app`) — private event management SaaS
+- Monorepo: Turborepo with `apps/web` (Next.js 14), `apps/mobile` (Expo 52), `packages/*`
+- Blueprint reference: `event-saas-blueprint-v2.md` in project docs
+- Brand reference: `bashly-brand-guidelines.html` in project docs
+- Wireframe reference: `bashly-host-dashboard.html` and `guest-event-page.html` for UI patterns
+
+---
+
+## 1. Stack — Never Deviate
+
+### Web (`apps/web`)
+- **Framework:** Next.js 14, App Router only — never use Pages Router
+- **Language:** TypeScript strict mode — `any` is never acceptable; always type everything
+- **Styling:** Tailwind CSS v3 + shadcn/ui — never write plain CSS files or inline styles
+- **Database:** Drizzle ORM + Neon PostgreSQL — never raw SQL strings, never Prisma
+- **Auth:** Better Auth — never Clerk, never NextAuth, never custom JWT. All auth flows go through `@/libs/auth` (server) and `@/libs/auth-client` (client)
+- **Forms:** React Hook Form + Zod — never uncontrolled inputs, never `useState` for form state
+- **Email:** Resend + React Email — never nodemailer, never SendGrid
+- **File storage:** Cloudflare R2 via `@aws-sdk/client-s3` — never `multer`, never local disk
+- **Payments:** Stripe — already wired; extend, never replace
+
+### Mobile (`apps/mobile`)
+- **Framework:** Expo 52 + Expo Router — file-based routing, same mental model as Next.js App Router
+- **Styling:** NativeWind v4 — same Tailwind class names as web, never `StyleSheet.create`
+- **UI primitives:** React Native Reusables — never import from `@radix-ui/*` in mobile code
+- **Auth:** `@better-auth/expo` + `expo-secure-store` — never `AsyncStorage` for auth tokens
+
+### Shared (`packages/*`)
+- `packages/types` — shared TypeScript interfaces and types
+- `packages/validators` — shared Zod schemas used by both web forms and API validation
+- `packages/api-client` — typed fetch wrappers for Bashly API endpoints
+- `packages/tailwind-config` — single source of truth for design tokens; both apps extend this
+
+---
+
+## 2. Next.js Conventions
+
+### Server vs Client Components
+- Default to **Server Components**. Add `"use client"` only when strictly required:
+  - Event handlers (`onClick`, `onChange`, etc.)
+  - Hooks (`useState`, `useEffect`, `useRef`, etc.)
+  - Browser APIs (`window`, `document`, `navigator`, etc.)
+  - Mapbox GL JS (requires `"use client"` — WebGL)
+  - Countdown timer components
+- Never put `"use client"` on a layout or page unnecessarily
+
+### Runtime
+- API routes that use Better Auth, Stripe, or Cloudflare R2 must use **Node.js runtime** (default)
+- Never add `export const runtime = 'edge'` to any route that touches auth, payments, or file storage
+- Edge runtime is only appropriate for static middleware (already correct in `middleware.ts`)
+
+### Route Structure
+- All web routes live under `apps/web/src/app/[locale]/`
+- Auth-required pages live inside `(auth)/` route group
+- Public event pages: `(public)/e/[slug]/` — ISR, no auth, theme-aware
+- Dashboard: `(auth)/dashboard/` — all host workspace routes
+
+### Data Fetching
+- Prefer `async` Server Components with direct Drizzle queries over API routes for dashboard data
+- Use API routes only for: unauthenticated guest endpoints, streaming service OAuth, webhook handlers, presigned URL generation
+- Always use `React.Suspense` + skeleton components for async data in layouts
+
+### File Naming
+- Files: `kebab-case` (e.g., `song-queue.tsx`, `use-rsvp-form.ts`)
+- Components: `PascalCase` export (e.g., `export function SongQueue()`)
+- Feature folders: `apps/web/src/features/[feature-name]/` for feature-specific components
+- Shared components: `apps/web/src/components/` for truly reusable UI primitives
+
+---
+
+## 3. TypeScript Rules
+
+```typescript
+// ✅ Always type function parameters and return values
+async function getEvent(id: string): Promise<Event | null> { ... }
+
+// ✅ Use `type` not `interface` (ESLint enforces this)
+type EventRole = 'owner' | 'co_host' | 'coordinator' | 'dj' | 'guest' | 'vip_guest' | 'vendor';
+
+// ✅ Infer Drizzle types from the schema
+import type { InferSelectModel } from 'drizzle-orm';
+import { eventSchema } from '@/models/Schema';
+type Event = InferSelectModel<typeof eventSchema>;
+
+// ❌ Never do this
+const data: any = await fetch(...);
+const event = data as Event;
+```
+
+- Use `type` everywhere — the ESLint config enforces `ts/consistent-type-definitions: ['error', 'type']`
+- Import types with `import type { ... }` to avoid runtime imports
+- All Zod schemas live in `packages/validators` — never define validation schemas inline in components
+
+---
+
+## 4. Database (Drizzle) Rules
+
+```typescript
+// ✅ Schema goes in apps/web/src/models/Schema.ts
+// ✅ Always import db from @/libs/DB
+import { db } from '@/libs/DB';
+import { eventSchema } from '@/models/Schema';
+import { eq, and, desc } from 'drizzle-orm';
+
+// ✅ Type-safe queries
+const event = await db.query.eventSchema.findFirst({
+  where: eq(eventSchema.id, eventId),
+});
+
+// ✅ After any schema change:
+// npm run db:generate --filter=@saas/web
+// npm run db:migrate --filter=@saas/web
+
+// ❌ Never
+db.execute(sql`SELECT * FROM events WHERE id = ${eventId}`);
+```
+
+- The `organization`, `member`, and `invitation` tables will be added by running `npx @better-auth/cli generate` after the `organization()` plugin is added to `auth.ts`
+- Better Auth tables (`userTable`, `sessionTable`, etc.) live in `AuthSchema.ts` — never modify these manually
+- Bashly business tables (events, rsvps, songs, invites, etc.) live in `Schema.ts`
+- Always run `db:generate` + `db:migrate` after schema changes — never edit migration files manually
+
+---
+
+## 5. Authentication Rules
+
+```typescript
+// ✅ Server-side session check
+import { auth } from '@/libs/auth';
+import { headers } from 'next/headers';
+
+const session = await auth.api.getSession({ headers: await headers() });
+if (!session) redirect('/sign-in');
+
+// ✅ Client-side session
+import { useSession } from '@/libs/auth-client';
+const { data: session } = useSession();
+
+// ❌ Never access Better Auth internals directly
+// ❌ Never write custom JWT logic
+// ❌ Never store session data in localStorage
+```
+
+- Guest-facing RSVP and song request endpoints are unauthenticated — check event slug + fingerprint, not session
+- Role checks for dashboard actions: verify `event_roles` table entry for the current user + event ID
+- Never trust client-supplied role claims — always verify server-side against the database
+
+---
+
+## 6. API Route Rules
+
+```typescript
+// ✅ Standard pattern for authenticated API routes
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/libs/auth';
+import { headers } from 'next/headers';
+
+export async function GET(req: NextRequest) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  // ... handler logic
+}
+
+// ✅ Standard pattern for unauthenticated guest endpoints (RSVP, song request)
+export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
+  const body = await req.json();
+  const parsed = rsvpSchema.safeParse(body);
+  if (!parsed.success) return NextResponse.json({ error: parsed.error }, { status: 400 });
+  // ... no session check needed
+}
+```
+
+- All API routes in `apps/web/src/app/[locale]/api/` or `apps/web/src/app/api/` (locale-agnostic preferred for API)
+- Always validate request bodies with Zod before touching the database
+- Return consistent error shapes: `{ error: string, code?: string }`
+- Rate-limit the iTunes search proxy and guest RSVP endpoints
+
+---
+
+## 7. UI & Styling Rules
+
+### Tailwind + shadcn/ui
+- Always use Tailwind utility classes — never write custom CSS
+- Use shadcn/ui components as the base; extend with Bashly design tokens from `tailwind.config.ts`
+- Import shadcn/ui components from `@/components/ui/`
+- `cn()` utility (from `@/utils/Helpers`) for conditional class merging — never string concatenation
+
+### Bashly Design Tokens (from brand guidelines)
+```
+Fonts:
+  - Headings: Bricolage Grotesque, weight 800
+  - Body: Nunito, weight 400/600/700
+  - Labels/numbers/dates/counts: JetBrains Mono, weight 600
+
+Light mode key colors:
+  - bg: rgb(248 251 254)
+  - surface: #ffffff
+  - text: rgb(9 21 27)
+  - accent (light): rgb(48 153 0)  ← fern-700, text/icons only
+  - CTA bg: rgb(81 255 0)          ← fern-500, buttons ONLY
+  - CTA text: cerulean-950
+
+Dark mode key colors:
+  - bg: rgb(9 21 27)
+  - surface: rgb(12 24 33)
+  - text: rgb(236 244 249)
+  - accent (dark): rgb(116 255 51) ← fern-400
+
+Rules:
+  - fern-500 (bright green) is ONLY used as CTA button backgrounds
+  - Never use fern-500 as text color on light backgrounds
+  - All text must meet WCAG AA: 4.5:1 for body, 3:1 for large text
+  - All touch targets: minimum 44×44px
+  - Buttons: pill-shaped (border-radius: 100px), min-height 44px, Nunito 700
+  - All numbers, dates, counts, metadata: JetBrains Mono
+  - Section labels: JetBrains Mono 0.6875rem, 600 weight, uppercase, 0.18em tracking, accent color
+```
+
+### Accessibility (non-negotiable)
+- Every interactive element needs `aria-label` or visible label
+- Focus rings: `outline: 3px solid var(--focus-ring); outline-offset: 3px` — never `outline: none`
+- All modals: `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, focus trap on open, restore focus on close
+- Images: always `alt` text; decorative images use `alt=""`
+- Motion: wrap animations in `@media (prefers-reduced-motion: no-preference)`
+- Screen reader text for icon-only buttons: use `.sr-only` class
+- Live regions: toasts/notifications use `role="status"` or `aria-live="polite"`
+
+---
+
+## 8. i18n Rules
+
+- All user-facing strings must go through `next-intl` — never hardcode English strings in JSX
+- String keys live in `apps/web/src/locales/en.json` and `es.json`
+- Use `useTranslations('ComponentName')` in client components
+- Use `getTranslations('ComponentName')` in server components and API routes
+- Never use `t('key')` from a different namespace without declaring the namespace
+
+```typescript
+// ✅ Server component
+const t = await getTranslations('EventDetail');
+// ✅ Client component
+const t = useTranslations('EventDetail');
+// ❌ Never
+<p>Welcome to your dashboard</p>
+```
+
+---
+
+## 9. Commit Rules
+
+All commits must follow Conventional Commits format. Use `npm run commit` (Commitizen) — never write commit messages manually.
+
+Format: `type(scope): description`
+
+Types: `feat`, `fix`, `refactor`, `style`, `test`, `docs`, `chore`
+Scopes: `web`, `mobile`, `auth`, `db`, `events`, `music`, `rsvp`, `registry`, `billing`, `api`
+
+Examples:
+- `feat(events): add event creation multi-step form`
+- `fix(auth): add organization plugin to auth.ts`
+- `refactor(db): replace todoSchema with Bashly event tables`
+
+---
+
+## 10. What NOT to Generate
+
+- ❌ No `interface` — use `type`
+- ❌ No `any` — ever
+- ❌ No Pages Router files (`pages/` directory)
+- ❌ No raw SQL strings
+- ❌ No Clerk imports or references
+- ❌ No Todo-related code (being removed)
+- ❌ No hardcoded English strings in JSX
+- ❌ No `outline: none` on focusable elements
+- ❌ No fern-500 as text color on light backgrounds
+- ❌ No `StyleSheet.create` in mobile code — use NativeWind
+- ❌ No `@radix-ui/*` imports in `apps/mobile/`
+- ❌ No `localStorage` for auth tokens (use `expo-secure-store` on mobile, Better Auth cookies on web)
+- ❌ No Edge runtime on auth/stripe/R2 routes
