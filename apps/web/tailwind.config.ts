@@ -7,6 +7,14 @@ const config = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   presets: [sharedConfig as Config],
   plugins: [require('tailwindcss-animate')],
+  theme: {
+    extend: {
+      fontFamily: {
+        bricolage: ['"Bricolage Grotesque"', 'sans-serif'],
+        nunito: ['Nunito', 'sans-serif'],
+      },
+    },
+  },
 } satisfies Config;
 
 export default config;
