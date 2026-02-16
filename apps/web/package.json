@@ -15,6 +15,7 @@
     "check-types": "tsc --noEmit --pretty",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:e2e:create-event": "dotenv -e .env.local -- playwright test tests/e2e/CreateEvent.e2e.ts",
     "test:guest": "node scripts/verify-guest-page.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "dotenv -e .env.local -- drizzle-kit migrate",
