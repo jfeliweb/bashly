@@ -1,3 +1,4 @@
+import '@/styles/event-themes.css';
 import '@/styles/global.css';
 
 import type { Metadata } from 'next';
