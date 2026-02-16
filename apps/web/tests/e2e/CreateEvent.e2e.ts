@@ -7,6 +7,11 @@ import { expect, test } from '@playwright/test';
  *   E2E_TEST_USER_EMAIL
  *   E2E_TEST_USER_PASSWORD
  *
+ * So the test user can sign in without clicking the verification email, set (same value):
+ *   E2E_AUTO_VERIFY_EMAIL=<E2E_TEST_USER_EMAIL>
+ * New sign-ups with that email are then auto-verified. For an existing unverified user,
+ * verify once via the email link or set email_verified in the DB.
+ *
  * Run from command line (from repo root or apps/web):
  *   cd apps/web && npm run test:e2e -- tests/e2e/CreateEvent.e2e.ts
  * With env from .env.local:
@@ -27,26 +32,16 @@ test.describe('Create Event', () => {
 
     const root = baseURL ?? 'http://localhost:3000';
     const localePrefix = '/en';
+    const dashboardUrlRegex = /\/(en\/)?dashboard(\/)?(\?.*)?$/;
 
-    // Sign in
+    // Sign in via the UI form
     await page.goto(`${root}${localePrefix}/sign-in`);
     await page.getByLabel('Email').fill(email!);
     await page.getByLabel('Password').fill(password!);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    // Wait for redirect to dashboard (or dashboard events list); allow time for auth round-trip
-    const dashboardUrlRegex = /\/(en\/)?dashboard(\/)?(\?.*)?$/;
-    try {
-      await expect(page).toHaveURL(dashboardUrlRegex, { timeout: 15000 });
-    } catch {
-      const errorEl = page.locator('[class*="bg-destructive"]').first();
-      const errText = (await errorEl.textContent())?.trim();
-      throw new Error(
-        errText
-          ? `Sign-in failed: ${errText} (check E2E_TEST_USER_EMAIL / E2E_TEST_USER_PASSWORD and email verification)`
-          : 'Sign-in failed: no redirect and no error message (check credentials and that the app is running)',
-      );
-    }
+    // Wait for redirect to dashboard
+    await expect(page).toHaveURL(dashboardUrlRegex, { timeout: 15000 });
 
     await page.goto(`${root}${localePrefix}/dashboard/events/new`);
 
