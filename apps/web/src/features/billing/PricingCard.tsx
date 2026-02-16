@@ -3,8 +3,10 @@ import React from 'react';
 
 import type { BillingInterval } from '@/types/Subscription';
 
+type PlanId = 'enterprise' | 'free' | 'premium';
+
 export const PricingCard = (props: {
-  planId: string;
+  planId: PlanId;
   price: number;
   interval: BillingInterval;
   button: React.ReactNode;
