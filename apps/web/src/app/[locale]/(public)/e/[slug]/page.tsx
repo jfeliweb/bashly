@@ -1,4 +1,5 @@
 import { asc, eq } from 'drizzle-orm';
+import { headers } from 'next/headers';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
@@ -9,12 +10,16 @@ import { CountdownTimer } from '@/features/events/CountdownTimer';
 import type { ScheduleItem } from '@/features/events/ScheduleList';
 import { ScheduleList } from '@/features/events/ScheduleList';
 import { RsvpButton } from '@/features/rsvp/RsvpButton';
+import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventTable, scheduleItemTable } from '@/models/Schema';
 
 export const revalidate = 60;
 
-type PageProps = { params: Promise<{ locale: string; slug: string }> };
+type PageProps = {
+  params: Promise<{ locale: string; slug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
 function formatEventDate(date: Date | null): string {
   if (!date) return '';
@@ -52,14 +57,29 @@ export async function generateMetadata({
   };
 }
 
-export default async function GuestEventPage({ params }: PageProps) {
+export default async function GuestEventPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  const isPreview = resolvedSearchParams.preview === '1';
   const t = await getTranslations('GuestEvent');
 
   const event = await db.query.eventTable.findFirst({
     where: eq(eventTable.slug, slug),
   });
-  if (!event || event.status === 'draft') notFound();
+
+  if (!event) {
+    notFound();
+  }
+
+  if (event.status === 'draft') {
+    if (!isPreview) {
+      notFound();
+    }
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session || session.user.id !== event.ownerId) {
+      notFound();
+    }
+  }
 
   const scheduleRows = await db
     .select()
@@ -85,6 +105,16 @@ export default async function GuestEventPage({ params }: PageProps) {
         color: 'var(--theme-text)',
       }}
     >
+      {/* Preview banner for draft events */}
+      {isPreview && event.status === 'draft' && (
+        <div
+          role="status"
+          className="bg-amber-500 px-4 py-2 text-center font-mono text-xs font-semibold uppercase tracking-wider text-amber-950"
+        >
+          {t('preview_banner')}
+        </div>
+      )}
+
       {/* 1. Hero */}
       <section className="relative h-[420px] w-full overflow-hidden">
         {event.coverImageUrl ? (
