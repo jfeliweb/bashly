@@ -6,14 +6,16 @@ import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
 import { PublishEventButton } from '@/features/events/PublishEventButton';
-import { SpotifyConnectButton } from '@/features/streaming/SpotifyConnectButton';
-import { SongQueuePanel } from '@/features/songs/SongQueuePanel';
 import { RegistryLinksPanel } from '@/features/registry/RegistryLinksPanel';
+import { SongQueuePanel } from '@/features/songs/SongQueuePanel';
+import { ExportPlaylistButton } from '@/features/streaming/ExportPlaylistButton';
+import { SpotifyConnectButton } from '@/features/streaming/SpotifyConnectButton';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import {
   eventRoleTable,
   eventTable,
+  playlistTable,
   rsvpTable,
   streamingConnectionTable,
 } from '@/models/Schema';
@@ -107,6 +109,16 @@ export default async function EventDetailPage({ params }: PageProps) {
       eq(streamingConnectionTable.platform, 'spotify'),
     ),
   });
+
+  const playlist = streamingConnection
+    ? await db.query.playlistTable.findFirst({
+      where: and(
+        eq(playlistTable.eventId, eventId),
+        eq(playlistTable.streamingConnectionId, streamingConnection.id),
+        eq(playlistTable.platform, 'spotify'),
+      ),
+    })
+    : null;
 
   const t = await getTranslations('EventDetail');
 
@@ -292,7 +304,7 @@ export default async function EventDetailPage({ params }: PageProps) {
           >
             {t('features')}
           </h2>
-          <ul className="mt-4 space-y-3" role="list">
+          <ul className="mt-4 space-y-3">
             <li className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
               <span className="text-sm font-semibold text-foreground">
                 {t('song_requests')}
@@ -363,10 +375,17 @@ export default async function EventDetailPage({ params }: PageProps) {
                 <h2 className="font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-[rgb(48,153,0)] dark:text-[rgb(116,255,51)]">
                   {t('music_section')}
                 </h2>
-                <SpotifyConnectButton
-                  isConnected={Boolean(streamingConnection)}
-                  displayName={streamingConnection?.platformDisplayName ?? undefined}
-                />
+                <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
+                  <SpotifyConnectButton
+                    isConnected={Boolean(streamingConnection)}
+                    displayName={streamingConnection?.platformDisplayName ?? undefined}
+                  />
+                  <ExportPlaylistButton
+                    eventId={eventId}
+                    isSpotifyConnected={Boolean(streamingConnection)}
+                    existingPlaylistUrl={playlist?.platformPlaylistUrl ?? null}
+                  />
+                </div>
               </div>
               <SongQueuePanel eventId={eventId} />
             </div>

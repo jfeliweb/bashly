@@ -1,0 +1,229 @@
+import { and, eq } from 'drizzle-orm';
+
+import { streamingConnectionTable } from '@/models/Schema';
+
+import { db } from './DB';
+import { Env } from './Env';
+import { logger } from './Logger';
+
+// Spotify tokens expire in 3600 seconds. We refresh 5 minutes early to avoid
+// mid-request expiry.
+const TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000;
+
+type SpotifyRefreshResponse = {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  scope: string;
+  // Spotify may rotate the refresh token — always save it if present
+  refresh_token?: string;
+};
+
+export async function getValidSpotifyToken(userId: string): Promise<string | null> {
+  const connection = await db.query.streamingConnectionTable.findFirst({
+    where: and(
+      eq(streamingConnectionTable.userId, userId),
+      eq(streamingConnectionTable.platform, 'spotify'),
+    ),
+  });
+
+  if (!connection) {
+    return null;
+  }
+
+  // Check if the current token is still fresh (with buffer)
+  const now = new Date();
+  if (
+    connection.tokenExpiresAt
+    && connection.tokenExpiresAt.getTime() - now.getTime() > TOKEN_REFRESH_BUFFER_MS
+  ) {
+    return connection.accessToken;
+  }
+
+  // Token is expired or about to expire — refresh it
+  if (!connection.refreshToken) {
+    logger.error({ userId }, 'No refresh token available for Spotify');
+    return null;
+  }
+
+  try {
+    // PKCE token refresh rules:
+    //   ✅ Send `client_id` in the body
+    //   ✅ Send `refresh_token` in the body
+    //   ❌ Do NOT send `client_secret`
+    //   ❌ Do NOT send an `Authorization: Basic` header
+    //
+    // The standard Authorization Code flow uses Basic auth for refresh,
+    // but PKCE clients are public clients — no secret exists.
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: connection.refreshToken,
+        client_id: Env.SPOTIFY_CLIENT_ID,
+      }),
+    });
+
+    if (!response.ok) {
+      const errBody = await response.text();
+      logger.error(
+        { userId, status: response.status, body: errBody },
+        'Spotify token refresh failed',
+      );
+      return null;
+    }
+
+    const data: SpotifyRefreshResponse = await response.json();
+    const expiresAt = new Date(Date.now() + data.expires_in * 1000);
+
+    // Spotify may rotate the refresh token. If a new one is returned, save it —
+    // the old one becomes invalid immediately.
+    await db
+      .update(streamingConnectionTable)
+      .set({
+        accessToken: data.access_token,
+        tokenExpiresAt: expiresAt,
+        // Only overwrite refreshToken if Spotify returned a new one
+        ...(data.refresh_token && { refreshToken: data.refresh_token }),
+      })
+      .where(eq(streamingConnectionTable.id, connection.id));
+
+    return data.access_token;
+  } catch (error) {
+    logger.error({ error, userId }, 'Failed to refresh Spotify token');
+    return null;
+  }
+}
+
+export async function createSpotifyPlaylist(
+  userId: string,
+  playlistName: string,
+  trackUris: string[],
+): Promise<{ id: string; url: string } | null> {
+  const token = await getValidSpotifyToken(userId);
+  if (!token) {
+    return null;
+  }
+
+  try {
+    // Create the playlist.
+    //
+    // Dev Mode endpoint (Feb 2026): POST /v1/me/playlists
+    // The old endpoint POST /v1/users/{user_id}/playlists is only available
+    // to Extended Quota Mode apps (250K+ MAU). Dev Mode apps must use /me/.
+    const createRes = await fetch('https://api.spotify.com/v1/me/playlists', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: playlistName,
+        description: 'Guest song requests curated via Bashly',
+        public: false,
+        collaborative: false,
+      }),
+    });
+
+    if (!createRes.ok) {
+      const errBody = await createRes.text();
+      logger.error(
+        { userId, status: createRes.status, body: errBody },
+        'Failed to create Spotify playlist',
+      );
+      return null;
+    }
+
+    const playlist: { id: string; external_urls: { spotify: string } } = await createRes.json();
+
+    // Add tracks in chunks of 100 (Spotify's per-request max).
+    //
+    // Dev Mode endpoint (Feb 2026): POST /v1/playlists/{id}/items
+    // The old endpoint /tracks was renamed to /items for Dev Mode apps.
+    const chunks = chunkArray(trackUris, 100);
+    for (const chunk of chunks) {
+      const addRes = await fetch(
+        `https://api.spotify.com/v1/playlists/${playlist.id}/items`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ uris: chunk }),
+        },
+      );
+
+      if (!addRes.ok) {
+        const errBody = await addRes.text();
+        logger.error(
+          { userId, status: addRes.status, body: errBody },
+          'Failed to add tracks to Spotify playlist',
+        );
+        // Don't abort entirely — return the playlist with whatever was added
+      }
+    }
+
+    return {
+      id: playlist.id,
+      url: playlist.external_urls.spotify,
+    };
+  } catch (error) {
+    logger.error({ error, userId }, 'Failed to create Spotify playlist');
+    return null;
+  }
+}
+
+export async function addTracksToSpotifyPlaylist(
+  userId: string,
+  playlistId: string,
+  trackUris: string[],
+): Promise<boolean> {
+  const token = await getValidSpotifyToken(userId);
+  if (!token) {
+    return false;
+  }
+
+  try {
+    const chunks = chunkArray(trackUris, 100);
+    for (const chunk of chunks) {
+      // Dev Mode endpoint (Feb 2026): /items (not /tracks)
+      const response = await fetch(
+        `https://api.spotify.com/v1/playlists/${playlistId}/items`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ uris: chunk }),
+        },
+      );
+
+      if (!response.ok) {
+        const errBody = await response.text();
+        logger.error(
+          { userId, playlistId, status: response.status, body: errBody },
+          'Failed to add tracks to Spotify playlist',
+        );
+        return false;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    logger.error({ error, userId, playlistId }, 'Failed to add tracks');
+    return false;
+  }
+}
+
+function chunkArray<T>(array: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+}
