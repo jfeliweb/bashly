@@ -19,7 +19,7 @@ export function SpotifyConnectButton({
   if (isConnected) {
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Music aria-hidden className="h-4 w-4 text-green-600" />
+        <Music aria-hidden className="size-4 text-green-600" />
         <span>
           {t('connected_as', { displayName: displayName ?? '—' })}
         </span>

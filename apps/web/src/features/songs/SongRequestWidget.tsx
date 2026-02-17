@@ -135,7 +135,7 @@ export function SongRequestWidget({
 
   return (
     <div
-      className="mx-auto max-w-[520px] px-4 pb-6 rounded-2xl border p-6"
+      className="mx-auto max-w-[520px] rounded-2xl border p-6 px-4"
       style={{
         backgroundColor: 'var(--theme-surface-raised)',
         borderColor: 'var(--theme-border)',
@@ -182,6 +182,7 @@ export function SongRequestWidget({
                       }}
                       className="flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors hover:bg-black/5 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--theme-primary)]"
                     >
+                      {/* eslint-disable-next-line @next/next/no-img-element -- external album art URL */}
                       <img
                         src={track.album_art_url}
                         alt=""
@@ -215,6 +216,7 @@ export function SongRequestWidget({
                 className="mb-4 flex items-center gap-3 rounded-lg p-3"
                 style={{ backgroundColor: 'var(--theme-surface)' }}
               >
+                {/* eslint-disable-next-line @next/next/no-img-element -- external album art URL */}
                 <img
                   src={selectedSong.album_art_url}
                   alt=""

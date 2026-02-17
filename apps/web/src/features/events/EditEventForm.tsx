@@ -1,7 +1,7 @@
 'use client';
 
-import { createEventSchema } from '@saas/validators';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { createEventSchema } from '@saas/validators';
 import { ImagePlus, Loader2, X } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
@@ -241,7 +241,7 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
                   type="file"
                   accept="image/jpeg,image/png,image/webp,image/gif"
                   className="sr-only"
-                  onChange={e => {
+                  onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
                       handleFileSelect(file);
@@ -437,7 +437,7 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
                       min={0}
                       max={20}
                       {...field}
-                      onChange={e => {
+                      onChange={(e) => {
                         const n = e.target.valueAsNumber;
                         field.onChange(Number.isFinite(n) ? n : 0);
                       }}

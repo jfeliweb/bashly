@@ -1,8 +1,8 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -53,14 +53,16 @@ export function PublishEventButton({ eventId, className }: PublishEventButtonPro
         )}
         aria-label={t('publish_event_aria')}
       >
-        {isPublishing ? (
-          <>
-            <Loader2 className="mr-2 size-4 animate-spin" aria-hidden />
-            {t('publishing')}
-          </>
-        ) : (
-          t('publish_event')
-        )}
+        {isPublishing
+          ? (
+              <>
+                <Loader2 className="mr-2 size-4 animate-spin" aria-hidden />
+                {t('publishing')}
+              </>
+            )
+          : (
+              t('publish_event')
+            )}
       </Button>
       {error && (
         <p className="text-sm text-destructive" role="alert">

@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 export type ScheduleItem = {
   id: string;
@@ -26,7 +25,9 @@ export function ScheduleList({
   const hasMore = items.length > initialVisible;
   const visibleItems = hasMore && !showAll ? items.slice(0, initialVisible) : items;
 
-  if (items.length === 0) return null;
+  if (items.length === 0) {
+    return null;
+  }
 
   return (
     <section className="mx-auto max-w-[520px] px-4 pb-6">
@@ -40,14 +41,14 @@ export function ScheduleList({
             className="flex gap-4"
             style={{ listStyle: 'none' }}
           >
-            <div className="w-14 flex-shrink-0 text-right">
+            <div className="w-14 shrink-0 text-right">
               <span className="font-mono text-xs font-semibold text-[var(--theme-primary)]">
                 {item.startTime}
               </span>
             </div>
-            <div className="flex flex-shrink-0 flex-col items-center pt-1">
+            <div className="flex shrink-0 flex-col items-center pt-1">
               <span
-                className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                className="size-2.5 shrink-0 rounded-full"
                 style={{ backgroundColor: 'var(--theme-primary)' }}
                 aria-hidden
               />
@@ -64,7 +65,7 @@ export function ScheduleList({
                 {item.title}
               </span>
               {item.note && (
-                <p className="font-nunito text-xs text-[var(--theme-text-muted)] mt-0.5">
+                <p className="mt-0.5 font-nunito text-xs text-[var(--theme-text-muted)]">
                   {item.note}
                 </p>
               )}

@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Music, ThumbsUp, Trash2, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -28,9 +29,11 @@ type Song = {
 
 type SongQueuePanelProps = {
   eventId: string;
+  djMode?: boolean;
 };
 
-export function SongQueuePanel({ eventId }: SongQueuePanelProps) {
+export function SongQueuePanel({ eventId, djMode = false }: SongQueuePanelProps) {
+  const t = useTranslations('DjDashboard');
   const [songs, setSongs] = useState<Song[]>([]);
   const [filter, setFilter] = useState<'all' | SongStatus>('all');
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -108,6 +111,13 @@ export function SongQueuePanel({ eventId }: SongQueuePanelProps) {
       aria-labelledby="song-queue-heading"
       className="rounded-xl border border-border bg-card p-6 shadow-sm"
     >
+      {djMode && (
+        <div className="mb-4 rounded-lg border border-purple-200 bg-purple-50 p-3 dark:border-purple-800 dark:bg-purple-950/30">
+          <p className="text-sm font-medium text-purple-900 dark:text-purple-100">
+            {t('dj_mode_banner')}
+          </p>
+        </div>
+      )}
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2
           id="song-queue-heading"
@@ -139,122 +149,140 @@ export function SongQueuePanel({ eventId }: SongQueuePanelProps) {
               <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
           </Select>
-          {pendingCount > 0 ? (
-            <Button
-              onClick={() => void bulkApproveAll()}
-              variant="outline"
-              className="min-h-[44px]"
-            >
-              <span>Approve All</span>
-              <span className="ml-1 font-mono text-xs font-semibold">
-                (
-                {pendingCount}
-                )
-              </span>
-            </Button>
-          ) : null}
+          {pendingCount > 0
+            ? (
+                <Button
+                  onClick={() => void bulkApproveAll()}
+                  variant="outline"
+                  className="min-h-[44px]"
+                >
+                  <span>Approve All</span>
+                  <span className="ml-1 font-mono text-xs font-semibold">
+                    (
+                    {pendingCount}
+                    )
+                  </span>
+                </Button>
+              )
+            : null}
         </div>
       </div>
 
-      {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading songs...</p>
-      ) : null}
+      {isLoading
+        ? (
+            <p className="text-sm text-muted-foreground">Loading songs...</p>
+          )
+        : null}
 
-      {!isLoading && songs.length === 0 ? (
-        <div className="py-8 text-center text-muted-foreground">
-          <Music className="mx-auto mb-3 size-10 opacity-30" aria-hidden />
-          <p className="text-sm">No song requests yet</p>
-        </div>
-      ) : null}
-
-      {!isLoading && songs.length > 0 ? (
-        <div className="space-y-3">
-          {songs.map(song => (
-            <div
-              key={song.id}
-              className="flex items-center gap-3 rounded-lg border border-border bg-background p-3"
-            >
-              {song.albumArtUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={song.albumArtUrl}
-                  alt=""
-                  className="size-12 rounded object-cover"
-                />
-              ) : null}
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-semibold text-foreground">
-                  {song.trackTitle}
-                </div>
-                <div className="truncate text-xs text-muted-foreground">
-                  {song.artistName}
-                  {' · Requested by '}
-                  {song.guestName}
-                </div>
-                {song.guestMessage ? (
-                  <div className="mt-1 line-clamp-2 text-xs italic text-muted-foreground">
-                    &quot;
-                    {song.guestMessage}
-                    &quot;
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div
-                  className="flex items-center gap-1 text-sm text-muted-foreground"
-                  title="Vote count"
-                >
-                  <ThumbsUp className="size-3" aria-hidden />
-                  <span className="font-mono font-semibold">
-                    {song.voteCount}
-                  </span>
-                </div>
-                {song.status === 'pending' ? (
-                  <>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => void updateStatus(song.id, 'approved')}
-                      aria-label="Approve song"
-                      className="text-green-600"
-                    >
-                      <Check className="size-4" aria-hidden />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => void updateStatus(song.id, 'rejected')}
-                      aria-label="Reject song"
-                      className="text-red-600"
-                    >
-                      <X className="size-4" aria-hidden />
-                    </Button>
-                  </>
-                ) : null}
-                {song.status === 'approved' ? (
-                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-300">
-                    Approved
-                  </span>
-                ) : null}
-                {song.status === 'rejected' ? (
-                  <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800 dark:bg-red-500/10 dark:text-red-300">
-                    Rejected
-                  </span>
-                ) : null}
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => void deleteSong(song.id)}
-                  aria-label="Delete song"
-                >
-                  <Trash2 className="size-4" aria-hidden />
-                </Button>
-              </div>
+      {!isLoading && songs.length === 0
+        ? (
+            <div className="py-8 text-center text-muted-foreground">
+              <Music className="mx-auto mb-3 size-10 opacity-30" aria-hidden />
+              <p className="text-sm">No song requests yet</p>
             </div>
-          ))}
-        </div>
-      ) : null}
+          )
+        : null}
+
+      {!isLoading && songs.length > 0
+        ? (
+            <div className="space-y-3">
+              {songs.map(song => (
+                <div
+                  key={song.id}
+                  className="flex items-center gap-3 rounded-lg border border-border bg-background p-3"
+                >
+                  {song.albumArtUrl
+                    ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={song.albumArtUrl}
+                          alt=""
+                          className="size-12 rounded object-cover"
+                        />
+                      )
+                    : null}
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-semibold text-foreground">
+                      {song.trackTitle}
+                    </div>
+                    <div className="truncate text-xs text-muted-foreground">
+                      {song.artistName}
+                      {' · Requested by '}
+                      {song.guestName}
+                    </div>
+                    {song.guestMessage
+                      ? (
+                          <div className="mt-1 line-clamp-2 text-xs italic text-muted-foreground">
+                            &quot;
+                            {song.guestMessage}
+                            &quot;
+                          </div>
+                        )
+                      : null}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="flex items-center gap-1 text-sm text-muted-foreground"
+                      title="Vote count"
+                    >
+                      <ThumbsUp className="size-3" aria-hidden />
+                      <span className="font-mono font-semibold">
+                        {song.voteCount}
+                      </span>
+                    </div>
+                    {song.status === 'pending'
+                      ? (
+                          <>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => void updateStatus(song.id, 'approved')}
+                              aria-label="Approve song"
+                              className="text-green-600"
+                            >
+                              <Check className="size-4" aria-hidden />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => void updateStatus(song.id, 'rejected')}
+                              aria-label="Reject song"
+                              className="text-red-600"
+                            >
+                              <X className="size-4" aria-hidden />
+                            </Button>
+                          </>
+                        )
+                      : null}
+                    {song.status === 'approved'
+                      ? (
+                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-300">
+                            Approved
+                          </span>
+                        )
+                      : null}
+                    {song.status === 'rejected'
+                      ? (
+                          <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800 dark:bg-red-500/10 dark:text-red-300">
+                            Rejected
+                          </span>
+                        )
+                      : null}
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => void deleteSong(song.id)}
+                      aria-label="Delete song"
+                    >
+                      <Trash2 className="size-4" aria-hidden />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
+        : null}
     </section>
   );
 }
