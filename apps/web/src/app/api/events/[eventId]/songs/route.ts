@@ -21,25 +21,50 @@ async function hasAnyRole(eventId: string, userId: string): Promise<boolean> {
 }
 
 export async function GET(req: NextRequest, { params }: RouteParams) {
+  const { eventId: segment } = await params;
+  const { searchParams } = new URL(req.url);
+  const statusFilter = searchParams.get('status'); // pending | approved | rejected | all
+
   const session = await auth.api.getSession({ headers: await headers() });
+
+  // Guest-facing: unauthenticated GET with status=approved — treat segment as event slug
+  if (!session && statusFilter === 'approved') {
+    const event = await db.query.eventTable.findFirst({
+      where: eq(eventTable.slug, segment),
+      columns: { id: true, status: true, songVotingEnabled: true },
+    });
+    if (!event || event.status !== 'published') {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+    }
+    const songs = await db
+      .select()
+      .from(songSuggestionTable)
+      .where(
+        and(
+          eq(songSuggestionTable.eventId, event.id),
+          eq(songSuggestionTable.status, 'approved'),
+        ),
+      )
+      .orderBy(
+        desc(songSuggestionTable.voteCount),
+        desc(songSuggestionTable.createdAt),
+      );
+    return NextResponse.json({ songs });
+  }
+
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { eventId } = await params;
-
-  const hasRole = await hasAnyRole(eventId, session.user.id);
+  const hasRole = await hasAnyRole(segment, session.user.id);
   if (!hasRole) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const { searchParams } = new URL(req.url);
-  const statusFilter = searchParams.get('status'); // pending | approved | rejected | all
-
   let query = db
     .select()
     .from(songSuggestionTable)
-    .where(eq(songSuggestionTable.eventId, eventId))
+    .where(eq(songSuggestionTable.eventId, segment))
     .$dynamic();
 
   if (statusFilter && statusFilter !== 'all') {
@@ -171,4 +196,3 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     { status: 201 },
   );
 }
-

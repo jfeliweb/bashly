@@ -5,7 +5,10 @@ import { NextResponse } from 'next/server';
 
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
-import { addTracksToSpotifyPlaylist, createSpotifyPlaylist } from '@/libs/spotify';
+import {
+  createSpotifyPlaylist,
+  replaceSpotifyPlaylistTracks,
+} from '@/libs/spotify';
 import {
   eventRoleTable,
   eventTable,
@@ -99,8 +102,8 @@ export async function POST(_req: NextRequest, { params }: RouteParams) {
   });
 
   if (existingPlaylist) {
-    // Re-sync: add newly approved tracks to the existing playlist
-    const success = await addTracksToSpotifyPlaylist(
+    // Re-sync: replace playlist with current approved tracks (no duplicates)
+    const success = await replaceSpotifyPlaylistTracks(
       session.user.id,
       existingPlaylist.platformPlaylistId,
       trackUris,
