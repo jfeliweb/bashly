@@ -56,7 +56,7 @@ export default async function RsvpConfirmedPage({
 
   return (
     <div
-      className={`event-theme-${themeId} min-h-screen`}
+      className={`event-theme-${themeId} min-h-screen`} // eslint-disable-line tailwindcss/no-custom-classname -- dynamic theme
       style={{
         backgroundColor: 'var(--theme-surface)',
         color: 'var(--theme-text)',

@@ -44,4 +44,3 @@ export async function POST(_req: NextRequest, { params }: RouteParams) {
 
   return NextResponse.json({ message: 'All pending songs approved' });
 }
-

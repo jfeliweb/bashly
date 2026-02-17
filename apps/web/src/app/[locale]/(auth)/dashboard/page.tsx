@@ -1,4 +1,4 @@
-import { count, desc, eq } from 'drizzle-orm';
+import { and, count, desc, eq, ne } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -7,9 +7,21 @@ import { getTranslations } from 'next-intl/server';
 import { Button } from '@/components/ui/button';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
-import { eventTable, rsvpTable } from '@/models/Schema';
+import { eventRoleTable, eventTable, rsvpTable } from '@/models/Schema';
 import { Logo } from '@/templates/Logo';
 import { cn } from '@/utils/Helpers';
+
+type EventCard = {
+  id: string;
+  title: string;
+  eventType: string;
+  eventDate: Date | null;
+  status: string | null;
+  slug: string;
+  rsvp_count: number;
+  userRole: 'owner' | 'dj';
+  hasDjRole: boolean;
+};
 
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({
@@ -53,28 +65,99 @@ export default async function DashboardEventsPage() {
     redirect('/sign-in');
   }
 
-  const events = await db
-    .select({
-      id: eventTable.id,
-      title: eventTable.title,
-      eventType: eventTable.eventType,
-      eventDate: eventTable.eventDate,
-      status: eventTable.status,
-      slug: eventTable.slug,
-      rsvp_count: count(rsvpTable.id),
-    })
-    .from(eventTable)
-    .leftJoin(rsvpTable, eq(rsvpTable.eventId, eventTable.id))
-    .where(eq(eventTable.ownerId, session.user.id))
-    .groupBy(
-      eventTable.id,
-      eventTable.title,
-      eventTable.eventType,
-      eventTable.eventDate,
-      eventTable.status,
-      eventTable.slug,
-    )
-    .orderBy(desc(eventTable.eventDate));
+  const [ownedRows, djRoleRows, djOnlyRows] = await Promise.all([
+    db
+      .select({
+        id: eventTable.id,
+        title: eventTable.title,
+        eventType: eventTable.eventType,
+        eventDate: eventTable.eventDate,
+        status: eventTable.status,
+        slug: eventTable.slug,
+        rsvp_count: count(rsvpTable.id),
+      })
+      .from(eventTable)
+      .leftJoin(rsvpTable, eq(rsvpTable.eventId, eventTable.id))
+      .where(eq(eventTable.ownerId, session.user.id))
+      .groupBy(
+        eventTable.id,
+        eventTable.title,
+        eventTable.eventType,
+        eventTable.eventDate,
+        eventTable.status,
+        eventTable.slug,
+      )
+      .orderBy(desc(eventTable.eventDate)),
+    db
+      .select({ eventId: eventRoleTable.eventId })
+      .from(eventRoleTable)
+      .where(
+        and(
+          eq(eventRoleTable.userId, session.user.id),
+          eq(eventRoleTable.role, 'dj'),
+        ),
+      ),
+    db
+      .select({
+        id: eventTable.id,
+        title: eventTable.title,
+        eventType: eventTable.eventType,
+        eventDate: eventTable.eventDate,
+        status: eventTable.status,
+        slug: eventTable.slug,
+        rsvp_count: count(rsvpTable.id),
+      })
+      .from(eventRoleTable)
+      .innerJoin(eventTable, eq(eventTable.id, eventRoleTable.eventId))
+      .leftJoin(rsvpTable, eq(rsvpTable.eventId, eventTable.id))
+      .where(
+        and(
+          eq(eventRoleTable.userId, session.user.id),
+          eq(eventRoleTable.role, 'dj'),
+          ne(eventTable.ownerId, session.user.id),
+        ),
+      )
+      .groupBy(
+        eventTable.id,
+        eventTable.title,
+        eventTable.eventType,
+        eventTable.eventDate,
+        eventTable.status,
+        eventTable.slug,
+      )
+      .orderBy(desc(eventTable.eventDate)),
+  ]);
+
+  const djEventIds = new Set(djRoleRows.map(r => r.eventId));
+
+  const ownedCards: EventCard[] = ownedRows.map(ev => ({
+    id: ev.id,
+    title: ev.title,
+    eventType: ev.eventType,
+    eventDate: ev.eventDate,
+    status: ev.status,
+    slug: ev.slug,
+    rsvp_count: Number(ev.rsvp_count),
+    userRole: 'owner',
+    hasDjRole: djEventIds.has(ev.id),
+  }));
+
+  const djOnlyCards: EventCard[] = djOnlyRows.map(ev => ({
+    id: ev.id,
+    title: ev.title,
+    eventType: ev.eventType,
+    eventDate: ev.eventDate,
+    status: ev.status,
+    slug: ev.slug,
+    rsvp_count: Number(ev.rsvp_count),
+    userRole: 'dj',
+    hasDjRole: true,
+  }));
+
+  const events: EventCard[] = [...ownedCards, ...djOnlyCards].sort(
+    (a, b) =>
+      (b.eventDate?.getTime() ?? 0) - (a.eventDate?.getTime() ?? 0),
+  );
 
   const t = await getTranslations('EventsList');
 
@@ -166,12 +249,25 @@ export default async function DashboardEventsPage() {
                         )}
                         {t(`status_${status}` as 'status_draft')}
                       </span>
-                      <Link
-                        href={`/dashboard/events/${ev.id}`}
-                        className="text-sm font-semibold text-[rgb(37,90,116)] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)] dark:text-[rgb(139,192,218)]"
-                      >
-                        {t('manage_link')}
-                      </Link>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {ev.userRole === 'owner' && (
+                          <Link
+                            href={`/dashboard/events/${ev.id}`}
+                            className="text-sm font-semibold text-[rgb(37,90,116)] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)] dark:text-[rgb(139,192,218)]"
+                          >
+                            {t('manage_link')}
+                          </Link>
+                        )}
+                        {(ev.userRole === 'dj' || ev.hasDjRole) && (
+                          <Link
+                            href={`/dashboard/dj/${ev.id}`}
+                            className="text-sm font-semibold text-[rgb(37,90,116)] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)] dark:text-[rgb(139,192,218)]"
+                            aria-label={t('dj_queue_link')}
+                          >
+                            {t('dj_queue_link')}
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   </article>
                 );

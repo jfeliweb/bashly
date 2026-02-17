@@ -8,8 +8,8 @@ import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable, songSuggestionTable } from '@/models/Schema';
 
-const UUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_REGEX
+  = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function isUuid(s: string): boolean {
   return UUID_REGEX.test(s);
@@ -29,7 +29,9 @@ async function hasAnyRole(eventId: string, userId: string): Promise<boolean> {
 
 /** Resolve route segment (UUID or slug) to event UUID. */
 async function resolveEventId(segment: string): Promise<string | null> {
-  if (isUuid(segment)) return segment;
+  if (isUuid(segment)) {
+    return segment;
+  }
   const event = await db.query.eventTable.findFirst({
     where: eq(eventTable.slug, segment),
     columns: { id: true },

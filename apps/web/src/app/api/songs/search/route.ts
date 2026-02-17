@@ -18,14 +18,22 @@ type iTunesResponse = {
 
 function getSearchTerm(searchParams: URLSearchParams): string | null {
   const term = searchParams.get('term');
-  if (term) return term;
+  if (term) {
+    return term;
+  }
   // Fallback: some clients send ?term%3Dvalue (whole "term=value" encoded as param name)
   const first = Array.from(searchParams.entries())[0];
-  if (!first) return null;
+  if (!first) {
+    return null;
+  }
   const [key, value] = first;
   const decodedKey = decodeURIComponent(key);
-  if (decodedKey.startsWith('term=')) return decodedKey.slice(5).trim();
-  if (value) return value.trim();
+  if (decodedKey.startsWith('term=')) {
+    return decodedKey.slice(5).trim();
+  }
+  if (value) {
+    return value.trim();
+  }
   return null;
 }
 

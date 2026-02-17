@@ -107,7 +107,7 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
 
   return (
     <div
-      className={`event-theme-${themeId} min-h-screen`}
+      className={`event-theme-${themeId} min-h-screen`} // eslint-disable-line tailwindcss/no-custom-classname -- dynamic theme
       style={{
         backgroundColor: 'var(--theme-surface)',
         color: 'var(--theme-text)',
@@ -206,11 +206,11 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
       {/* 4b. Song request widget */}
       {event.songRequestsEnabled && (
         <Suspense
-          fallback={
+          fallback={(
             <div className="mx-auto max-w-[520px] px-4 pb-6">
               <div className="h-64" />
             </div>
-          }
+          )}
         >
           <SongRequestWidget
             eventSlug={event.slug}

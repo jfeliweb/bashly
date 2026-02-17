@@ -137,13 +137,13 @@ export default async function EventDetailPage({ params }: PageProps) {
               className={cn(
                 'inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-xs font-semibold',
                 status === 'draft'
-                  && 'border-border bg-muted text-muted-foreground',
+                && 'border-border bg-muted text-muted-foreground',
                 status === 'published'
-                  && 'border-[rgb(48,153,0)] bg-[rgb(238,255,229)] text-[rgb(48,153,0)] dark:border-[rgb(116,255,51)] dark:bg-[rgb(116,255,51)]/10 dark:text-[rgb(116,255,51)]',
+                && 'border-[rgb(48,153,0)] bg-[rgb(238,255,229)] text-[rgb(48,153,0)] dark:border-[rgb(116,255,51)] dark:bg-[rgb(116,255,51)]/10 dark:text-[rgb(116,255,51)]',
                 status === 'completed'
-                  && 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-400/10 dark:text-blue-300',
+                && 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-400/10 dark:text-blue-300',
                 status === 'cancelled'
-                  && 'border-destructive/50 bg-destructive/10 text-destructive',
+                && 'border-destructive/50 bg-destructive/10 text-destructive',
               )}
             >
               {status === 'published' && (
@@ -366,7 +366,7 @@ export default async function EventDetailPage({ params }: PageProps) {
         </section>
 
         {/* Gift Registry + Song Queue / Music */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           <RegistryLinksPanel
             eventId={eventId}
             registryEnabled={event.registryEnabled ?? true}

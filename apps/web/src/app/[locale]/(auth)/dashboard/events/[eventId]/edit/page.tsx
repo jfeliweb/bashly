@@ -1,3 +1,4 @@
+import type { InferSelectModel } from 'drizzle-orm';
 import { and, eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import Link from 'next/link';
@@ -12,7 +13,6 @@ import {
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable } from '@/models/Schema';
-import type { InferSelectModel } from 'drizzle-orm';
 
 type PageProps = {
   params: Promise<{ eventId: string; locale: string }>;
@@ -116,7 +116,9 @@ export default async function EditEventPage({ params }: PageProps) {
       <div className="mb-6 flex items-center gap-3">
         <Button asChild variant="ghost" size="sm" className="min-h-[44px]">
           <Link href={`/dashboard/events/${eventId}`}>
-            ← {t('back_to_events')}
+            ←
+            {' '}
+            {t('back_to_events')}
           </Link>
         </Button>
       </div>
