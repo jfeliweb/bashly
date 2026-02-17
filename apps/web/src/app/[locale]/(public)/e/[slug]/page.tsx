@@ -13,6 +13,7 @@ import { ScheduleList } from '@/features/events/ScheduleList';
 import { RegistrySection } from '@/features/registry/RegistrySection';
 import { RsvpButton } from '@/features/rsvp/RsvpButton';
 import { SongRequestWidget } from '@/features/songs/SongRequestWidget';
+import { SongVotingList } from '@/features/songs/SongVotingList';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventTable, scheduleItemTable } from '@/models/Schema';
@@ -216,6 +217,18 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
             songRequestsEnabled={event.songRequestsEnabled}
             songRequestsPerGuest={event.songRequestsPerGuest ?? 0}
           />
+        </Suspense>
+      )}
+
+      {/* 4c. Song voting list */}
+      {event.songVotingEnabled && (
+        <Suspense fallback={<div className="h-64" />}>
+          <div className="mx-auto max-w-[520px] px-4 pb-6">
+            <SongVotingList
+              eventSlug={event.slug}
+              votingEnabled={event.songVotingEnabled}
+            />
+          </div>
         </Suspense>
       )}
 

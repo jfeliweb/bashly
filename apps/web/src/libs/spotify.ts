@@ -1,10 +1,9 @@
 import { and, eq } from 'drizzle-orm';
 
+import { db } from '@/libs/DB';
+import { Env } from '@/libs/Env';
+import { logger } from '@/libs/Logger';
 import { streamingConnectionTable } from '@/models/Schema';
-
-import { db } from './DB';
-import { Env } from './Env';
-import { logger } from './Logger';
 
 // Spotify tokens expire in 3600 seconds. We refresh 5 minutes early to avoid
 // mid-request expiry.
@@ -216,6 +215,69 @@ export async function addTracksToSpotifyPlaylist(
     return true;
   } catch (error) {
     logger.error({ error, userId, playlistId }, 'Failed to add tracks');
+    return false;
+  }
+}
+
+/**
+ * Replace all tracks in a playlist with the given URIs (max 100 per request).
+ * For more than 100 tracks: clear with PUT uris:[], then add in chunks via POST.
+ */
+export async function replaceSpotifyPlaylistTracks(
+  userId: string,
+  playlistId: string,
+  trackUris: string[],
+): Promise<boolean> {
+  const token = await getValidSpotifyToken(userId);
+  if (!token) {
+    return false;
+  }
+
+  const baseUrl = `https://api.spotify.com/v1/playlists/${playlistId}/items`;
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
+
+  try {
+    if (trackUris.length <= 100) {
+      const res = await fetch(baseUrl, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ uris: trackUris }),
+      });
+      if (!res.ok) {
+        const errBody = await res.text();
+        logger.error(
+          { userId, playlistId, status: res.status, body: errBody },
+          'Failed to replace Spotify playlist tracks',
+        );
+        return false;
+      }
+      return true;
+    }
+
+    // Clear playlist first (PUT with empty uris)
+    const clearRes = await fetch(baseUrl, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({ uris: [] }),
+    });
+    if (!clearRes.ok) {
+      const errBody = await clearRes.text();
+      logger.error(
+        { userId, playlistId, status: clearRes.status, body: errBody },
+        'Failed to clear Spotify playlist for replace',
+      );
+      return false;
+    }
+
+    return addTracksToSpotifyPlaylist(userId, playlistId, trackUris);
+  } catch (error) {
+    logger.error(
+      { error, userId, playlistId },
+      'Failed to replace Spotify playlist tracks',
+    );
     return false;
   }
 }
