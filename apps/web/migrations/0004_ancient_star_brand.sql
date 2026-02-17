@@ -1,0 +1,1 @@
+ALTER TABLE "song_suggestion" ADD COLUMN "fingerprint" text;
