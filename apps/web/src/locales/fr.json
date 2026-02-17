@@ -177,6 +177,7 @@
     "address_after_rsvp": "Après RSVP",
     "address_always": "Toujours",
     "create_button": "Créer l'événement",
+    "create_and_publish": "Créer et publier",
     "creating": "Création…",
     "error_toast": "Impossible de créer l'événement. Réessayez."
   },
@@ -191,6 +192,26 @@
     "role_guest": "Invité",
     "role_vip_guest": "Invité VIP",
     "role_vendor": "Prestataire"
+  },
+  "SongRequestWidget": {
+    "heading": "Demander une chanson",
+    "search_placeholder": "Rechercher une chanson ou un artiste...",
+    "search_aria": "Rechercher une chanson",
+    "search_button_aria": "Rechercher",
+    "change_song_aria": "Changer de chanson",
+    "change_button": "Changer",
+    "your_name_placeholder": "Votre nom",
+    "your_name_aria": "Votre nom",
+    "message_placeholder": "Ajouter un message (optionnel)",
+    "message_aria": "Ajouter un message",
+    "submit_button": "Envoyer la demande",
+    "submitting": "Envoi...",
+    "submit_error": "Impossible d'envoyer la chanson. Veuillez réessayer.",
+    "submit_error_network": "Une erreur s'est produite. Veuillez réessayer.",
+    "success_heading": "Votre chanson est dans la file !",
+    "success_subtext": "L'organisateur traitera votre demande bientôt.",
+    "limit_hint": "Vous pouvez demander jusqu'à {count} chanson pour cet événement",
+    "limit_hint_plural": "Vous pouvez demander jusqu'à {count} chansons pour cet événement"
   },
   "Registry": {
     "title": "Liste de cadeaux",
@@ -234,5 +255,10 @@
     "qr_guest_url": "URL de la page invités",
     "download_png": "Télécharger le QR en PNG",
     "download_svg": "Télécharger le QR en SVG"
+  },
+  "Streaming": {
+    "connect_button_label": "Connecter Spotify",
+    "connect_button_aria": "Connecter votre compte Spotify à Bashly",
+    "connected_as": "Connecté en tant que {displayName}"
   }
 }

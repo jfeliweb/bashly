@@ -183,8 +183,13 @@
     "address_after_rsvp": "After RSVP",
     "address_always": "Always",
     "create_button": "Create Event",
+    "create_and_publish": "Create & Publish",
     "creating": "Creating…",
-    "error_toast": "Could not create event. Please try again."
+    "error_toast": "Could not create event. Please try again.",
+    "save_button": "Save changes",
+    "saving": "Saving…",
+    "error_toast_edit": "Could not save. Please try again.",
+    "songs_per_guest_label": "Songs per guest"
   },
   "InviteClaim": {
     "error_invalid_or_expired": "This invite link is invalid or has expired.",
@@ -197,6 +202,26 @@
     "role_guest": "Guest",
     "role_vip_guest": "VIP Guest",
     "role_vendor": "Vendor"
+  },
+  "SongRequestWidget": {
+    "heading": "Request a Song",
+    "search_placeholder": "Search for a song or artist...",
+    "search_aria": "Search for a song",
+    "search_button_aria": "Search",
+    "change_song_aria": "Change song",
+    "change_button": "Change",
+    "your_name_placeholder": "Your name",
+    "your_name_aria": "Your name",
+    "message_placeholder": "Add a message (optional)",
+    "message_aria": "Add a message",
+    "submit_button": "Submit Song Request",
+    "submitting": "Submitting...",
+    "submit_error": "Failed to submit song. Please try again.",
+    "submit_error_network": "Something went wrong. Please try again.",
+    "success_heading": "Your song is in the queue!",
+    "success_subtext": "The host will review your request soon.",
+    "limit_hint": "You can request up to {count} song for this event",
+    "limit_hint_plural": "You can request up to {count} songs for this event"
   },
   "GuestEvent": {
     "event_ended": "This event has ended",
@@ -226,6 +251,10 @@
     "status_completed": "Completed",
     "status_cancelled": "Cancelled",
     "view_guest_page": "View Guest Page ↗",
+    "publish_event": "Publish Event",
+    "publish_event_aria": "Publish event so guests can RSVP and view the page",
+    "publishing": "Publishing…",
+    "publish_error": "Could not publish. Please try again.",
     "edit_event": "Edit Event",
     "quick_stats": "Quick Stats",
     "stat_rsvps": "RSVPs",
@@ -253,10 +282,16 @@
     "songs_per_guest": "Songs per Guest",
     "song_voting": "Guest Voting",
     "gift_registry": "Gift Registry",
+    "music_section": "Music",
     "enabled": "On",
     "disabled": "Off",
     "welcome_message": "Welcome Message",
     "back_to_events": "← Back to Events"
+  },
+  "Streaming": {
+    "connect_button_label": "Connect Spotify",
+    "connect_button_aria": "Connect your Spotify account to Bashly",
+    "connected_as": "Connected as {displayName}"
   },
   "RsvpModal": {
     "heading": "RSVP for {title}",
