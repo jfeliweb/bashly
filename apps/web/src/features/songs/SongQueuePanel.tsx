@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Music, Trash2, X } from 'lucide-react';
+import { Check, Music, ThumbsUp, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -200,7 +200,16 @@ export function SongQueuePanel({ eventId }: SongQueuePanelProps) {
                 ) : null}
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
+                <div
+                  className="flex items-center gap-1 text-sm text-muted-foreground"
+                  title="Vote count"
+                >
+                  <ThumbsUp className="size-3" aria-hidden />
+                  <span className="font-mono font-semibold">
+                    {song.voteCount}
+                  </span>
+                </div>
                 {song.status === 'pending' ? (
                   <>
                     <Button
