@@ -32,6 +32,7 @@ export const createEventSchema = z.object({
   private_notes: z.string().max(2000).optional(),
   cover_image_url: z.string().url().optional(),
   cover_image_key: z.string().optional(),
+  status: z.enum(['draft', 'published']).optional(),
 });
 
 export const updateEventSchema = createEventSchema
