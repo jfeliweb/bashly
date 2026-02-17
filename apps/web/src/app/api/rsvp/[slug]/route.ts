@@ -3,7 +3,7 @@ import { and, count, eq } from 'drizzle-orm';
 import { type NextRequest, NextResponse } from 'next/server';
 import { createElement } from 'react';
 
-import { RsvpConfirmation } from '@/emails/RsvpConfirmation';
+import { RsvpConfirmationEmail } from '@/emails/RsvpConfirmationEmail';
 import { db } from '@/libs/DB';
 import { sendEmail } from '@/libs/resend';
 import { eventTable, rsvpTable } from '@/models/Schema';
@@ -100,12 +100,13 @@ export async function POST(req: NextRequest, context: RouteContext) {
       })
       .where(eq(rsvpTable.id, existing.id));
 
-    // Send confirmation email on update if attending
+    // Send confirmation email on update if attending (fire-and-forget)
     if (data.email && data.status === 'attending') {
-      await sendConfirmationEmail({
+      void sendConfirmationEmail({
         guestName: data.name,
         email: data.email,
         event,
+        plusOnes: data.plus_ones,
       });
     }
 
@@ -130,12 +131,13 @@ export async function POST(req: NextRequest, context: RouteContext) {
     })
     .returning();
 
-  // 6. Send confirmation email if attending and email is provided
+  // 6. Send confirmation email if attending and email is provided (fire-and-forget)
   if (data.email && data.status === 'attending' && rsvp) {
-    await sendConfirmationEmail({
+    void sendConfirmationEmail({
       guestName: data.name,
       email: data.email,
       event,
+      plusOnes: rsvp.plusOnes,
     });
   }
 
@@ -153,42 +155,54 @@ type EventForEmail = {
   title: string;
   slug: string;
   eventDate: Date | null;
+  doorsOpenAt: Date | null;
   venueName: string | null;
+  venueAddress: string | null;
 };
 
 async function sendConfirmationEmail({
   guestName,
   email,
   event,
+  plusOnes,
 }: {
   guestName: string;
   email: string;
   event: EventForEmail;
+  plusOnes: number;
 }) {
   const baseUrl = getBaseUrl();
-  const eventUrl = `${baseUrl}/e/${event.slug}`;
+  const eventPageUrl = `${baseUrl}/e/${event.slug}`;
+
   const eventDate = event.eventDate
-    ? new Intl.DateTimeFormat('en-US', {
+    ? event.eventDate.toLocaleDateString('en-US', {
         weekday: 'long',
-        year: 'numeric',
         month: 'long',
         day: 'numeric',
+        year: 'numeric',
+      })
+    : undefined;
+
+  const eventTime = event.doorsOpenAt
+    ? event.doorsOpenAt.toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: '2-digit',
-        hour12: true,
-      }).format(event.eventDate)
-    : 'Date TBA';
+      })
+    : undefined;
 
   try {
     await sendEmail({
       to: email,
-      subject: `You're on the list for ${event.title}! 🎉`,
-      react: createElement(RsvpConfirmation, {
+      subject: `You're confirmed for ${event.title}!`,
+      react: createElement(RsvpConfirmationEmail, {
         guestName,
         eventTitle: event.title,
         eventDate,
-        venueName: event.venueName,
-        eventUrl,
+        eventTime,
+        venueName: event.venueName ?? undefined,
+        venueAddress: event.venueAddress ?? undefined,
+        eventPageUrl,
+        plusOnes,
       }),
     });
   } catch (err) {

@@ -6,9 +6,11 @@ import { headers } from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+import { InviteEmail } from '@/emails/InviteEmail';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
-import { eventRoleTable, inviteTable } from '@/models/Schema';
+import { sendEmail } from '@/libs/resend';
+import { eventRoleTable, eventTable, inviteTable } from '@/models/Schema';
 
 type RouteParams = { params: Promise<{ eventId: string }> };
 
@@ -79,17 +81,19 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     );
   }
 
+  const data = parsed.data;
   const code = randomBytes(12).toString('base64url');
   const baseUrl
     = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000';
+
   const [invite] = await db
     .insert(inviteTable)
     .values({
       eventId,
       code,
-      role: parsed.data.role,
-      maxUses: parsed.data.max_uses ?? null,
-      expiresAt: parsed.data.expires_at ?? null,
+      role: data.role,
+      maxUses: data.max_uses ?? null,
+      expiresAt: data.expires_at ? new Date(data.expires_at) : null,
       createdBy: session.user.id,
     })
     .returning();
@@ -99,6 +103,40 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       { error: 'Failed to create invite' },
       { status: 500 },
     );
+  }
+
+  if (data.email) {
+    const event = await db.query.eventTable.findFirst({
+      where: eq(eventTable.id, eventId),
+      columns: { title: true, eventDate: true },
+    });
+
+    if (event) {
+      const appUrl
+        = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+      const inviteUrl = `${appUrl}/invite/${code}`;
+      const eventDate = event.eventDate
+        ? event.eventDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+          })
+        : undefined;
+
+      void sendEmail({
+        to: data.email,
+        subject: `You're invited to ${event.title}!`,
+        react: InviteEmail({
+          eventTitle: event.title,
+          hostName: session.user.name ?? 'the host',
+          role: data.role,
+          inviteUrl,
+          eventDate,
+          message: data.message,
+        }),
+      });
+    }
   }
 
   const url = `${baseUrl}/invite/${code}`;
