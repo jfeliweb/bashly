@@ -1,7 +1,7 @@
-import { render } from '@react-email/components';
 import { rsvpSchema } from '@saas/validators';
 import { and, count, eq } from 'drizzle-orm';
 import { type NextRequest, NextResponse } from 'next/server';
+import { createElement } from 'react';
 
 import { RsvpConfirmation } from '@/emails/RsvpConfirmation';
 import { db } from '@/libs/DB';
@@ -180,21 +180,16 @@ async function sendConfirmationEmail({
     : 'Date TBA';
 
   try {
-    const html = await render(
-      RsvpConfirmation({
+    await sendEmail({
+      to: email,
+      subject: `You're on the list for ${event.title}! 🎉`,
+      react: createElement(RsvpConfirmation, {
         guestName,
         eventTitle: event.title,
         eventDate,
         venueName: event.venueName,
         eventUrl,
       }),
-    );
-
-    await sendEmail({
-      from: 'Bashly <noreply@bashly.app>',
-      to: email,
-      subject: `You're on the list for ${event.title}! 🎉`,
-      html,
     });
   } catch (err) {
     // Log but don't fail the RSVP if email fails
