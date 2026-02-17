@@ -213,6 +213,15 @@
     "limit_hint": "Vous pouvez demander jusqu'à {count} chanson pour cet événement",
     "limit_hint_plural": "Vous pouvez demander jusqu'à {count} chansons pour cet événement"
   },
+  "SongVotingList": {
+    "heading": "Votez pour vos favoris",
+    "loading": "Chargement des chansons...",
+    "empty": "Aucune chanson dans la file pour le moment",
+    "suggested_by": "Suggéré par {name}",
+    "vote_aria": "Voter pour cette chanson",
+    "remove_vote_aria": "Retirer le vote",
+    "vote_error": "Impossible de voter. Veuillez réessayer."
+  },
   "Registry": {
     "title": "Liste de cadeaux",
     "show_on_page": "Afficher sur la page",
@@ -259,6 +268,15 @@
   "Streaming": {
     "connect_button_label": "Connecter Spotify",
     "connect_button_aria": "Connecter votre compte Spotify à Bashly",
-    "connected_as": "Connecté en tant que {displayName}"
+    "connected_as": "Connecté en tant que {displayName}",
+    "connect_to_export": "Connectez Spotify pour exporter votre playlist",
+    "export_to_spotify": "Exporter vers Spotify",
+    "resync_to_spotify": "Re-synchroniser vers Spotify",
+    "exporting": "Export en cours…",
+    "open_playlist": "Ouvrir la playlist sur Spotify",
+    "open_playlist_aria": "Ouvrir la playlist sur Spotify (nouvel onglet)",
+    "tracks_added_success": "{message} — {count} titres ajoutés !",
+    "export_failed": "Échec de l'export",
+    "export_error_generic": "Échec de l'export. Veuillez réessayer."
   }
 }

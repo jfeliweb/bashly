@@ -223,6 +223,15 @@
     "limit_hint": "You can request up to {count} song for this event",
     "limit_hint_plural": "You can request up to {count} songs for this event"
   },
+  "SongVotingList": {
+    "heading": "Vote for Your Favorites",
+    "loading": "Loading songs...",
+    "empty": "No songs in the queue yet",
+    "suggested_by": "Suggested by {name}",
+    "vote_aria": "Vote for this song",
+    "remove_vote_aria": "Remove vote",
+    "vote_error": "Failed to vote. Please try again."
+  },
   "GuestEvent": {
     "event_ended": "This event has ended",
     "countdown_aria": "Countdown to event",
@@ -291,7 +300,16 @@
   "Streaming": {
     "connect_button_label": "Connect Spotify",
     "connect_button_aria": "Connect your Spotify account to Bashly",
-    "connected_as": "Connected as {displayName}"
+    "connected_as": "Connected as {displayName}",
+    "connect_to_export": "Connect Spotify to export your playlist",
+    "export_to_spotify": "Export to Spotify",
+    "resync_to_spotify": "Re-sync to Spotify",
+    "exporting": "Exporting…",
+    "open_playlist": "Open Playlist on Spotify",
+    "open_playlist_aria": "Open playlist on Spotify (opens in new tab)",
+    "tracks_added_success": "{message} — {count} tracks added!",
+    "export_failed": "Export failed",
+    "export_error_generic": "Failed to export playlist. Please try again."
   },
   "RsvpModal": {
     "heading": "RSVP for {title}",
