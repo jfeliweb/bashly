@@ -132,6 +132,21 @@
     "songs_disabled_hint": "Les demandes de chansons sont désactivées pour cet événement. Demandez au propriétaire de l'événement de les activer dans les paramètres.",
     "dj_mode_banner": "Mode DJ actif — concentrez-vous sur la musique !"
   },
+  "VendorPortal": {
+    "meta_title": "Portail fournisseur",
+    "meta_description": "Logistique et horaire de l'événement pour les fournisseurs",
+    "badge": "Portail fournisseur",
+    "subtitle": "Logistique et horaire de l'événement pour les fournisseurs",
+    "event_details_heading": "Détails de l'événement",
+    "date_label": "Date",
+    "doors_open_label": "Ouverture des portes",
+    "venue_label": "Lieu",
+    "address_label": "Adresse",
+    "venue_notes_label": "Notes du lieu (parking, accès, etc.)",
+    "schedule_heading": "Horaire de l'événement",
+    "vendor_notes_heading": "Notes importantes pour les fournisseurs",
+    "info_box": "Vue réservée aux fournisseurs. Vous avez accès à la logistique et à l'horaire. Pour toute question, contactez directement l'organisateur."
+  },
   "EventsList": {
     "title_bar": "Mes événements",
     "title_bar_description": "Créez et gérez vos événements Bashly",
@@ -145,7 +160,10 @@
     "status_cancelled": "Annulé",
     "manage_link": "Gérer →",
     "dj_queue_link": "File DJ →",
-    "rsvp_count": "{count} RSVP"
+    "rsvp_count": "{count} RSVP",
+    "co_host_badge": "Co-organisateur",
+    "vendor_badge": "Fournisseur",
+    "vendor_info_link": "Infos fournisseur →"
   },
   "CreateEvent": {
     "step_indicator": "Étape {n} sur 3",

@@ -132,6 +132,21 @@
     "songs_disabled_hint": "Song requests are currently disabled for this event. Ask the event owner to enable them in the event settings.",
     "dj_mode_banner": "DJ Mode Active — Focus on the music!"
   },
+  "VendorPortal": {
+    "meta_title": "Vendor Portal",
+    "meta_description": "Event logistics and schedule information for vendors",
+    "badge": "Vendor Portal",
+    "subtitle": "Event logistics and schedule for vendors",
+    "event_details_heading": "Event Details",
+    "date_label": "Date",
+    "doors_open_label": "Doors Open",
+    "venue_label": "Venue",
+    "address_label": "Address",
+    "venue_notes_label": "Venue Notes (Parking, Load-In, etc.)",
+    "schedule_heading": "Event Schedule",
+    "vendor_notes_heading": "Important Notes for Vendors",
+    "info_box": "This is a vendor-only view. You have access to event logistics and schedule information. If you have questions or need additional details, please contact the event organizer directly."
+  },
   "EventsList": {
     "title_bar": "My Events",
     "title_bar_description": "Create and manage your Bashly events",
@@ -145,7 +160,10 @@
     "status_cancelled": "Cancelled",
     "manage_link": "Manage →",
     "dj_queue_link": "DJ Queue →",
-    "rsvp_count": "{count} RSVPs"
+    "rsvp_count": "{count} RSVPs",
+    "co_host_badge": "Co-Host",
+    "vendor_badge": "Vendor",
+    "vendor_info_link": "Vendor Info →"
   },
   "CreateEvent": {
     "step_indicator": "Step {n} of 3",
@@ -303,7 +321,14 @@
     "enabled": "On",
     "disabled": "Off",
     "welcome_message": "Welcome Message",
-    "back_to_events": "← Back to Events"
+    "back_to_events": "← Back to Events",
+    "delete_event": "Delete Event",
+    "delete_event_aria": "Delete event",
+    "delete_event_confirm_title": "Delete this event?",
+    "delete_event_confirm_description": "This cannot be undone. The event and all its data (RSVPs, song queue, registry links) will be permanently removed.",
+    "delete_event_cancel": "Cancel",
+    "delete_event_confirm": "Delete event",
+    "delete_event_deleting": "Deleting…"
   },
   "Streaming": {
     "connect_button_label": "Connect Spotify",
