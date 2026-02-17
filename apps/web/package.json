@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev:spotlight": "spotlight-sidecar",
-    "dev:next": "next dev",
+    "dev:next": "next dev --hostname 127.0.0.1",
     "dev": "run-p dev:*",
     "build": "next build",
     "start": "next start",
