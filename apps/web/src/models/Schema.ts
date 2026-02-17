@@ -155,3 +155,15 @@ export const rsvpTable = pgTable('rsvp', {
   fingerprint: text('fingerprint'),
   createdAt: timestamp('created_at', ts).defaultNow().notNull(),
 });
+
+export const registryLinkTable = pgTable('registry_link', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  eventId: uuid('event_id')
+    .notNull()
+    .references(() => eventTable.id, { onDelete: 'cascade' }),
+  displayName: text('display_name').notNull(),
+  url: text('url').notNull(),
+  domain: text('domain').notNull(),
+  sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: timestamp('created_at', ts).defaultNow().notNull(),
+});
