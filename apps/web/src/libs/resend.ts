@@ -1,37 +1,52 @@
+import type { ReactElement } from 'react';
 import { Resend } from 'resend';
 
 import { Env } from './Env';
+import { logger } from './Logger';
 
-export const resend = Env.RESEND_API_KEY
-  ? new Resend(Env.RESEND_API_KEY)
-  : null;
+// Resend SDK singleton (only when API key is configured)
+const resend = Env.RESEND_API_KEY ? new Resend(Env.RESEND_API_KEY) : null;
 
-/**
- * Send an email using Resend.
- * Returns null if Resend is not configured.
- */
-export async function sendEmail(options: {
+type SendEmailParams = {
   to: string | string[];
   subject: string;
-  html: string;
+  react: ReactElement;
   from?: string;
-}) {
+};
+
+/**
+ * Send a transactional email via Resend.
+ * Uses Bashly's verified "from" address unless overridden.
+ * Returns false if Resend is not configured or if sending fails.
+ */
+export async function sendEmail({
+  to,
+  subject,
+  react,
+  from = 'Bashly <noreply@updates.bashly.app>',
+}: SendEmailParams): Promise<boolean> {
   if (!resend) {
-    console.warn('Resend is not configured. Skipping email send.');
-    return null;
+    logger.warn({ to, subject }, 'Resend not configured; skipping email send');
+    return false;
   }
 
-  const { data, error } = await resend.emails.send({
-    from: options.from ?? 'noreply@yourdomain.com',
-    to: options.to,
-    subject: options.subject,
-    html: options.html,
-  });
+  try {
+    const { data, error } = await resend.emails.send({
+      from,
+      to,
+      subject,
+      react,
+    });
 
-  if (error) {
-    console.error('Failed to send email:', error);
-    throw new Error(`Failed to send email: ${error.message}`);
+    if (error) {
+      logger.error({ error, to, subject }, 'Failed to send email via Resend');
+      return false;
+    }
+
+    logger.info({ emailId: data?.id, to, subject }, 'Email sent successfully');
+    return true;
+  } catch (error) {
+    logger.error({ error, to, subject }, 'Exception sending email');
+    return false;
   }
-
-  return data;
 }

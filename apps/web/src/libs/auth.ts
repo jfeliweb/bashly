@@ -1,6 +1,9 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { createElement } from 'react';
 
+import { PasswordResetEmail } from '@/emails/PasswordResetEmail';
+import { VerificationEmail } from '@/emails/VerificationEmail';
 import {
   accountTable,
   sessionTable,
@@ -27,7 +30,7 @@ export const auth = betterAuth({
       await sendEmail({
         to: user.email,
         subject: 'Reset your password',
-        html: `<p>Click <a href="${url}">here</a> to reset your password.</p>`,
+        react: createElement(PasswordResetEmail, { url }),
       });
     },
   },
@@ -36,7 +39,7 @@ export const auth = betterAuth({
       await sendEmail({
         to: user.email,
         subject: 'Verify your email address',
-        html: `<p>Click <a href="${url}">here</a> to verify your email.</p>`,
+        react: createElement(VerificationEmail, { url }),
       });
     },
     sendOnSignUp: true,
