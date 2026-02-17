@@ -8,6 +8,13 @@ import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable, songSuggestionTable } from '@/models/Schema';
 
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function isUuid(s: string): boolean {
+  return UUID_REGEX.test(s);
+}
+
 type RouteParams = { params: Promise<{ eventId: string }> };
 
 async function hasAnyRole(eventId: string, userId: string): Promise<boolean> {
@@ -18,6 +25,16 @@ async function hasAnyRole(eventId: string, userId: string): Promise<boolean> {
     ),
   });
   return !!row;
+}
+
+/** Resolve route segment (UUID or slug) to event UUID. */
+async function resolveEventId(segment: string): Promise<string | null> {
+  if (isUuid(segment)) return segment;
+  const event = await db.query.eventTable.findFirst({
+    where: eq(eventTable.slug, segment),
+    columns: { id: true },
+  });
+  return event?.id ?? null;
 }
 
 export async function GET(req: NextRequest, { params }: RouteParams) {
@@ -56,7 +73,12 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const hasRole = await hasAnyRole(segment, session.user.id);
+  const eventId = await resolveEventId(segment);
+  if (!eventId) {
+    return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+  }
+
+  const hasRole = await hasAnyRole(eventId, session.user.id);
   if (!hasRole) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
@@ -64,7 +86,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
   let query = db
     .select()
     .from(songSuggestionTable)
-    .where(eq(songSuggestionTable.eventId, segment))
+    .where(eq(songSuggestionTable.eventId, eventId))
     .$dynamic();
 
   if (statusFilter && statusFilter !== 'all') {
