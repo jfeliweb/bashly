@@ -10,17 +10,7 @@ import { eventRoleTable, registryLinkTable } from '@/models/Schema';
 
 type RouteParams = { params: Promise<{ eventId: string }> };
 
-async function hasAnyRole(eventId: string, userId: string): Promise<boolean> {
-  const row = await db.query.eventRoleTable.findFirst({
-    where: and(
-      eq(eventRoleTable.eventId, eventId),
-      eq(eventRoleTable.userId, userId),
-    ),
-  });
-  return !!row;
-}
-
-async function hasWriteRole(eventId: string, userId: string): Promise<boolean> {
+async function isOwnerOrCoHost(eventId: string, userId: string): Promise<boolean> {
   const row = await db.query.eventRoleTable.findFirst({
     where: and(
       eq(eventRoleTable.eventId, eventId),
@@ -28,10 +18,7 @@ async function hasWriteRole(eventId: string, userId: string): Promise<boolean> {
     ),
     columns: { role: true },
   });
-  if (!row) {
-    return false;
-  }
-  return row.role === 'owner' || row.role === 'co_host';
+  return row?.role === 'owner' || row?.role === 'co_host';
 }
 
 export async function GET(
@@ -44,9 +31,9 @@ export async function GET(
   }
 
   const { eventId } = await params;
-  const allowed = await hasAnyRole(eventId, session.user.id);
-  if (!allowed) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  const canView = await isOwnerOrCoHost(eventId, session.user.id);
+  if (!canView) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const links = await db
@@ -68,8 +55,8 @@ export async function POST(
   }
 
   const { eventId } = await params;
-  const allowed = await hasWriteRole(eventId, session.user.id);
-  if (!allowed) {
+  const canManage = await isOwnerOrCoHost(eventId, session.user.id);
+  if (!canManage) {
     return NextResponse.json(
       { error: 'Forbidden', code: 'INSUFFICIENT_ROLE' },
       { status: 403 },

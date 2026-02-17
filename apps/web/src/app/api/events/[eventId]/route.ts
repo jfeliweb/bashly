@@ -11,7 +11,7 @@ import { geocodeAddress } from '@/utils/geocode';
 
 type RouteParams = { params: Promise<{ eventId: string }> };
 
-async function getRole(eventId: string, userId: string): Promise<'owner' | 'co_host' | null> {
+async function isOwnerOrCoHost(eventId: string, userId: string): Promise<boolean> {
   const row = await db.query.eventRoleTable.findFirst({
     where: and(
       eq(eventRoleTable.eventId, eventId),
@@ -19,24 +19,7 @@ async function getRole(eventId: string, userId: string): Promise<'owner' | 'co_h
     ),
     columns: { role: true },
   });
-  if (!row) {
-    return null;
-  }
-  const role = row.role;
-  if (role === 'owner' || role === 'co_host') {
-    return role;
-  }
-  return null;
-}
-
-async function hasAnyRole(eventId: string, userId: string): Promise<boolean> {
-  const row = await db.query.eventRoleTable.findFirst({
-    where: and(
-      eq(eventRoleTable.eventId, eventId),
-      eq(eventRoleTable.userId, userId),
-    ),
-  });
-  return !!row;
+  return row?.role === 'owner' || row?.role === 'co_host';
 }
 
 export async function GET(
@@ -47,11 +30,10 @@ export async function GET(
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const userId = session.user.id;
 
   const { eventId } = await params;
-  const hasRole = await hasAnyRole(eventId, userId);
-  if (!hasRole) {
+  const canView = await isOwnerOrCoHost(eventId, session.user.id);
+  if (!canView) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
@@ -74,11 +56,9 @@ export async function PATCH(
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const userId = session.user.id;
-
   const { eventId } = await params;
-  const role = await getRole(eventId, userId);
-  if (role !== 'owner' && role !== 'co_host') {
+  const canManage = await isOwnerOrCoHost(eventId, session.user.id);
+  if (!canManage) {
     return NextResponse.json(
       { error: 'Forbidden', code: 'INSUFFICIENT_ROLE' },
       { status: 403 },
@@ -160,13 +140,19 @@ export async function DELETE(
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const userId = session.user.id;
 
   const { eventId } = await params;
-  const role = await getRole(eventId, userId);
-  if (role !== 'owner') {
+  const role = await db.query.eventRoleTable.findFirst({
+    where: and(
+      eq(eventRoleTable.eventId, eventId),
+      eq(eventRoleTable.userId, session.user.id),
+    ),
+    columns: { role: true },
+  });
+
+  if (role?.role !== 'owner') {
     return NextResponse.json(
-      { error: 'Forbidden', code: 'INSUFFICIENT_ROLE' },
+      { error: 'Only the event owner can delete the event' },
       { status: 403 },
     );
   }
