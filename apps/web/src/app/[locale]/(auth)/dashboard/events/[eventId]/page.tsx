@@ -8,8 +8,10 @@ import { Button } from '@/components/ui/button';
 import { PublishEventButton } from '@/features/events/PublishEventButton';
 import { RegistryLinksPanel } from '@/features/registry/RegistryLinksPanel';
 import { SongQueuePanel } from '@/features/songs/SongQueuePanel';
-import { ExportPlaylistButton } from '@/features/streaming/ExportPlaylistButton';
-import { SpotifyConnectButton } from '@/features/streaming/SpotifyConnectButton';
+import {
+  ExportPlaylistButton,
+  SpotifyConnectButton,
+} from '@/features/streaming';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import {
