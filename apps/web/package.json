@@ -64,6 +64,7 @@
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-email": "^5.2.8",
     "react-hook-form": "^7.53.0",
     "react-map-gl": "^8.1.0",
     "resend": "^4.1.0",
