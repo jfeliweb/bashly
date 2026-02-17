@@ -16,9 +16,13 @@ const protectedPaths = ['/dashboard', '/onboarding'];
 
 function isProtectedPath(pathname: string): boolean {
   // Never protect the auth API — unauthenticated users must be able to call it
-  if (pathname.includes('/api/auth')) return false;
+  if (pathname.includes('/api/auth')) {
+    return false;
+  }
 
-  if (pathname.includes('/api')) return true;
+  if (pathname.includes('/api')) {
+    return true;
+  }
 
   return protectedPaths.some(path =>
     pathname.includes(path),

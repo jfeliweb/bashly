@@ -10,6 +10,7 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
+
 import { userTable } from './AuthSchema';
 
 // This file defines the structure of your database tables using the Drizzle ORM.
