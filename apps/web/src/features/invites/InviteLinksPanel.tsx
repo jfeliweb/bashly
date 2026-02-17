@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/utils/Helpers';
 
 type InviteRow = {
@@ -61,6 +62,8 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [newRole, setNewRole] = useState<InviteRole>('guest');
+  const [newEmail, setNewEmail] = useState<string>('');
+  const [newMessage, setNewMessage] = useState<string>('');
   const [newMaxUses, setNewMaxUses] = useState<string>('');
   const [newExpiresAt, setNewExpiresAt] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
@@ -126,7 +129,13 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
   const handleCreate = useCallback(async () => {
     setSubmitting(true);
     try {
-      const body: { role: string; max_uses?: number; expires_at?: string } = {
+      const body: {
+        role: string;
+        max_uses?: number;
+        expires_at?: string;
+        email?: string;
+        message?: string;
+      } = {
         role: newRole,
       };
       if (newMaxUses.trim()) {
@@ -141,6 +150,12 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
           body.expires_at = d.toISOString();
         }
       }
+      if (newEmail.trim()) {
+        body.email = newEmail.trim();
+      }
+      if (newMessage.trim()) {
+        body.message = newMessage.trim();
+      }
       const res = await fetch(`/api/events/${eventId}/invites`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -152,11 +167,13 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
         setShowForm(false);
         setNewMaxUses('');
         setNewExpiresAt('');
+        setNewEmail('');
+        setNewMessage('');
       }
     } finally {
       setSubmitting(false);
     }
-  }, [eventId, newRole, newMaxUses, newExpiresAt]);
+  }, [eventId, newRole, newMaxUses, newExpiresAt, newEmail, newMessage]);
 
   const downloadQr = useCallback(
     async (format: 'png' | 'svg') => {
@@ -331,6 +348,35 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div>
+            <label htmlFor="invite-email" className="mb-1 block text-sm font-medium">
+              {t('email_label')}
+            </label>
+            <Input
+              id="invite-email"
+              type="email"
+              placeholder={t('email_placeholder')}
+              value={newEmail}
+              onChange={e => setNewEmail(e.target.value)}
+              className="min-h-[44px]"
+              aria-label={t('email_aria')}
+            />
+          </div>
+          <div>
+            <label htmlFor="invite-message" className="mb-1 block text-sm font-medium">
+              {t('message_label')}
+            </label>
+            <Textarea
+              id="invite-message"
+              placeholder={t('message_placeholder')}
+              value={newMessage}
+              onChange={e => setNewMessage(e.target.value)}
+              maxLength={500}
+              rows={3}
+              className="min-h-[44px]"
+              aria-label={t('message_aria')}
+            />
           </div>
           <div>
             <label htmlFor="invite-max-uses" className="mb-1 block text-sm font-medium">
