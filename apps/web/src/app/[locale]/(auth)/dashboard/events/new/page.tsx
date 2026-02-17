@@ -56,6 +56,7 @@ const createEventFormSchema = createEventSchema.omit({
 }).extend({
   event_date_str: z.string().optional(),
   event_time_str: z.string().optional(),
+  publish_after_create: z.boolean().optional(),
 });
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -77,6 +78,7 @@ const defaultFormValues: CreateEventFormValues = {
   song_requests_per_guest: 5,
   song_voting_enabled: false,
   registry_enabled: true,
+  publish_after_create: false,
 };
 
 function buildApiPayload(values: CreateEventFormValues): CreateEventInput {
@@ -84,7 +86,7 @@ function buildApiPayload(values: CreateEventFormValues): CreateEventInput {
     = values.event_date_str && values.event_time_str
       ? new Date(`${values.event_date_str}T${values.event_time_str}`)
       : undefined;
-  return {
+  const payload: CreateEventInput = {
     event_type: values.event_type,
     title: values.title,
     event_date,
@@ -101,6 +103,10 @@ function buildApiPayload(values: CreateEventFormValues): CreateEventInput {
     cover_image_url: values.cover_image_url || undefined,
     cover_image_key: values.cover_image_key || undefined,
   };
+  if (values.publish_after_create) {
+    payload.status = 'published';
+  }
+  return payload;
 }
 
 export default function NewEventPage() {
@@ -114,6 +120,8 @@ export default function NewEventPage() {
   const [coverUploading, setCoverUploading] = useState(false);
   const [coverError, setCoverError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const publishOnCreateRef = useRef(false);
 
   const form = useForm<CreateEventFormValues>({
     resolver: zodResolver(createEventFormSchema),
@@ -203,6 +211,10 @@ export default function NewEventPage() {
   };
 
   const onSubmit = async (values: CreateEventFormValues) => {
+    if (publishOnCreateRef.current) {
+      values.publish_after_create = true;
+      publishOnCreateRef.current = false;
+    }
     const payload = buildApiPayload(values);
     try {
       const res = await fetch('/api/events', {
@@ -608,7 +620,7 @@ export default function NewEventPage() {
                   )}
                 />
               </div>
-              <div className="mt-8 flex gap-3">
+              <div className="mt-8 flex flex-wrap gap-3">
                 <Button
                   type="button"
                   variant="ghost"
@@ -623,6 +635,18 @@ export default function NewEventPage() {
                   className="min-h-[44px] rounded-[100px] bg-[rgb(81,255,0)] font-bold text-[rgb(9,21,27)] hover:bg-[rgb(65,204,0)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)] disabled:opacity-70"
                 >
                   {isSubmitting ? t('creating') : t('create_button')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isSubmitting}
+                  className="min-h-[44px] rounded-[100px] font-semibold focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
+                  onClick={() => {
+                    publishOnCreateRef.current = true;
+                    form.handleSubmit(onSubmit)();
+                  }}
+                >
+                  {isSubmitting ? t('creating') : t('create_and_publish')}
                 </Button>
               </div>
             </section>

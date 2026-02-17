@@ -5,10 +5,18 @@ import { notFound, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
+import { PublishEventButton } from '@/features/events/PublishEventButton';
+import { SpotifyConnectButton } from '@/features/streaming/SpotifyConnectButton';
+import { SongQueuePanel } from '@/features/songs/SongQueuePanel';
 import { RegistryLinksPanel } from '@/features/registry/RegistryLinksPanel';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
-import { eventRoleTable, eventTable, rsvpTable } from '@/models/Schema';
+import {
+  eventRoleTable,
+  eventTable,
+  rsvpTable,
+  streamingConnectionTable,
+} from '@/models/Schema';
 import { cn } from '@/utils/Helpers';
 
 type PageProps = {
@@ -93,6 +101,13 @@ export default async function EventDetailPage({ params }: PageProps) {
   const rsvpCount = rsvpResult?.value ?? 0;
   const status = event.status ?? 'draft';
 
+  const streamingConnection = await db.query.streamingConnectionTable.findFirst({
+    where: and(
+      eq(streamingConnectionTable.userId, session.user.id),
+      eq(streamingConnectionTable.platform, 'spotify'),
+    ),
+  });
+
   const t = await getTranslations('EventDetail');
 
   return (
@@ -135,7 +150,7 @@ export default async function EventDetailPage({ params }: PageProps) {
             </p>
           )}
         </div>
-        <div className="flex shrink-0 flex-wrap gap-2">
+        <div className="flex shrink-0 flex-wrap items-start gap-2">
           <Button
             asChild
             variant="outline"
@@ -149,9 +164,16 @@ export default async function EventDetailPage({ params }: PageProps) {
               {t('view_guest_page')}
             </Link>
           </Button>
+          {status === 'draft' && (
+            <PublishEventButton eventId={eventId} />
+          )}
           <Button
             asChild
-            className="min-h-[44px] rounded-[100px] bg-[rgb(81,255,0)] px-6 font-bold text-[rgb(9,21,27)] hover:bg-[rgb(65,204,0)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
+            variant={status === 'draft' ? 'outline' : undefined}
+            className={cn(
+              'min-h-[44px] font-semibold focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]',
+              status !== 'draft' && 'rounded-[100px] bg-[rgb(81,255,0)] px-6 font-bold text-[rgb(9,21,27)] hover:bg-[rgb(65,204,0)]',
+            )}
           >
             <Link href={`/dashboard/events/${eventId}/edit`}>
               {t('edit_event')}
@@ -329,12 +351,26 @@ export default async function EventDetailPage({ params }: PageProps) {
           </ul>
         </section>
 
-        {/* Gift Registry */}
-        <div className="lg:col-span-2">
+        {/* Gift Registry + Song Queue / Music */}
+        <div className="lg:col-span-2 space-y-6">
           <RegistryLinksPanel
             eventId={eventId}
             registryEnabled={event.registryEnabled ?? true}
           />
+          {event.songRequestsEnabled && (
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-[rgb(48,153,0)] dark:text-[rgb(116,255,51)]">
+                  {t('music_section')}
+                </h2>
+                <SpotifyConnectButton
+                  isConnected={Boolean(streamingConnection)}
+                  displayName={streamingConnection?.platformDisplayName ?? undefined}
+                />
+              </div>
+              <SongQueuePanel eventId={eventId} />
+            </div>
+          )}
         </div>
 
         {/* Welcome Message */}
