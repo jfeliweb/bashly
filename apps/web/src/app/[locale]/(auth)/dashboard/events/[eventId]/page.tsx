@@ -5,6 +5,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
+import { RegistryLinksPanel } from '@/features/registry/RegistryLinksPanel';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable, rsvpTable } from '@/models/Schema';
@@ -327,6 +328,14 @@ export default async function EventDetailPage({ params }: PageProps) {
             </li>
           </ul>
         </section>
+
+        {/* Gift Registry */}
+        <div className="lg:col-span-2">
+          <RegistryLinksPanel
+            eventId={eventId}
+            registryEnabled={event.registryEnabled ?? true}
+          />
+        </div>
 
         {/* Welcome Message */}
         {event.welcomeMessage && (

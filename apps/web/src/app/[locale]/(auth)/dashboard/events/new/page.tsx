@@ -2,8 +2,10 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type CreateEventInput, createEventSchema } from '@saas/validators';
+import { ImagePlus, Loader2, X } from 'lucide-react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -56,6 +58,8 @@ const createEventFormSchema = createEventSchema.omit({
   event_time_str: z.string().optional(),
 });
 
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
 type CreateEventFormValues = z.infer<typeof createEventFormSchema>;
 
 const defaultFormValues: CreateEventFormValues = {
@@ -94,6 +98,8 @@ function buildApiPayload(values: CreateEventFormValues): CreateEventInput {
     song_requests_per_guest: values.song_requests_per_guest,
     song_voting_enabled: values.song_voting_enabled,
     registry_enabled: values.registry_enabled,
+    cover_image_url: values.cover_image_url || undefined,
+    cover_image_key: values.cover_image_key || undefined,
   };
 }
 
@@ -103,6 +109,12 @@ export default function NewEventPage() {
   const [step, setStep] = useState(1);
   const [apiError, setApiError] = useState<string | null>(null);
 
+  // Cover photo upload state
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [coverUploading, setCoverUploading] = useState(false);
+  const [coverError, setCoverError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm<CreateEventFormValues>({
     resolver: zodResolver(createEventFormSchema),
     defaultValues: defaultFormValues,
@@ -110,6 +122,63 @@ export default function NewEventPage() {
 
   const eventType = form.watch('event_type');
   const welcomeMessage = form.watch('welcome_message') ?? '';
+
+  const handleFileSelect = useCallback(async (file: File) => {
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      setCoverError(t('cover_upload_error'));
+      return;
+    }
+
+    setCoverError(null);
+    setCoverUploading(true);
+
+    const previewUrl = URL.createObjectURL(file);
+    setCoverPreview(previewUrl);
+
+    const tempId = crypto.randomUUID();
+
+    try {
+      const res = await fetch('/api/upload/presign', {
+        method: 'POST',
+        body: JSON.stringify({ filename: file.name, contentType: file.type, eventId: tempId }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!res.ok) {
+        throw new Error('Presign request failed');
+      }
+
+      const { uploadUrl, objectKey, publicUrl } = await res.json() as {
+        uploadUrl: string;
+        objectKey: string;
+        publicUrl: string;
+      };
+
+      await fetch(uploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      });
+
+      form.setValue('cover_image_key', objectKey);
+      form.setValue('cover_image_url', publicUrl);
+    } catch {
+      setCoverPreview(null);
+      setCoverError(t('cover_upload_error'));
+    } finally {
+      setCoverUploading(false);
+    }
+  }, [form, t]);
+
+  const handleRemoveCover = useCallback(() => {
+    setCoverPreview(null);
+    setCoverError(null);
+    form.setValue('cover_image_key', undefined);
+    form.setValue('cover_image_url', undefined);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [form]);
 
   const onStep1Select = (value: CreateEventFormValues['event_type']) => {
     form.setValue('event_type', value);
@@ -220,6 +289,71 @@ export default function NewEventPage() {
                 {t('step_2_heading')}
               </h2>
               <div className="mt-6 space-y-4">
+                {/* Cover Photo Upload */}
+                <div>
+                  <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {t('cover_photo_label')}
+                  </p>
+                  <div className="mt-2">
+                    {coverPreview
+                      ? (
+                          <div className="relative aspect-[1200/630] w-full overflow-hidden rounded-xl border border-border">
+                            <Image
+                              src={coverPreview}
+                              alt=""
+                              fill
+                              className="object-cover"
+                              unoptimized
+                            />
+                            {coverUploading && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                                <Loader2 className="size-8 animate-spin text-white" />
+                              </div>
+                            )}
+                            {!coverUploading && (
+                              <button
+                                type="button"
+                                onClick={handleRemoveCover}
+                                className="absolute right-2 top-2 flex size-8 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
+                                aria-label={t('cover_remove')}
+                              >
+                                <X className="size-4" />
+                              </button>
+                            )}
+                          </div>
+                        )
+                      : (
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border px-4 py-10 text-muted-foreground transition-colors hover:border-muted-foreground/50 hover:text-foreground focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
+                          >
+                            <ImagePlus className="size-8" />
+                            <span className="text-sm font-semibold">{t('cover_upload_button')}</span>
+                          </button>
+                        )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      className="sr-only"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          handleFileSelect(file);
+                        }
+                      }}
+                      aria-label={t('cover_photo_label')}
+                    />
+                    {coverError && (
+                      <p className="mt-1 text-sm text-destructive">{coverError}</p>
+                    )}
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {t('cover_photo_help')}
+                    </p>
+                  </div>
+                </div>
+
                 <FormField
                   control={form.control}
                   name="title"
