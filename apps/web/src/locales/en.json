@@ -125,6 +125,13 @@
   "DataTable": {
     "no_results": "No results."
   },
+  "DjDashboard": {
+    "meta_title": "DJ Queue Management",
+    "meta_description": "Manage the song queue for your event",
+    "subtitle": "DJ Queue Management",
+    "songs_disabled_hint": "Song requests are currently disabled for this event. Ask the event owner to enable them in the event settings.",
+    "dj_mode_banner": "DJ Mode Active — Focus on the music!"
+  },
   "EventsList": {
     "title_bar": "My Events",
     "title_bar_description": "Create and manage your Bashly events",
@@ -137,6 +144,7 @@
     "status_completed": "Completed",
     "status_cancelled": "Cancelled",
     "manage_link": "Manage →",
+    "dj_queue_link": "DJ Queue →",
     "rsvp_count": "{count} RSVPs"
   },
   "CreateEvent": {

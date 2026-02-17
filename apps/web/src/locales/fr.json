@@ -125,6 +125,13 @@
   "DataTable": {
     "no_results": "Aucun résultat."
   },
+  "DjDashboard": {
+    "meta_title": "Gestion de la file DJ",
+    "meta_description": "Gérer la file de chansons pour votre événement",
+    "subtitle": "Gestion de la file DJ",
+    "songs_disabled_hint": "Les demandes de chansons sont désactivées pour cet événement. Demandez au propriétaire de l'événement de les activer dans les paramètres.",
+    "dj_mode_banner": "Mode DJ actif — concentrez-vous sur la musique !"
+  },
   "EventsList": {
     "title_bar": "Mes événements",
     "title_bar_description": "Créez et gérez vos événements Bashly",
@@ -137,6 +144,7 @@
     "status_completed": "Terminé",
     "status_cancelled": "Annulé",
     "manage_link": "Gérer →",
+    "dj_queue_link": "File DJ →",
     "rsvp_count": "{count} RSVP"
   },
   "CreateEvent": {
