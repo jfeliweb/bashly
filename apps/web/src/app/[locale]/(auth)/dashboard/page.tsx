@@ -19,8 +19,9 @@ type EventCard = {
   status: string | null;
   slug: string;
   rsvp_count: number;
-  userRole: 'owner' | 'dj';
+  userRole: 'owner' | 'co_host' | 'dj' | 'vendor';
   hasDjRole: boolean;
+  hasVendorRole: boolean;
 };
 
 export async function generateMetadata(props: { params: { locale: string } }) {
@@ -65,70 +66,119 @@ export default async function DashboardEventsPage() {
     redirect('/sign-in');
   }
 
-  const [ownedRows, djRoleRows, djOnlyRows] = await Promise.all([
-    db
-      .select({
-        id: eventTable.id,
-        title: eventTable.title,
-        eventType: eventTable.eventType,
-        eventDate: eventTable.eventDate,
-        status: eventTable.status,
-        slug: eventTable.slug,
-        rsvp_count: count(rsvpTable.id),
-      })
-      .from(eventTable)
-      .leftJoin(rsvpTable, eq(rsvpTable.eventId, eventTable.id))
-      .where(eq(eventTable.ownerId, session.user.id))
-      .groupBy(
-        eventTable.id,
-        eventTable.title,
-        eventTable.eventType,
-        eventTable.eventDate,
-        eventTable.status,
-        eventTable.slug,
-      )
-      .orderBy(desc(eventTable.eventDate)),
-    db
-      .select({ eventId: eventRoleTable.eventId })
-      .from(eventRoleTable)
-      .where(
-        and(
-          eq(eventRoleTable.userId, session.user.id),
-          eq(eventRoleTable.role, 'dj'),
+  const [ownedRows, djRoleRows, djOnlyRows, coHostRows, vendorRows]
+    = await Promise.all([
+      db
+        .select({
+          id: eventTable.id,
+          title: eventTable.title,
+          eventType: eventTable.eventType,
+          eventDate: eventTable.eventDate,
+          status: eventTable.status,
+          slug: eventTable.slug,
+          rsvp_count: count(rsvpTable.id),
+        })
+        .from(eventTable)
+        .leftJoin(rsvpTable, eq(rsvpTable.eventId, eventTable.id))
+        .where(eq(eventTable.ownerId, session.user.id))
+        .groupBy(
+          eventTable.id,
+          eventTable.title,
+          eventTable.eventType,
+          eventTable.eventDate,
+          eventTable.status,
+          eventTable.slug,
+        )
+        .orderBy(desc(eventTable.eventDate)),
+      db
+        .select({ eventId: eventRoleTable.eventId })
+        .from(eventRoleTable)
+        .where(
+          and(
+            eq(eventRoleTable.userId, session.user.id),
+            eq(eventRoleTable.role, 'dj'),
+          ),
         ),
-      ),
-    db
-      .select({
-        id: eventTable.id,
-        title: eventTable.title,
-        eventType: eventTable.eventType,
-        eventDate: eventTable.eventDate,
-        status: eventTable.status,
-        slug: eventTable.slug,
-        rsvp_count: count(rsvpTable.id),
-      })
-      .from(eventRoleTable)
-      .innerJoin(eventTable, eq(eventTable.id, eventRoleTable.eventId))
-      .leftJoin(rsvpTable, eq(rsvpTable.eventId, eventTable.id))
-      .where(
-        and(
-          eq(eventRoleTable.userId, session.user.id),
-          eq(eventRoleTable.role, 'dj'),
-          ne(eventTable.ownerId, session.user.id),
-        ),
-      )
-      .groupBy(
-        eventTable.id,
-        eventTable.title,
-        eventTable.eventType,
-        eventTable.eventDate,
-        eventTable.status,
-        eventTable.slug,
-      )
-      .orderBy(desc(eventTable.eventDate)),
-  ]);
+      db
+        .select({
+          id: eventTable.id,
+          title: eventTable.title,
+          eventType: eventTable.eventType,
+          eventDate: eventTable.eventDate,
+          status: eventTable.status,
+          slug: eventTable.slug,
+          rsvp_count: count(rsvpTable.id),
+        })
+        .from(eventRoleTable)
+        .innerJoin(eventTable, eq(eventTable.id, eventRoleTable.eventId))
+        .leftJoin(rsvpTable, eq(rsvpTable.eventId, eventTable.id))
+        .where(
+          and(
+            eq(eventRoleTable.userId, session.user.id),
+            eq(eventRoleTable.role, 'dj'),
+            ne(eventTable.ownerId, session.user.id),
+          ),
+        )
+        .groupBy(
+          eventTable.id,
+          eventTable.title,
+          eventTable.eventType,
+          eventTable.eventDate,
+          eventTable.status,
+          eventTable.slug,
+        )
+        .orderBy(desc(eventTable.eventDate)),
+      db
+        .select({
+          id: eventTable.id,
+          title: eventTable.title,
+          eventType: eventTable.eventType,
+          eventDate: eventTable.eventDate,
+          status: eventTable.status,
+          slug: eventTable.slug,
+          rsvp_count: count(rsvpTable.id),
+        })
+        .from(eventRoleTable)
+        .innerJoin(eventTable, eq(eventTable.id, eventRoleTable.eventId))
+        .leftJoin(rsvpTable, eq(rsvpTable.eventId, eventTable.id))
+        .where(
+          and(
+            eq(eventRoleTable.userId, session.user.id),
+            eq(eventRoleTable.role, 'co_host'),
+          ),
+        )
+        .groupBy(
+          eventTable.id,
+          eventTable.title,
+          eventTable.eventType,
+          eventTable.eventDate,
+          eventTable.status,
+          eventTable.slug,
+        )
+        .orderBy(desc(eventTable.eventDate)),
+      db
+        .select({
+          id: eventTable.id,
+          title: eventTable.title,
+          eventType: eventTable.eventType,
+          eventDate: eventTable.eventDate,
+          status: eventTable.status,
+          slug: eventTable.slug,
+        })
+        .from(eventRoleTable)
+        .innerJoin(eventTable, eq(eventTable.id, eventRoleTable.eventId))
+        .where(
+          and(
+            eq(eventRoleTable.userId, session.user.id),
+            eq(eventRoleTable.role, 'vendor'),
+          ),
+        )
+        .orderBy(desc(eventTable.eventDate)),
+    ]);
 
   const djEventIds = new Set(djRoleRows.map(r => r.eventId));
+  const ownedIds = new Set(ownedRows.map(r => r.id));
+  const vendorEventIds = new Set(vendorRows.map(r => r.id));
 
   const ownedCards: EventCard[] = ownedRows.map(ev => ({
     id: ev.id,
@@ -140,21 +190,69 @@ export default async function DashboardEventsPage() {
     rsvp_count: Number(ev.rsvp_count),
     userRole: 'owner',
     hasDjRole: djEventIds.has(ev.id),
+    hasVendorRole: vendorEventIds.has(ev.id),
   }));
 
-  const djOnlyCards: EventCard[] = djOnlyRows.map(ev => ({
-    id: ev.id,
-    title: ev.title,
-    eventType: ev.eventType,
-    eventDate: ev.eventDate,
-    status: ev.status,
-    slug: ev.slug,
-    rsvp_count: Number(ev.rsvp_count),
-    userRole: 'dj',
-    hasDjRole: true,
-  }));
+  const coHostEventIds = new Set(
+    coHostRows.filter(ev => !ownedIds.has(ev.id)).map(ev => ev.id),
+  );
+  const coHostCards: EventCard[] = coHostRows
+    .filter(ev => !ownedIds.has(ev.id))
+    .map(ev => ({
+      id: ev.id,
+      title: ev.title,
+      eventType: ev.eventType,
+      eventDate: ev.eventDate,
+      status: ev.status,
+      slug: ev.slug,
+      rsvp_count: Number(ev.rsvp_count),
+      userRole: 'co_host',
+      hasDjRole: djEventIds.has(ev.id),
+      hasVendorRole: vendorEventIds.has(ev.id),
+    }));
 
-  const events: EventCard[] = [...ownedCards, ...djOnlyCards].sort(
+  const djOnlyEventIds = new Set(djOnlyRows.map(r => r.id));
+  const djOnlyCards: EventCard[] = djOnlyRows
+    .filter(ev => !coHostEventIds.has(ev.id))
+    .map(ev => ({
+      id: ev.id,
+      title: ev.title,
+      eventType: ev.eventType,
+      eventDate: ev.eventDate,
+      status: ev.status,
+      slug: ev.slug,
+      rsvp_count: Number(ev.rsvp_count),
+      userRole: 'dj',
+      hasDjRole: true,
+      hasVendorRole: vendorEventIds.has(ev.id),
+    }));
+
+  const vendorOnlyCards: EventCard[] = vendorRows
+    .filter(
+      ev =>
+        !ownedIds.has(ev.id)
+        && !coHostEventIds.has(ev.id)
+        && !djOnlyEventIds.has(ev.id),
+    )
+    .map(ev => ({
+      id: ev.id,
+      title: ev.title,
+      eventType: ev.eventType,
+      eventDate: ev.eventDate,
+      status: ev.status,
+      slug: ev.slug,
+      rsvp_count: 0,
+      userRole: 'vendor' as const,
+      hasDjRole: false,
+      hasVendorRole: true,
+    }));
+
+  const events: EventCard[] = [
+    ...ownedCards,
+    ...coHostCards,
+    ...djOnlyCards,
+    ...vendorOnlyCards,
+  ].sort(
     (a, b) =>
       (b.eventDate?.getTime() ?? 0) - (a.eventDate?.getTime() ?? 0),
   );
@@ -225,32 +323,46 @@ export default async function DashboardEventsPage() {
                       </span>
                     </div>
                     <p className="mt-1 font-mono text-sm text-muted-foreground">
-                      {t('rsvp_count', { count: Number(ev.rsvp_count) })}
+                      {ev.userRole === 'vendor'
+                        ? '—'
+                        : t('rsvp_count', { count: Number(ev.rsvp_count) })}
                     </p>
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-                      <span
-                        className={cn(
-                          'inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-xs font-semibold',
-                          status === 'draft'
-                          && 'border-border bg-muted text-muted-foreground',
-                          status === 'published'
-                          && 'border-[rgb(48,153,0)] bg-[rgb(238,255,229)] text-[rgb(48,153,0)] dark:border-[rgb(116,255,51)] dark:bg-[rgb(116,255,51)]/10 dark:text-[rgb(116,255,51)]',
-                          status === 'completed'
-                          && 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-400/10 dark:text-blue-300',
-                          status === 'cancelled'
-                          && 'border-destructive/50 bg-destructive/10 text-destructive',
-                        )}
-                      >
-                        {status === 'published' && (
-                          <span
-                            className="mr-1.5 size-1.5 rounded-full bg-current motion-safe:animate-pulse"
-                            aria-hidden
-                          />
-                        )}
-                        {t(`status_${status}` as 'status_draft')}
-                      </span>
                       <div className="flex flex-wrap items-center gap-2">
-                        {ev.userRole === 'owner' && (
+                        <span
+                          className={cn(
+                            'inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-xs font-semibold',
+                            status === 'draft'
+                            && 'border-border bg-muted text-muted-foreground',
+                            status === 'published'
+                            && 'border-[rgb(48,153,0)] bg-[rgb(238,255,229)] text-[rgb(48,153,0)] dark:border-[rgb(116,255,51)] dark:bg-[rgb(116,255,51)]/10 dark:text-[rgb(116,255,51)]',
+                            status === 'completed'
+                            && 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-400/10 dark:text-blue-300',
+                            status === 'cancelled'
+                            && 'border-destructive/50 bg-destructive/10 text-destructive',
+                          )}
+                        >
+                          {status === 'published' && (
+                            <span
+                              className="mr-1.5 size-1.5 rounded-full bg-current motion-safe:animate-pulse"
+                              aria-hidden
+                            />
+                          )}
+                          {t(`status_${status}` as 'status_draft')}
+                        </span>
+                        {ev.userRole === 'co_host' && (
+                          <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                            {t('co_host_badge')}
+                          </span>
+                        )}
+                        {ev.userRole === 'vendor' && (
+                          <span className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800 dark:bg-purple-900/40 dark:text-purple-300">
+                            {t('vendor_badge')}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {(ev.userRole === 'owner' || ev.userRole === 'co_host') && (
                           <Link
                             href={`/dashboard/events/${ev.id}`}
                             className="text-sm font-semibold text-[rgb(37,90,116)] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)] dark:text-[rgb(139,192,218)]"
@@ -265,6 +377,15 @@ export default async function DashboardEventsPage() {
                             aria-label={t('dj_queue_link')}
                           >
                             {t('dj_queue_link')}
+                          </Link>
+                        )}
+                        {(ev.userRole === 'vendor' || ev.hasVendorRole) && (
+                          <Link
+                            href={`/dashboard/vendor/${ev.id}`}
+                            className="text-sm font-semibold text-purple-600 hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-purple-600 dark:text-purple-400 dark:focus-visible:outline-purple-400"
+                            aria-label={t('vendor_info_link')}
+                          >
+                            {t('vendor_info_link')}
                           </Link>
                         )}
                       </div>

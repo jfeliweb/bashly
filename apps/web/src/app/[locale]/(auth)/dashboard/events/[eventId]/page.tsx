@@ -5,6 +5,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
+import { DeleteEventButton } from '@/features/events/DeleteEventButton';
 import { PublishEventButton } from '@/features/events/PublishEventButton';
 import { RegistryLinksPanel } from '@/features/registry/RegistryLinksPanel';
 import { SongQueuePanel } from '@/features/songs/SongQueuePanel';
@@ -86,6 +87,17 @@ export default async function EventDetailPage({ params }: PageProps) {
   });
 
   if (!role) {
+    notFound();
+  }
+
+  const isOwner = role.role === 'owner';
+  const isCoHost = role.role === 'co_host';
+  const canManageEvent = isOwner || isCoHost;
+
+  if (!canManageEvent) {
+    if (role.role === 'dj') {
+      redirect(`/dashboard/dj/${eventId}`);
+    }
     notFound();
   }
 
@@ -193,6 +205,9 @@ export default async function EventDetailPage({ params }: PageProps) {
               {t('edit_event')}
             </Link>
           </Button>
+          {isOwner && (
+            <DeleteEventButton eventId={eventId} />
+          )}
         </div>
       </div>
 
@@ -378,10 +393,12 @@ export default async function EventDetailPage({ params }: PageProps) {
                   {t('music_section')}
                 </h2>
                 <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
-                  <SpotifyConnectButton
-                    isConnected={Boolean(streamingConnection)}
-                    displayName={streamingConnection?.platformDisplayName ?? undefined}
-                  />
+                  {isOwner && (
+                    <SpotifyConnectButton
+                      isConnected={Boolean(streamingConnection)}
+                      displayName={streamingConnection?.platformDisplayName ?? undefined}
+                    />
+                  )}
                   <ExportPlaylistButton
                     eventId={eventId}
                     isSpotifyConnected={Boolean(streamingConnection)}
