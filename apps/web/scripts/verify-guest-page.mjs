@@ -29,14 +29,14 @@ async function main() {
     });
   }
 
-  const failed = results.filter((r) => !r.ok);
+  const failed = results.filter(r => !r.ok);
   if (failed.length) {
     console.error('Guest page verification failed:');
-    failed.forEach((r) => console.error('  -', r.name, r.status));
+    failed.forEach(r => console.error('  -', r.name, r.status));
     process.exit(1);
   }
   console.log('Guest page verification passed:');
-  results.forEach((r) => console.log('  ✓', r.name));
+  results.forEach(r => console.log('  ✓', r.name));
 }
 
 main().catch((e) => {

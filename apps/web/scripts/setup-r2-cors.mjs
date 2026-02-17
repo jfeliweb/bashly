@@ -7,9 +7,10 @@
  * to be set in .env.local (loaded via dotenv).
  */
 
-import { PutBucketCorsCommand, GetBucketCorsCommand, S3Client } from '@aws-sdk/client-s3';
-import { config } from 'dotenv';
 import { resolve } from 'node:path';
+
+import { GetBucketCorsCommand, PutBucketCorsCommand, S3Client } from '@aws-sdk/client-s3';
+import { config } from 'dotenv';
 
 config({ path: resolve(process.cwd(), '.env.local') });
 
