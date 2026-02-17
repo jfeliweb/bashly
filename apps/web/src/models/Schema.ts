@@ -6,17 +6,11 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
-
-// Re-export Better-Auth tables
-export {
-  accountTable,
-  sessionTable,
-  userTable,
-  verificationTable,
-} from './AuthSchema';
+import { userTable } from './AuthSchema';
 
 // This file defines the structure of your database tables using the Drizzle ORM.
 
@@ -165,5 +159,88 @@ export const registryLinkTable = pgTable('registry_link', {
   url: text('url').notNull(),
   domain: text('domain').notNull(),
   sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: timestamp('created_at', ts).defaultNow().notNull(),
+});
+
+// --- Phase 2: Music ---
+
+export const songSuggestionTable = pgTable('song_suggestion', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  eventId: uuid('event_id')
+    .notNull()
+    .references(() => eventTable.id, { onDelete: 'cascade' }),
+  rsvpId: uuid('rsvp_id').references(() => rsvpTable.id),
+  itunesTrackId: text('itunes_track_id').notNull(),
+  spotifyUri: text('spotify_uri'),
+  appleMusicId: text('apple_music_id'),
+  isrc: text('isrc'),
+  trackTitle: text('track_title').notNull(),
+  artistName: text('artist_name').notNull(),
+  albumName: text('album_name'),
+  albumArtUrl: text('album_art_url'),
+  guestMessage: text('guest_message'),
+  guestName: text('guest_name'),
+  fingerprint: text('fingerprint'),
+  status: text('status').notNull().default('pending'),
+  voteCount: integer('vote_count').notNull().default(0),
+  sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: timestamp('created_at', ts).defaultNow().notNull(),
+});
+
+export const songVoteTable = pgTable(
+  'song_vote',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    songSuggestionId: uuid('song_suggestion_id')
+      .notNull()
+      .references(() => songSuggestionTable.id, { onDelete: 'cascade' }),
+    rsvpId: uuid('rsvp_id').references(() => rsvpTable.id),
+    fingerprint: text('fingerprint'),
+    createdAt: timestamp('created_at', ts).defaultNow().notNull(),
+  },
+  table => ({
+    songSuggestionFingerprintUnique: unique('song_vote_suggestion_fingerprint_unique').on(
+      table.songSuggestionId,
+      table.fingerprint,
+    ),
+  }),
+);
+
+export const streamingConnectionTable = pgTable(
+  'streaming_connection',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => userTable.id),
+    platform: text('platform').notNull(),
+    accessToken: text('access_token').notNull(),
+    refreshToken: text('refresh_token'),
+    tokenExpiresAt: timestamp('token_expires_at', ts),
+    platformUserId: text('platform_user_id'),
+    platformDisplayName: text('platform_display_name'),
+    connectedAt: timestamp('connected_at', ts).defaultNow().notNull(),
+  },
+  table => ({
+    userPlatformUnique: unique('streaming_connection_user_platform_unique').on(
+      table.userId,
+      table.platform,
+    ),
+  }),
+);
+
+export const playlistTable = pgTable('playlist', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  eventId: uuid('event_id')
+    .notNull()
+    .references(() => eventTable.id, { onDelete: 'cascade' }),
+  streamingConnectionId: uuid('streaming_connection_id')
+    .notNull()
+    .references(() => streamingConnectionTable.id, { onDelete: 'cascade' }),
+  platform: text('platform').notNull(),
+  platformPlaylistId: text('platform_playlist_id').notNull(),
+  platformPlaylistUrl: text('platform_playlist_url'),
+  lastSyncedAt: timestamp('last_synced_at', ts),
+  trackCount: integer('track_count').notNull().default(0),
   createdAt: timestamp('created_at', ts).defaultNow().notNull(),
 });

@@ -37,6 +37,16 @@ export default async function middleware(request: NextRequest) {
     if (pathname.startsWith('/api/auth')) {
       return NextResponse.next();
     }
+    // Guest-facing endpoints: song requests and RSVP (no auth required)
+    if (pathname.startsWith('/api/events/') && pathname.endsWith('/songs')) {
+      return NextResponse.next();
+    }
+    if (pathname.startsWith('/api/rsvp/')) {
+      return NextResponse.next();
+    }
+    if (pathname.startsWith('/api/songs/search')) {
+      return NextResponse.next();
+    }
     // All other API routes require auth
     if (!sessionToken) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
