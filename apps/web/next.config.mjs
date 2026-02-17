@@ -24,6 +24,17 @@ export default withSentryConfig(
       },
       poweredByHeader: false,
       reactStrictMode: true,
+      images: {
+        remotePatterns: [
+          {
+            protocol: 'https',
+            hostname: (process.env.R2_PUBLIC_DOMAIN ?? '').replace(
+              /^https?:\/\//,
+              '',
+            ),
+          },
+        ],
+      },
     }),
   ),
   {
