@@ -27,10 +27,11 @@ test.describe('Create Event', () => {
     const email = process.env.E2E_TEST_USER_EMAIL;
     const password = process.env.E2E_TEST_USER_PASSWORD;
 
-    // Skip when credentials not set (e.g. CI without E2E user)
-    test.skip(!email || !password, 'E2E_TEST_USER_EMAIL and E2E_TEST_USER_PASSWORD must be set');
+    expect(email, 'E2E_TEST_USER_EMAIL must be set').toBeDefined();
+    expect(password, 'E2E_TEST_USER_PASSWORD must be set').toBeDefined();
+    expect(baseURL, 'baseURL must be set in Playwright config').toBeDefined();
 
-    const root = baseURL ?? 'http://localhost:3000';
+    const root = baseURL as string;
     const localePrefix = '/en';
     const dashboardUrlRegex = /\/(en\/)?dashboard(\/)?(\?.*)?$/;
 
