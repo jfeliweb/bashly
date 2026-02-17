@@ -53,6 +53,8 @@ export async function POST(req: Request) {
     }
   }
 
+  const status = parsed.data.status === 'published' ? 'published' : 'draft';
+
   const [event] = await db
     .insert(eventTable)
     .values({
@@ -81,6 +83,7 @@ export async function POST(req: Request) {
       songVotingEnabled: parsed.data.song_voting_enabled,
       registryEnabled: parsed.data.registry_enabled,
       privateNotes: parsed.data.private_notes,
+      status,
     })
     .returning();
 
