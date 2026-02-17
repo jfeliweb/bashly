@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable } from '@/models/Schema';
+import { geocodeAddress } from '@/utils/geocode';
 
 type RouteParams = { params: Promise<{ eventId: string }> };
 
@@ -94,16 +95,36 @@ export async function PATCH(
   }
 
   const data = parsed.data;
+
+  // Geocode venue address if it changed (non-blocking on failure)
+  let geoFields: { venueLat?: string; venueLng?: string } = {};
+  if (data.venue_address !== undefined) {
+    if (data.venue_address) {
+      const coords = await geocodeAddress(data.venue_address);
+      if (coords) {
+        geoFields = {
+          venueLat: coords.lat.toString(),
+          venueLng: coords.lng.toString(),
+        };
+      }
+    } else {
+      geoFields = { venueLat: undefined, venueLng: undefined };
+    }
+  }
+
   await db
     .update(eventTable)
     .set({
       ...(data.title !== undefined && { title: data.title }),
       ...(data.event_type !== undefined && { eventType: data.event_type }),
       ...(data.description !== undefined && { description: data.description }),
+      ...(data.cover_image_url !== undefined && { coverImageUrl: data.cover_image_url }),
+      ...(data.cover_image_key !== undefined && { coverImageKey: data.cover_image_key }),
       ...(data.event_date !== undefined && { eventDate: data.event_date }),
       ...(data.doors_open_at !== undefined && { doorsOpenAt: data.doors_open_at }),
       ...(data.venue_name !== undefined && { venueName: data.venue_name }),
       ...(data.venue_address !== undefined && { venueAddress: data.venue_address }),
+      ...geoFields,
       ...(data.venue_notes !== undefined && { venueNotes: data.venue_notes }),
       ...(data.dress_code !== undefined && { dressCode: data.dress_code }),
       ...(data.welcome_message !== undefined && { welcomeMessage: data.welcome_message }),

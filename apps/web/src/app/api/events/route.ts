@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable } from '@/models/Schema';
+import { geocodeAddress } from '@/utils/geocode';
 import { generateSlug } from '@/utils/slug';
 
 export async function GET() {
@@ -41,6 +42,17 @@ export async function POST(req: Request) {
 
   const slug = generateSlug(parsed.data.title);
 
+  // Geocode venue address (non-blocking on failure)
+  let venueLat: string | undefined;
+  let venueLng: string | undefined;
+  if (parsed.data.venue_address) {
+    const coords = await geocodeAddress(parsed.data.venue_address);
+    if (coords) {
+      venueLat = coords.lat.toString();
+      venueLng = coords.lng.toString();
+    }
+  }
+
   const [event] = await db
     .insert(eventTable)
     .values({
@@ -49,10 +61,14 @@ export async function POST(req: Request) {
       title: parsed.data.title,
       eventType: parsed.data.event_type,
       description: parsed.data.description,
+      coverImageUrl: parsed.data.cover_image_url,
+      coverImageKey: parsed.data.cover_image_key,
       eventDate: parsed.data.event_date,
       doorsOpenAt: parsed.data.doors_open_at,
       venueName: parsed.data.venue_name,
       venueAddress: parsed.data.venue_address,
+      venueLat,
+      venueLng,
       venueNotes: parsed.data.venue_notes,
       dressCode: parsed.data.dress_code,
       welcomeMessage: parsed.data.welcome_message,
