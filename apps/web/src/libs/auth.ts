@@ -14,7 +14,10 @@ import {
 import { db } from './DB';
 import { sendEmail } from './resend';
 
+const appUrl = process.env.BETTER_AUTH_URL || 'http://127.0.0.1:3000';
+
 export const auth = betterAuth({
+  baseURL: appUrl,
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
@@ -51,6 +54,7 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: [
-    process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+    appUrl,
+    ...(process.env.ENVIRONMENT === 'local' ? ['http://localhost:3000'] : []),
   ],
 });
