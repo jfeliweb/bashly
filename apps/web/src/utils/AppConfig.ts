@@ -1,72 +1,101 @@
-import { BILLING_INTERVAL, type PricingPlan } from '@/types/Subscription';
-
 const localePrefix = 'as-needed' as const;
 
-// FIXME: Update this configuration file based on your project information
 export const AppConfig = {
   name: 'Bashly',
-  locales: [
-    {
-      id: 'en',
-      name: 'English',
-    },
-    { id: 'fr', name: 'Français' },
-  ],
-  defaultLocale: 'en',
+  locales: ['en', 'es'] as const,
+  defaultLocale: 'en' as const,
   localePrefix,
+  localeNames: {
+    en: 'English',
+    es: 'Español',
+  } as const,
 };
 
-export const AllLocales = AppConfig.locales.map(locale => locale.id);
+export type AppLocale = (typeof AppConfig.locales)[number];
+
+export const AllLocales = [...AppConfig.locales];
 
 export const PLAN_ID = {
   FREE: 'free',
+  CELEBRATION: 'celebration',
   PREMIUM: 'premium',
-  ENTERPRISE: 'enterprise',
+  PLANNER: 'planner',
 } as const;
 
-export const PricingPlanList: Record<string, PricingPlan> = {
+export type PlanId = (typeof PLAN_ID)[keyof typeof PLAN_ID];
+
+type PlanConfigEntry = {
+  price: number;
+  name: string;
+  description: string;
+  billing?: 'per-event' | 'monthly';
+  features: {
+    activeEvents: number;
+    guestsPerEvent: number;
+    songRequests: number;
+    streamingExport: boolean;
+    registryLinks: number;
+    teamMembers?: number;
+    whiteLabel?: boolean;
+    vendorPortal?: boolean;
+    prioritySupport?: boolean;
+  };
+};
+
+export const PlanConfig: Record<PlanId, PlanConfigEntry> = {
   [PLAN_ID.FREE]: {
-    id: PLAN_ID.FREE,
     price: 0,
-    interval: BILLING_INTERVAL.MONTH,
-    testPriceId: '',
-    devPriceId: '',
-    prodPriceId: '',
+    name: 'Free',
+    description: 'Perfect for trying Bashly',
     features: {
-      teamMember: 2,
-      website: 2,
-      storage: 2,
-      transfer: 2,
+      activeEvents: 1,
+      guestsPerEvent: 50,
+      songRequests: 50,
+      streamingExport: false,
+      registryLinks: 1,
+    },
+  },
+  [PLAN_ID.CELEBRATION]: {
+    price: 12,
+    name: 'Celebration',
+    description: 'For a single unforgettable event',
+    billing: 'per-event',
+    features: {
+      activeEvents: 1,
+      guestsPerEvent: 500,
+      songRequests: 500,
+      streamingExport: true,
+      registryLinks: 10,
     },
   },
   [PLAN_ID.PREMIUM]: {
-    id: PLAN_ID.PREMIUM,
-    price: 79,
-    interval: BILLING_INTERVAL.MONTH,
-    testPriceId: 'price_premium_test', // Use for testing
-    // FIXME: Update the price ID, you can create it after running `npm run stripe:setup-price`
-    devPriceId: 'price_1PNksvKOp3DEwzQlGOXO7YBK',
-    prodPriceId: '',
+    price: 19,
+    name: 'Premium',
+    description: 'For recurring event hosts',
+    billing: 'monthly',
     features: {
-      teamMember: 5,
-      website: 5,
-      storage: 5,
-      transfer: 5,
+      activeEvents: 999,
+      guestsPerEvent: 1000,
+      songRequests: 1000,
+      streamingExport: true,
+      registryLinks: 10,
     },
   },
-  [PLAN_ID.ENTERPRISE]: {
-    id: PLAN_ID.ENTERPRISE,
-    price: 199,
-    interval: BILLING_INTERVAL.MONTH,
-    testPriceId: 'price_enterprise_test', // Use for testing
-    // FIXME: Update the price ID, you can create it after running `npm run stripe:setup-price`
-    devPriceId: 'price_1PNksvKOp3DEwzQli9IvXzgb',
-    prodPriceId: 'price_123',
+  [PLAN_ID.PLANNER]: {
+    price: 49,
+    name: 'Planner',
+    description: 'For professional event planners',
+    billing: 'monthly',
     features: {
-      teamMember: 100,
-      website: 100,
-      storage: 100,
-      transfer: 100,
+      activeEvents: 999,
+      guestsPerEvent: 999999,
+      songRequests: 999999,
+      streamingExport: true,
+      registryLinks: 999,
+      teamMembers: 10,
+      whiteLabel: true,
+      vendorPortal: true,
+      prioritySupport: true,
     },
   },
 };
