@@ -22,11 +22,136 @@
   "Navbar": {
     "sign_in": "Sign In",
     "sign_up": "Sign Up",
+    "features": "Features",
+    "about": "About",
     "product": "Product",
     "docs": "Docs",
     "blog": "Blog",
     "community": "Community",
     "company": "Company"
+  },
+  "About": {
+    "meta_title": "About Bashly",
+    "meta_description": "Learn about Bashly's mission to make event planning effortless for everyone.",
+    "title": "About Bashly",
+    "intro_strong": "Bashly was born from a simple observation:",
+    "intro_rest": "planning memorable events shouldn't require juggling spreadsheets, tracking RSVPs via text, and arguing over the playlist.",
+    "paragraph_2": "We built Bashly for hosts who want to focus on what matters — celebrating with the people they love. Whether it's a Sweet 16, a graduation party, or a family reunion, every event deserves a seamless planning experience.",
+    "paragraph_3": "Today, thousands of hosts use Bashly to manage RSVPs, collect song requests via QR code, and export perfectly curated playlists to Spotify. No apps to download. No complicated setup. Just effortless event planning.",
+    "mission_heading": "Our Mission",
+    "mission_text": "To make every celebration unforgettable by giving hosts the tools they need to plan with confidence and guests the freedom to participate without barriers.",
+    "why_heading": "Why Bashly?",
+    "why_guest_title": "Guest-first design",
+    "why_guest_text": "No apps, no accounts — guests can RSVP and request songs in seconds",
+    "why_music_title": "Music at the core",
+    "why_music_text": "QR code song requests and direct Spotify export make playlist curation effortless",
+    "why_free_title": "Free to start",
+    "why_free_text": "Every feature you need to host your first event, completely free",
+    "why_care_title": "Built with care",
+    "why_care_text": "From accessible design to beautiful event pages, we sweat the details so you don't have to",
+    "contact_heading": "Get in Touch",
+    "contact_intro": "Have questions? Want to share feedback? We'd love to hear from you."
+  },
+  "FeaturesPage": {
+    "meta_title": "Features",
+    "meta_description": "Everything you need to plan unforgettable events — RSVPs, song requests, playlists, and more.",
+    "hero_title": "Everything you need to plan unforgettable events",
+    "hero_description": "From RSVPs to playlists, Bashly handles the details so you can focus on celebrating.",
+    "cta_title": "Ready to get started?",
+    "cta_description": "Create your first event for free. No credit card required.",
+    "cta_button": "Get Started Free",
+    "features": {
+      "guest_management": {
+        "title": "Guest Management",
+        "description": "Track RSVPs, dietary restrictions, and +1s in one place. Export guest lists to CSV.",
+        "detail_0": "Unlimited guest capacity",
+        "detail_1": "Dietary restriction tracking",
+        "detail_2": "Plus-one management",
+        "detail_3": "CSV export for seating charts",
+        "detail_4": "Email confirmations"
+      },
+      "song_requests": {
+        "title": "Song Requests",
+        "description": "Let guests request songs with a QR code scan. No app download required.",
+        "detail_0": "QR code generation",
+        "detail_1": "iTunes search integration",
+        "detail_2": "Song approval workflow",
+        "detail_3": "Reorder playlist",
+        "detail_4": "Guest message notes"
+      },
+      "spotify_export": {
+        "title": "Spotify Export",
+        "description": "Export approved songs directly to Spotify. One-click playlist creation.",
+        "detail_0": "Direct Spotify integration",
+        "detail_1": "Automatic track matching",
+        "detail_2": "Playlist auto-creation",
+        "detail_3": "Re-sync after changes",
+        "detail_4": "Share playlist with DJ"
+      },
+      "invite_links": {
+        "title": "Invite Links & QR Codes",
+        "description": "Share beautiful, branded invite links or download QR codes for printed materials.",
+        "detail_0": "Unique shareable links",
+        "detail_1": "Downloadable QR codes (PNG/SVG)",
+        "detail_2": "Role-based invite codes",
+        "detail_3": "Track invite opens",
+        "detail_4": "Custom event page themes"
+      },
+      "event_schedule": {
+        "title": "Event Schedule",
+        "description": "Build a timeline for your event. Share with vendors, DJs, and co-hosts.",
+        "detail_0": "Drag-and-drop timeline",
+        "detail_1": "Share with team roles",
+        "detail_2": "Vendor-only schedule view",
+        "detail_3": "Time zone support",
+        "detail_4": "Export to calendar apps"
+      },
+      "gift_registry": {
+        "title": "Gift Registry",
+        "description": "Link to your gift registries. Guests see everything on your event page.",
+        "detail_0": "Link to any registry",
+        "detail_1": "Multiple registry support",
+        "detail_2": "Display with icons",
+        "detail_3": "Registry priority sorting",
+        "detail_4": "Easy mobile access"
+      },
+      "team_roles": {
+        "title": "Team Roles",
+        "description": "Add co-hosts, DJs, and vendors. Everyone gets the access they need.",
+        "detail_0": "Co-host full access",
+        "detail_1": "DJ queue management",
+        "detail_2": "Vendor logistics view",
+        "detail_3": "Coordinator role",
+        "detail_4": "VIP guest badges"
+      },
+      "email_notifications": {
+        "title": "Email Notifications",
+        "description": "Automated emails for invites, RSVP confirmations, and song approvals.",
+        "detail_0": "Invite emails with link",
+        "detail_1": "RSVP confirmation",
+        "detail_2": "Song approval notification",
+        "detail_3": "Custom sender domain",
+        "detail_4": "Branded templates"
+      },
+      "privacy_security": {
+        "title": "Privacy & Security",
+        "description": "Your events are private by default. Share only with invited guests.",
+        "detail_0": "Private event URLs",
+        "detail_1": "No public discovery",
+        "detail_2": "Secure authentication",
+        "detail_3": "GDPR compliant",
+        "detail_4": "Data export on request"
+      },
+      "fast_reliable": {
+        "title": "Fast & Reliable",
+        "description": "Lightning-fast page loads. 99.9% uptime. Your events are always accessible.",
+        "detail_0": "Global CDN",
+        "detail_1": "Sub-second page loads",
+        "detail_2": "Automatic backups",
+        "detail_3": "Real-time updates",
+        "detail_4": "Mobile optimized"
+      }
+    }
   },
   "Hero": {
     "title": "Bashly",

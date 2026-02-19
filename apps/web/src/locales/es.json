@@ -22,11 +22,136 @@
   "Navbar": {
     "sign_in": "Sign In",
     "sign_up": "Sign Up",
+    "features": "Características",
+    "about": "Acerca de",
     "product": "Product",
     "docs": "Docs",
     "blog": "Blog",
     "community": "Community",
     "company": "Company"
+  },
+  "About": {
+    "meta_title": "Acerca de Bashly",
+    "meta_description": "Conoce la misión de Bashly para hacer la planificación de eventos sencilla para todos.",
+    "title": "Acerca de Bashly",
+    "intro_strong": "Bashly nació de una simple observación:",
+    "intro_rest": "planificar eventos memorables no debería requerir hojas de cálculo, seguir RSVPs por mensaje y discutir la playlist.",
+    "paragraph_2": "Construimos Bashly para anfitriones que quieren enfocarse en lo que importa — celebrar con las personas que aman. Ya sea un Sweet 16, una fiesta de graduación o una reunión familiar, cada evento merece una experiencia de planificación fluida.",
+    "paragraph_3": "Hoy, miles de anfitriones usan Bashly para gestionar RSVPs, recoger solicitudes de canciones por código QR y exportar playlists perfectamente curadas a Spotify. Sin apps que descargar. Sin configuración complicada. Solo planificación de eventos sin esfuerzo.",
+    "mission_heading": "Nuestra misión",
+    "mission_text": "Hacer que cada celebración sea inolvidable dando a los anfitriones las herramientas que necesitan para planificar con confianza y a los invitados la libertad de participar sin barreras.",
+    "why_heading": "¿Por qué Bashly?",
+    "why_guest_title": "Diseño centrado en el invitado",
+    "why_guest_text": "Sin apps, sin cuentas — los invitados pueden confirmar RSVP y pedir canciones en segundos",
+    "why_music_title": "La música en el centro",
+    "why_music_text": "Solicitudes de canciones por QR y exportación directa a Spotify hacen la curación de playlists sencilla",
+    "why_free_title": "Gratis para empezar",
+    "why_free_text": "Todas las funciones que necesitas para tu primer evento, completamente gratis",
+    "why_care_title": "Hecho con cuidado",
+    "why_care_text": "Desde diseño accesible hasta páginas de evento bonitas, cuidamos los detalles para que tú no tengas que hacerlo",
+    "contact_heading": "Contáctanos",
+    "contact_intro": "¿Tienes preguntas? ¿Quieres compartir comentarios? Nos encantaría saber de ti."
+  },
+  "FeaturesPage": {
+    "meta_title": "Características",
+    "meta_description": "Todo lo que necesitas para planificar eventos inolvidables — RSVPs, solicitudes de canciones, playlists y más.",
+    "hero_title": "Todo lo que necesitas para planificar eventos inolvidables",
+    "hero_description": "De RSVPs a playlists, Bashly se encarga de los detalles para que te enfoques en celebrar.",
+    "cta_title": "¿Listo para empezar?",
+    "cta_description": "Crea tu primer evento gratis. No se requiere tarjeta de crédito.",
+    "cta_button": "Empezar gratis",
+    "features": {
+      "guest_management": {
+        "title": "Gestión de invitados",
+        "description": "Rastrea RSVPs, restricciones dietéticas y +1 en un solo lugar. Exporta listas a CSV.",
+        "detail_0": "Capacidad ilimitada de invitados",
+        "detail_1": "Seguimiento de restricciones dietéticas",
+        "detail_2": "Gestión de acompañantes",
+        "detail_3": "Exportación CSV para planos de asientos",
+        "detail_4": "Confirmaciones por email"
+      },
+      "song_requests": {
+        "title": "Solicitudes de canciones",
+        "description": "Los invitados piden canciones escaneando un código QR. Sin descargar app.",
+        "detail_0": "Generación de código QR",
+        "detail_1": "Integración con búsqueda iTunes",
+        "detail_2": "Flujo de aprobación de canciones",
+        "detail_3": "Reordenar playlist",
+        "detail_4": "Notas de mensaje del invitado"
+      },
+      "spotify_export": {
+        "title": "Exportar a Spotify",
+        "description": "Exporta canciones aprobadas directamente a Spotify. Creación de playlist en un clic.",
+        "detail_0": "Integración directa con Spotify",
+        "detail_1": "Coincidencia automática de pistas",
+        "detail_2": "Auto-creación de playlist",
+        "detail_3": "Re-sincronizar tras cambios",
+        "detail_4": "Compartir playlist con el DJ"
+      },
+      "invite_links": {
+        "title": "Enlaces de invitación y códigos QR",
+        "description": "Comparte enlaces de invitación con marca o descarga códigos QR para imprimir.",
+        "detail_0": "Enlaces únicos compartibles",
+        "detail_1": "Códigos QR descargables (PNG/SVG)",
+        "detail_2": "Códigos de invitación por rol",
+        "detail_3": "Seguimiento de aperturas",
+        "detail_4": "Temas personalizados de página"
+      },
+      "event_schedule": {
+        "title": "Cronograma del evento",
+        "description": "Crea la línea de tiempo de tu evento. Compártela con proveedores, DJs y co-anfitriones.",
+        "detail_0": "Línea de tiempo arrastrar y soltar",
+        "detail_1": "Compartir con roles del equipo",
+        "detail_2": "Vista de cronograma solo para proveedores",
+        "detail_3": "Soporte de zona horaria",
+        "detail_4": "Exportar a apps de calendario"
+      },
+      "gift_registry": {
+        "title": "Lista de regalos",
+        "description": "Enlaza tus listas de regalos. Los invitados ven todo en tu página de evento.",
+        "detail_0": "Enlace a cualquier lista",
+        "detail_1": "Soporte de múltiples listas",
+        "detail_2": "Visualización con iconos",
+        "detail_3": "Orden de prioridad de listas",
+        "detail_4": "Fácil acceso móvil"
+      },
+      "team_roles": {
+        "title": "Roles del equipo",
+        "description": "Añade co-anfitriones, DJs y proveedores. Cada uno tiene el acceso que necesita.",
+        "detail_0": "Acceso completo de co-anfitrión",
+        "detail_1": "Gestión de cola del DJ",
+        "detail_2": "Vista logística para proveedores",
+        "detail_3": "Rol de coordinador",
+        "detail_4": "Insignias de invitado VIP"
+      },
+      "email_notifications": {
+        "title": "Notificaciones por email",
+        "description": "Emails automáticos para invitaciones, confirmaciones de RSVP y aprobaciones de canciones.",
+        "detail_0": "Emails de invitación con enlace",
+        "detail_1": "Confirmación de RSVP",
+        "detail_2": "Notificación de aprobación de canción",
+        "detail_3": "Dominio remitente personalizado",
+        "detail_4": "Plantillas con marca"
+      },
+      "privacy_security": {
+        "title": "Privacidad y seguridad",
+        "description": "Tus eventos son privados por defecto. Comparte solo con invitados.",
+        "detail_0": "URLs de evento privadas",
+        "detail_1": "Sin descubrimiento público",
+        "detail_2": "Autenticación segura",
+        "detail_3": "Cumplimiento GDPR",
+        "detail_4": "Exportación de datos bajo petición"
+      },
+      "fast_reliable": {
+        "title": "Rápido y fiable",
+        "description": "Carga de páginas ultrarrápida. 99.9% de disponibilidad. Tus eventos siempre accesibles.",
+        "detail_0": "CDN global",
+        "detail_1": "Carga en menos de un segundo",
+        "detail_2": "Copias de seguridad automáticas",
+        "detail_3": "Actualizaciones en tiempo real",
+        "detail_4": "Optimizado para móvil"
+      }
+    }
   },
   "Hero": {
     "title": "Bashly",
