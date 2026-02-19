@@ -1,12 +1,11 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
+import { BashlyLogo } from '@/components/BashlyLogo';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { buttonVariants } from '@/components/ui/buttonVariants';
 import { CenteredMenu } from '@/features/landing/CenteredMenu';
 import { Section } from '@/features/landing/Section';
-
-import { Logo } from './Logo';
 
 export const Navbar = () => {
   const t = useTranslations('Navbar');
@@ -14,7 +13,11 @@ export const Navbar = () => {
   return (
     <Section className="px-3 py-6">
       <CenteredMenu
-        logo={<Logo />}
+        logo={(
+          <Link href="/" className="flex items-center">
+            <BashlyLogo className="text-xl" />
+          </Link>
+        )}
         rightMenu={(
           <>
             {/* PRO: Dark mode toggle button */}
