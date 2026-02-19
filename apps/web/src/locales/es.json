@@ -249,7 +249,40 @@
     "company": "Company",
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy",
+    "contact": "Contact",
     "footer_text": "© {year} Bashly. Made with ♥ for celebrations."
+  },
+  "TermsPage": {
+    "meta_title": "Terms of Service",
+    "meta_description": "Bashly Terms of Service and conditions of use.",
+    "title": "Terms of Service",
+    "last_updated": "Last updated: {date}",
+    "s6_p": "Your use of the Service is subject to our <link>Privacy Policy</link>, which explains how we collect, use, and protect your personal information."
+  },
+  "PrivacyPage": {
+    "meta_title": "Privacy Policy",
+    "meta_description": "Learn how Bashly collects, uses, and protects your personal information.",
+    "title": "Privacy Policy",
+    "last_updated": "Last updated: {date}"
+  },
+  "ContactPage": {
+    "meta_title": "Contact Us",
+    "meta_description": "Get in touch with the Bashly team.",
+    "title": "Contáctanos",
+    "intro": "Nos encantaría saber de ti. Elige la mejor forma de contactarnos.",
+    "general_heading": "Consultas generales",
+    "general_desc": "Preguntas sobre Bashly o acceso beta",
+    "general_email": "hello@bashly.app",
+    "support_heading": "Soporte",
+    "support_desc": "¿Necesitas ayuda con tu evento?",
+    "support_email": "support@bashly.app",
+    "bugs_heading": "Reportar errores",
+    "bugs_desc": "¿Encontraste un problema? Avísanos",
+    "bugs_email": "bugs@bashly.app",
+    "beta_heading": "Programa Beta",
+    "beta_p1": "Bashly está actualmente en beta. Estamos recopilando comentarios de usuarios iniciales para mejorar la plataforma. Si encuentras problemas o tienes sugerencias, contáctanos — tu opinión da forma al futuro de Bashly.",
+    "beta_p2": "Normalmente respondemos en 24 horas en días laborables.",
+    "response_label": "Tiempo de respuesta:"
   },
   "ProtectFallback": {
     "not_enough_permission": "You do not have the permissions to perform this action"
@@ -262,7 +295,9 @@
     "password_label": "Contraseña",
     "sign_in_button": "Iniciar Sesión",
     "no_account": "¿No tienes cuenta?",
-    "sign_up_link": "Regístrate"
+    "sign_up_link": "Regístrate",
+    "or_continue_with": "O continuar con",
+    "social_coming_soon_hint": "Inicio de sesión social próximamente. Por ahora, usa correo y contraseña."
   },
   "SignUp": {
     "meta_title": "Crear Cuenta",
@@ -273,7 +308,19 @@
     "password_label": "Contraseña",
     "sign_up_button": "Crear Cuenta",
     "have_account": "¿Ya tienes cuenta?",
-    "sign_in_link": "Inicia sesión"
+    "sign_in_link": "Inicia sesión",
+    "or_continue_with": "O continuar con",
+    "social_coming_soon_hint": "Inicio de sesión social próximamente. Por ahora, usa correo y contraseña."
+  },
+  "SocialLoginPlaceholder": {
+    "continue_google": "Continuar con Google",
+    "continue_apple": "Continuar con Apple",
+    "coming_soon": "Próximamente"
+  },
+  "BetaBanner": {
+    "beta_note_title": "Nota beta:",
+    "beta_note_message": "El inicio de sesión social (Google, Apple) estará disponible pronto. Por ahora, inicia sesión con correo y contraseña.",
+    "dismiss_aria": "Cerrar"
   },
   "DashboardLayout": {
     "my_events": "My Events",
@@ -330,7 +377,12 @@
     "meta_description": "Manage the song queue for your event",
     "subtitle": "DJ Queue Management",
     "songs_disabled_hint": "Song requests are currently disabled for this event. Ask the event owner to enable them in the event settings.",
-    "dj_mode_banner": "DJ Mode Active — Focus on the music!"
+    "dj_mode_banner": "DJ Mode Active — Focus on the music!",
+    "empty_songs_title": "No song requests yet",
+    "empty_songs_description": "Share your event link with guests so they can request their favorite songs.",
+    "empty_songs_cta": "Share Event Link",
+    "tooltip_song_approval_title": "Approve Songs",
+    "tooltip_song_approval_description": "Click approve to add songs to your playlist. You can reorder them later."
   },
   "VendorPortal": {
     "meta_title": "Vendor Portal",
@@ -352,8 +404,9 @@
     "title_bar_description": "Create and manage your Bashly events",
     "new_event_button": "New Event",
     "empty_title": "No events yet",
-    "empty_description": "Create your first event to get started",
+    "empty_description": "Create your first event to start planning your celebration. It only takes a minute!",
     "empty_cta": "Create Event",
+    "empty_cta_first": "Create Your First Event",
     "status_draft": "Draft",
     "status_published": "Published",
     "status_completed": "Completed",
@@ -415,7 +468,9 @@
     "save_button": "Save changes",
     "saving": "Saving…",
     "error_toast_edit": "Could not save. Please try again.",
-    "songs_per_guest_label": "Songs per guest"
+    "songs_per_guest_label": "Songs per guest",
+    "tooltip_event_type_title": "Choose Your Event Type",
+    "tooltip_event_type_description": "This helps us customize your event page. You can change it later."
   },
   "InviteClaim": {
     "error_invalid_or_expired": "This invite link is invalid or has expired.",
@@ -592,6 +647,19 @@
     "error_name_required": "Please enter a registry name.",
     "error_url_required": "Please enter a URL.",
     "error_add_failed": "Could not add link. Please try again."
+  },
+  "Onboarding": {
+    "welcome_title": "Welcome to Bashly, {name}!",
+    "welcome_subtitle": "Let's create your first unforgettable event",
+    "feature_rsvp_title": "Manage RSVPs",
+    "feature_rsvp_description": "Track guests, dietary needs, and plus-ones",
+    "feature_songs_title": "Collect Song Requests",
+    "feature_songs_description": "Let guests request songs with QR codes",
+    "feature_schedule_title": "Build Your Schedule",
+    "feature_schedule_description": "Share timelines with your team",
+    "cta_first_event": "Create Your First Event",
+    "cta_later": "I'll Do This Later",
+    "hint_dashboard": "You can always create events from your dashboard"
   },
   "InviteLinks": {
     "panel_title": "Invite Links",

@@ -77,11 +77,25 @@
   },
   "SignIn": {
     "meta_title": "Se connecter",
-    "meta_description": "Connectez-vous à votre compte avec facilité."
+    "meta_description": "Connectez-vous à votre compte avec facilité.",
+    "or_continue_with": "Ou continuer avec",
+    "social_coming_soon_hint": "Connexion sociale bientôt disponible. Pour l'instant, utilisez l'e-mail et le mot de passe."
   },
   "SignUp": {
     "meta_title": "S'inscrire",
-    "meta_description": "Créez un compte sans effort grâce à notre processus d'inscription intuitif."
+    "meta_description": "Créez un compte sans effort grâce à notre processus d'inscription intuitif.",
+    "or_continue_with": "Ou continuer avec",
+    "social_coming_soon_hint": "Connexion sociale bientôt disponible. Pour l'instant, utilisez l'e-mail et le mot de passe."
+  },
+  "SocialLoginPlaceholder": {
+    "continue_google": "Continuer avec Google",
+    "continue_apple": "Continuer avec Apple",
+    "coming_soon": "Bientôt disponible"
+  },
+  "BetaBanner": {
+    "beta_note_title": "Note bêta :",
+    "beta_note_message": "La connexion sociale (Google, Apple) arrive bientôt. Pour l'instant, connectez-vous avec votre e-mail et mot de passe.",
+    "dismiss_aria": "Fermer"
   },
   "DashboardLayout": {
     "home": "Accueil",
@@ -130,7 +144,12 @@
     "meta_description": "Gérer la file de chansons pour votre événement",
     "subtitle": "Gestion de la file DJ",
     "songs_disabled_hint": "Les demandes de chansons sont désactivées pour cet événement. Demandez au propriétaire de l'événement de les activer dans les paramètres.",
-    "dj_mode_banner": "Mode DJ actif — concentrez-vous sur la musique !"
+    "dj_mode_banner": "Mode DJ actif — concentrez-vous sur la musique !",
+    "empty_songs_title": "Aucune demande de chanson pour l'instant",
+    "empty_songs_description": "Partagez le lien de votre événement pour que les invités puissent demander leurs chansons préférées.",
+    "empty_songs_cta": "Partager le lien",
+    "tooltip_song_approval_title": "Approuver les chansons",
+    "tooltip_song_approval_description": "Cliquez sur approuver pour ajouter les chansons à votre playlist. Vous pourrez les réordonner plus tard."
   },
   "VendorPortal": {
     "meta_title": "Portail fournisseur",
@@ -152,8 +171,9 @@
     "title_bar_description": "Créez et gérez vos événements Bashly",
     "new_event_button": "Nouvel événement",
     "empty_title": "Aucun événement pour l'instant",
-    "empty_description": "Créez votre premier événement pour commencer",
+    "empty_description": "Créez votre premier événement pour organiser votre fête. En une minute !",
     "empty_cta": "Créer un événement",
+    "empty_cta_first": "Créer votre premier événement",
     "status_draft": "Brouillon",
     "status_published": "Publié",
     "status_completed": "Terminé",
@@ -205,7 +225,9 @@
     "create_button": "Créer l'événement",
     "create_and_publish": "Créer et publier",
     "creating": "Création…",
-    "error_toast": "Impossible de créer l'événement. Réessayez."
+    "error_toast": "Impossible de créer l'événement. Réessayez.",
+    "tooltip_event_type_title": "Choisissez le type d'événement",
+    "tooltip_event_type_description": "Cela nous aide à personnaliser votre page. Vous pourrez le modifier plus tard."
   },
   "InviteClaim": {
     "error_invalid_or_expired": "Ce lien d'invitation est invalide ou a expiré.",
@@ -296,6 +318,19 @@
     "qr_guest_url": "URL de la page invités",
     "download_png": "Télécharger le QR en PNG",
     "download_svg": "Télécharger le QR en SVG"
+  },
+  "Onboarding": {
+    "welcome_title": "Bienvenue sur Bashly, {name} !",
+    "welcome_subtitle": "Créons ensemble votre premier événement inoubliable",
+    "feature_rsvp_title": "Gérer les RSVP",
+    "feature_rsvp_description": "Suivez les invités, régimes alimentaires et accompagnants",
+    "feature_songs_title": "Collecter les demandes de chansons",
+    "feature_songs_description": "Les invités demandent des chansons via QR",
+    "feature_schedule_title": "Construire l'horaire",
+    "feature_schedule_description": "Partagez le déroulé avec votre équipe",
+    "cta_first_event": "Créer votre premier événement",
+    "cta_later": "Plus tard",
+    "hint_dashboard": "Vous pourrez toujours créer des événements depuis le tableau de bord"
   },
   "Streaming": {
     "connect_button_label": "Connecter Spotify",
