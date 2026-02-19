@@ -1,14 +1,16 @@
 import { and, count, desc, eq, ne } from 'drizzle-orm';
+import { Calendar } from 'lucide-react';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/EmptyState';
+import { DashboardWelcomeOverlay } from '@/features/onboarding/DashboardWelcomeOverlay';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable, rsvpTable } from '@/models/Schema';
-import { Logo } from '@/templates/Logo';
 import { cn } from '@/utils/Helpers';
 
 type EventCard = {
@@ -60,11 +62,18 @@ function eventTypeToLabel(eventType: string): string {
   return map[eventType] ?? eventType.toUpperCase();
 }
 
-export default async function DashboardEventsPage() {
+type PageProps = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ welcome?: string }>;
+};
+
+export default async function DashboardEventsPage(props: PageProps) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) {
     redirect('/sign-in');
   }
+
+  const searchParams = await props.searchParams;
 
   const [ownedRows, djRoleRows, djOnlyRows, coHostRows, vendorRows]
     = await Promise.all([
@@ -261,6 +270,10 @@ export default async function DashboardEventsPage() {
 
   return (
     <>
+      <DashboardWelcomeOverlay
+        show={searchParams?.welcome === 'true'}
+        userName={session.user.name ?? ''}
+      />
       <div className="mb-6 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
@@ -283,23 +296,13 @@ export default async function DashboardEventsPage() {
       {events.length === 0
         ? (
             <div className="flex min-h-[50vh] flex-col items-center justify-center">
-              <div className="flex max-w-sm flex-col items-center rounded-xl border border-border bg-card p-8 text-center shadow-sm">
-                <div className="mb-4">
-                  <Logo />
-                </div>
-                <h2 className="text-xl font-extrabold text-foreground">
-                  {t('empty_title')}
-                </h2>
-                <p className="mt-2 text-muted-foreground">
-                  {t('empty_description')}
-                </p>
-                <Button
-                  asChild
-                  className="mt-6 min-h-[44px] rounded-[100px] bg-[rgb(81,255,0)] font-bold text-[rgb(9,21,27)] hover:bg-[rgb(65,204,0)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
-                >
-                  <Link href="/dashboard/events/new">{t('empty_cta')}</Link>
-                </Button>
-              </div>
+              <EmptyState
+                icon={Calendar}
+                title={t('empty_title')}
+                description={t('empty_description')}
+                actionLabel={t('empty_cta_first')}
+                actionHref="/dashboard/events/new"
+              />
             </div>
           )
         : (

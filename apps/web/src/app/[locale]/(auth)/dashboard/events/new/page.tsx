@@ -20,6 +20,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { OnboardingTooltip } from '@/components/OnboardingTooltip';
 import {
   Select,
   SelectContent,
@@ -262,9 +263,17 @@ export default function NewEventPage() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {step === 1 && (
             <section aria-label={t('step_1_heading')}>
-              <h2 className="text-2xl font-extrabold tracking-tight text-foreground">
-                {t('step_1_heading')}
-              </h2>
+              <div className="relative">
+                <h2 className="text-2xl font-extrabold tracking-tight text-foreground">
+                  {t('step_1_heading')}
+                </h2>
+                <OnboardingTooltip
+                  id="event-type"
+                  title={t('tooltip_event_type_title')}
+                  description={t('tooltip_event_type_description')}
+                  position="bottom"
+                />
+              </div>
               <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {EVENT_TYPES.map(({ value, emoji, labelKey }) => (
                   <button

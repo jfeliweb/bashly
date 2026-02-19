@@ -2,8 +2,10 @@
 
 import { Check, Music, ThumbsUp, Trash2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { EmptyState } from '@/components/EmptyState';
+import { OnboardingTooltip } from '@/components/OnboardingTooltip';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -30,13 +32,22 @@ type Song = {
 type SongQueuePanelProps = {
   eventId: string;
   djMode?: boolean;
+  /** Path to guest event page (e.g. `/e/my-event`) for "Share Event Link" empty state */
+  guestPagePath?: string;
 };
 
-export function SongQueuePanel({ eventId, djMode = false }: SongQueuePanelProps) {
+export function SongQueuePanel({ eventId, djMode = false, guestPagePath }: SongQueuePanelProps) {
   const t = useTranslations('DjDashboard');
   const [songs, setSongs] = useState<Song[]>([]);
   const [filter, setFilter] = useState<'all' | SongStatus>('all');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const handleShareLink = useCallback(() => {
+    if (typeof window === 'undefined' || !guestPagePath) return;
+    const url = `${window.location.origin}${guestPagePath}`;
+    void window.navigator.clipboard.writeText(url);
+    // Could add toast here; for now copy is silent per spec
+  }, [guestPagePath]);
 
   useEffect(() => {
     void loadSongs();
@@ -118,7 +129,7 @@ export function SongQueuePanel({ eventId, djMode = false }: SongQueuePanelProps)
           </p>
         </div>
       )}
-      <div className="mb-4 flex items-center justify-between gap-3">
+      <div className="relative mb-4 flex items-center justify-between gap-3">
         <h2
           id="song-queue-heading"
           className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-foreground"
@@ -131,6 +142,12 @@ export function SongQueuePanel({ eventId, djMode = false }: SongQueuePanelProps)
             )
           </span>
         </h2>
+        <OnboardingTooltip
+          id="song-approval"
+          title={t('tooltip_song_approval_title')}
+          description={t('tooltip_song_approval_description')}
+          position="bottom"
+        />
         <div className="flex items-center gap-2">
           <Select
             value={filter}
@@ -176,10 +193,13 @@ export function SongQueuePanel({ eventId, djMode = false }: SongQueuePanelProps)
 
       {!isLoading && songs.length === 0
         ? (
-            <div className="py-8 text-center text-muted-foreground">
-              <Music className="mx-auto mb-3 size-10 opacity-30" aria-hidden />
-              <p className="text-sm">No song requests yet</p>
-            </div>
+            <EmptyState
+              icon={Music}
+              title={t('empty_songs_title')}
+              description={t('empty_songs_description')}
+              actionLabel={guestPagePath ? t('empty_songs_cta') : undefined}
+              onAction={guestPagePath ? handleShareLink : undefined}
+            />
           )
         : null}
 

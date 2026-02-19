@@ -406,7 +406,7 @@ export default async function EventDetailPage({ params }: PageProps) {
                   />
                 </div>
               </div>
-              <SongQueuePanel eventId={eventId} />
+              <SongQueuePanel eventId={eventId} guestPagePath={`/e/${event.slug}`} />
             </div>
           )}
         </div>
