@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 
 import { AllLocales, AppConfig } from './utils/AppConfig';
@@ -15,9 +15,13 @@ const LOCAL_ORIGIN_127 = 'http://127.0.0.1:3000';
 
 /** In dev, force all redirects to use 127.0.0.1 so we never send Location: localhost (Spotify requires 127.0.0.1). */
 function ensureRedirectUses127(response: NextResponse): NextResponse {
-  if (response.status < 300 || response.status > 399) return response;
+  if (response.status < 300 || response.status > 399) {
+    return response;
+  }
   const location = response.headers.get('Location');
-  if (!location) return response;
+  if (!location) {
+    return response;
+  }
   try {
     const url = new URL(location, LOCAL_ORIGIN_127);
     if (url.hostname === 'localhost') {
@@ -51,11 +55,21 @@ export default async function middleware(request: NextRequest) {
 
   // API routes live outside [locale]/ — never run intl middleware on them
   if (pathname.startsWith('/api')) {
-    if (pathname.startsWith('/api/auth')) return NextResponse.next();
-    if (pathname.startsWith('/api/events/') && pathname.endsWith('/songs')) return NextResponse.next();
-    if (pathname.startsWith('/api/rsvp/')) return NextResponse.next();
-    if (pathname.startsWith('/api/songs/search')) return NextResponse.next();
-    if (!sessionToken) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (pathname.startsWith('/api/auth')) {
+      return NextResponse.next();
+    }
+    if (pathname.startsWith('/api/events/') && pathname.endsWith('/songs')) {
+      return NextResponse.next();
+    }
+    if (pathname.startsWith('/api/rsvp/')) {
+      return NextResponse.next();
+    }
+    if (pathname.startsWith('/api/songs/search')) {
+      return NextResponse.next();
+    }
+    if (!sessionToken) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     return NextResponse.next();
   }
 
