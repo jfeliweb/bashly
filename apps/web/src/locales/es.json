@@ -1,23 +1,23 @@
 {
   "Index": {
-    "meta_title": "Bashly - Unforgettable Events, Effortlessly Planned",
-    "meta_description": "Plan Sweet 16s, graduations, and celebrations with RSVP management, song requests, and streaming playlist export. Free to start.",
-    "hero_headline_1": "Unforgettable events,",
-    "hero_headline_2": "effortlessly",
-    "hero_headline_3": "planned",
-    "hero_subtext": "Create stunning Sweet 16s, graduations, and celebrations with RSVP management, guest song requests, and streaming playlist export. All in one place.",
-    "primary_cta": "Get Started Free",
-    "secondary_cta": "See How It Works",
-    "hero_disclaimer": "No credit card required • Free forever for small events"
+    "meta_title": "Bashly - Eventos Inolvidables, Fácilmente Planeados",
+    "meta_description": "Planifica Sweet 16s, graduaciones y celebraciones con gestión de RSVP, solicitudes de canciones y exportación de listas de reproducción.",
+    "hero_headline_1": "Eventos inolvidables,",
+    "hero_headline_2": "sin esfuerzo",
+    "hero_headline_3": "planeados",
+    "hero_subtext": "Crea Sweet 16s, graduaciones y celebraciones con gestión de RSVP, solicitudes de canciones y exportación de listas. Todo en un solo lugar.",
+    "primary_cta": "Empezar gratis",
+    "secondary_cta": "Ver cómo funciona",
+    "hero_disclaimer": "Sin tarjeta de crédito • Gratis para eventos pequeños"
   },
   "Nav": {
-    "events": "Events",
-    "features": "Features",
-    "pricing": "Pricing",
-    "about": "About",
-    "sign_in": "Sign In",
-    "sign_up": "Sign Up",
-    "dashboard": "Dashboard"
+    "events": "Eventos",
+    "features": "Características",
+    "pricing": "Precios",
+    "about": "Acerca de",
+    "sign_in": "Iniciar Sesión",
+    "sign_up": "Registrarse",
+    "dashboard": "Panel"
   },
   "Navbar": {
     "sign_in": "Sign In",
@@ -38,20 +38,20 @@
     "section_subtitle": "Features",
     "section_title": "Everything you need for your event",
     "section_description": "Song requests, RSVPs, streaming export, and more — all in one place.",
-    "landing_section_title": "Everything you need to plan unforgettable events",
-    "landing_section_description": "From RSVPs to playlists, Bashly handles the details so you can focus on celebrating.",
-    "feature_guest_title": "Guest Management",
-    "feature_guest_description": "Track RSVPs, dietary restrictions, and plus-ones. No spreadsheets needed.",
-    "feature_songs_title": "Song Requests",
-    "feature_songs_description": "Let guests request songs with a simple QR code scan. Curate the perfect playlist.",
-    "feature_invites_title": "Instant Invites",
-    "feature_invites_description": "Generate unique invite links and QR codes. Share via text, email, or print.",
-    "feature_spotify_title": "Spotify Export",
-    "feature_spotify_description": "Export approved songs directly to Spotify. One-click playlist creation.",
-    "feature_schedule_title": "Event Schedule",
-    "feature_schedule_description": "Build a timeline for your event. Share with vendors, DJs, and co-hosts.",
-    "feature_registry_title": "Gift Registry",
-    "feature_registry_description": "Link to your registries. Guests see everything in one beautiful page."
+    "landing_section_title": "Todo lo que necesitas para eventos inolvidables",
+    "landing_section_description": "De RSVPs a playlists, Bashly se encarga de los detalles para que te enfoques en celebrar.",
+    "feature_guest_title": "Gestión de invitados",
+    "feature_guest_description": "RSVPs, restricciones dietéticas y acompañantes. Sin hojas de cálculo.",
+    "feature_songs_title": "Solicitudes de canciones",
+    "feature_songs_description": "Los invitados piden canciones con un escaneo QR. Curatea la playlist perfecta.",
+    "feature_invites_title": "Invitaciones al instante",
+    "feature_invites_description": "Enlaces únicos y códigos QR. Comparte por mensaje, email o impreso.",
+    "feature_spotify_title": "Exportar a Spotify",
+    "feature_spotify_description": "Exporta canciones aprobadas a Spotify. Playlist en un clic.",
+    "feature_schedule_title": "Cronograma del evento",
+    "feature_schedule_description": "Crea la línea de tiempo. Compártela con proveedores, DJs y co-anfitriones.",
+    "feature_registry_title": "Regalo de bodas",
+    "feature_registry_description": "Enlaza tus listas de regalos. Todo en una sola página."
   },
   "Pricing": {
     "section_subtitle": "Plans",
@@ -83,38 +83,38 @@
     "answer": "Create an event, then generate invite links or QR codes from the event dashboard. Share the link and guests can RSVP and request songs."
   },
   "CTA": {
-    "title": "Ready to plan your bash?",
+    "title": "¿Listo para planear tu fiesta?",
     "description": "Create your first event free. No credit card required.",
-    "section_description": "Join thousands of hosts who trust Bashly for their celebrations. Start free — no credit card required.",
-    "button_text": "Get started free"
+    "section_description": "Miles de anfitriones confían en Bashly. Empieza gratis — sin tarjeta de crédito.",
+    "button_text": "Empezar gratis"
   },
   "HowItWorks": {
-    "section_title": "How Bashly works",
-    "section_description": "Four simple steps to create unforgettable celebrations",
-    "step_1_title": "Create Your Event",
-    "step_1_description": "Add event details, upload a cover photo, and customize your guest page.",
-    "step_2_title": "Invite Guests",
-    "step_2_description": "Share your unique link or download a QR code for physical invitations.",
-    "step_3_title": "Collect Requests",
-    "step_3_description": "Guests RSVP and request songs — no app download required.",
-    "step_4_title": "Curate & Export",
-    "step_4_description": "Approve songs, export to Spotify, and enjoy your perfectly curated playlist."
+    "section_title": "Cómo funciona Bashly",
+    "section_description": "Cuatro pasos para celebraciones inolvidables",
+    "step_1_title": "Crea tu evento",
+    "step_1_description": "Detalles, foto de portada y personaliza la página de invitados.",
+    "step_2_title": "Invita invitados",
+    "step_2_description": "Comparte tu enlace o descarga un código QR para invitaciones físicas.",
+    "step_3_title": "Recoge solicitudes",
+    "step_3_description": "RSVPs y solicitudes de canciones — sin descargar app.",
+    "step_4_title": "Curatea y exporta",
+    "step_4_description": "Aprueba canciones, exporta a Spotify y disfruta tu playlist."
   },
   "EventShowcase": {
-    "section_title": "Perfect for any celebration",
-    "section_description": "Bashly adapts to your event — no matter the occasion",
+    "section_title": "Perfecto para cualquier celebración",
+    "section_description": "Bashly se adapta a tu evento — sea cual sea la ocasión",
     "sweet16_title": "Sweet 16",
-    "sweet16_description": "Make it a night to remember",
-    "graduation_title": "Graduation",
-    "graduation_description": "Celebrate their achievement",
+    "sweet16_description": "Una noche para recordar",
+    "graduation_title": "Graduación",
+    "graduation_description": "Celebra su logro",
     "quinceanera_title": "Quinceañera",
-    "quinceanera_description": "Honor tradition with elegance",
-    "anniversary_title": "Anniversary",
-    "anniversary_description": "Toast to lasting love",
-    "reunion_title": "Family Reunion",
-    "reunion_description": "Bring everyone together",
-    "birthday_title": "Birthday Bash",
-    "birthday_description": "Party like never before"
+    "quinceanera_description": "Honra la tradición con elegancia",
+    "anniversary_title": "Aniversario",
+    "anniversary_description": "Brinda por el amor duradero",
+    "reunion_title": "Reunión familiar",
+    "reunion_description": "Reúne a todos",
+    "birthday_title": "Fiesta de cumpleaños",
+    "birthday_description": "Fiesta como nunca"
   },
   "Footer": {
     "product": "Product",
@@ -130,12 +130,25 @@
     "not_enough_permission": "You do not have the permissions to perform this action"
   },
   "SignIn": {
-    "meta_title": "Sign in",
-    "meta_description": "Seamlessly sign in to your account with our user-friendly login process."
+    "meta_title": "Iniciar Sesión",
+    "title": "Bienvenido de nuevo",
+    "subtitle": "Inicia sesión para gestionar tus eventos",
+    "email_label": "Correo electrónico",
+    "password_label": "Contraseña",
+    "sign_in_button": "Iniciar Sesión",
+    "no_account": "¿No tienes cuenta?",
+    "sign_up_link": "Regístrate"
   },
   "SignUp": {
-    "meta_title": "Sign up",
-    "meta_description": "Effortlessly create an account through our intuitive sign-up process."
+    "meta_title": "Crear Cuenta",
+    "title": "Crear cuenta",
+    "subtitle": "Comienza a planificar eventos inolvidables",
+    "name_label": "Nombre",
+    "email_label": "Correo electrónico",
+    "password_label": "Contraseña",
+    "sign_up_button": "Crear Cuenta",
+    "have_account": "¿Ya tienes cuenta?",
+    "sign_in_link": "Inicia sesión"
   },
   "DashboardLayout": {
     "my_events": "My Events",
@@ -145,15 +158,15 @@
   },
   "Dashboard": {
     "meta_title": "Bashly Dashboard",
-    "meta_description": "Your events at a glance.",
-    "title": "My Events",
-    "subtitle": "Manage your celebrations",
-    "create_event": "Create Event",
-    "empty_state_title": "No events yet",
-    "empty_state_description": "Create your first event to get started",
-    "rsvp_count": "RSVPs",
-    "song_count": "Songs",
-    "guest_count": "Guests"
+    "meta_description": "Tus eventos de un vistazo.",
+    "title": "Mis Eventos",
+    "subtitle": "Gestiona tus celebraciones",
+    "create_event": "Crear Evento",
+    "empty_state_title": "No hay eventos todavía",
+    "empty_state_description": "Crea tu primer evento para comenzar",
+    "rsvp_count": "Confirmaciones",
+    "song_count": "Canciones",
+    "guest_count": "Invitados"
   },
   "DashboardIndex": {
     "title_bar": "Dashboard",

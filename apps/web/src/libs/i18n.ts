@@ -16,7 +16,7 @@ import { AllLocales } from '@/utils/AppConfig';
 // Using internationalization in Server Components
 export default getRequestConfig(async ({ locale }) => {
   // Validate that the incoming `locale` parameter is valid
-  if (!AllLocales.includes(locale)) {
+  if (!(AllLocales as readonly string[]).includes(locale)) {
     notFound();
   }
 
