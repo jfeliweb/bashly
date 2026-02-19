@@ -87,3 +87,33 @@
     @apply font-heading;
   }
 }
+
+@layer components {
+  .prose-cerulean h2 {
+    @apply mt-8 text-xl font-semibold text-foreground;
+  }
+  .prose-cerulean h3 {
+    @apply mt-6 text-lg font-semibold text-foreground;
+  }
+  .prose-cerulean p {
+    @apply mt-3 text-muted-foreground;
+  }
+  .prose-cerulean ul {
+    @apply mt-3 list-disc pl-6 text-muted-foreground;
+  }
+  .prose-cerulean li {
+    @apply mt-1 text-muted-foreground;
+  }
+  .prose-cerulean strong {
+    @apply text-foreground;
+  }
+  .prose-cerulean a {
+    @apply text-cerulean-600 hover:text-cerulean-700 focus:outline focus:outline-2 focus:outline-offset-2;
+  }
+  .prose-cerulean a:focus-visible {
+    outline-width: 3px;
+    outline-style: solid;
+    outline-color: var(--focus-ring, currentColor);
+    outline-offset: 3px;
+  }
+}
