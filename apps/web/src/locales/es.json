@@ -23,6 +23,7 @@
     "sign_in": "Sign In",
     "sign_up": "Sign Up",
     "features": "Características",
+    "pricing": "Precios",
     "about": "Acerca de",
     "product": "Product",
     "docs": "Docs",
@@ -202,6 +203,71 @@
     "plan_interval_year": "year",
     "plan_interval_per_event": "event",
     "next_renew_date": "Your subscription renews on {date}"
+  },
+  "PricingPage": {
+    "meta_title": "Precios",
+    "meta_description": "Elige el plan perfecto para tus eventos. Empieza gratis y mejora cuando quieras.",
+    "hero_title": "Precios simples y transparentes",
+    "hero_subtitle": "Empieza gratis y mejora cuando estés listo. Sin tarifas ocultas.",
+    "hero_disclaimer": "Durante la beta, todas las funciones son gratuitas. Los planes de pago llegarán pronto.",
+    "billing": {
+      "forever_free": "para siempre",
+      "per_event": "evento",
+      "per_month": "mes"
+    },
+    "plans": {
+      "free": {
+        "name": "Gratis",
+        "description": "Perfecto para probar Bashly"
+      },
+      "celebration": {
+        "name": "Celebración",
+        "description": "Para un solo evento inolvidable"
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Para anfitriones con eventos recurrentes"
+      },
+      "planner": {
+        "name": "Planner",
+        "description": "Para organizadores de eventos profesionales"
+      }
+    },
+    "badges": {
+      "most_popular": "Más popular"
+    },
+    "cta_free": "Empezar gratis",
+    "cta_coming_soon": "Próximamente",
+    "features": {
+      "active_events_label": "evento(s) activo(s)",
+      "guests_per_event_label": "invitados por evento",
+      "song_requests_label": "solicitudes de canciones",
+      "streaming_export_label": "exportación a Spotify",
+      "registry_links_label": "enlaces de lista de regalos",
+      "email_notifications_label": "notificaciones por email",
+      "qr_codes_label": "generación de código QR",
+      "schedule_label": "cronograma del evento",
+      "team_roles_label": "roles del equipo (DJ, co-anfitrión)",
+      "vendor_portal_label": "portal para proveedores",
+      "white_label_label": "páginas de marca blanca",
+      "priority_support_label": "soporte prioritario",
+      "unlimited": "Ilimitado"
+    },
+    "beta_note": "Todos los planes incluyen soporte por email ilimitado y acceso a nuevas funciones durante la beta. No se te cobrará sin tu consentimiento.",
+    "contact_note": "¿Preguntas sobre precios o planes de pago? <contact_link>Contáctanos</contact_link> y te ayudaremos a elegir la mejor opción.",
+    "faq": {
+      "heading": "Preguntas frecuentes",
+      "q1_title": "¿Cuándo estarán disponibles los planes de pago?",
+      "q1_body": "Los planes de pago llegarán pronto. Durante la beta, todas las funciones son gratuitas. Te avisaremos con antelación antes de cualquier cobro y nunca se te cobrará sin tu consentimiento explícito.",
+      "q2_title": "¿Puedo mejorar o bajar de plan en cualquier momento?",
+      "q2_body": "Sí. Puedes cambiar de plan en cualquier momento. Las mejoras se aplican de inmediato y las reducciones al final de tu ciclo de facturación.",
+      "q3_title": "¿Qué métodos de pago aceptan?",
+      "q3_body": "Aceptamos las principales tarjetas de crédito (Visa, Mastercard, Amex) a través de Stripe. No almacenamos tu información de pago — Stripe la gestiona de forma segura.",
+      "q4_title": "¿Tienen política de reembolso?",
+      "q4_body": "Sí. Si no estás satisfecho con tu compra, contáctanos en los primeros 30 días para un reembolso completo. Sin preguntas.",
+      "q5_title": "¿Ofrecen descuentos para organizaciones sin fines de lucro?",
+      "q5_body": "Sí. Ofrecemos 50% de descuento en todos los planes de pago para organizaciones sin fines de lucro verificadas. Escríbenos a hello@bashly.app con tu información de registro para la verificación."
+    }
   },
   "FAQ": {
     "question": "How do I invite guests?",

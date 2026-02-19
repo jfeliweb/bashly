@@ -23,6 +23,7 @@
     "sign_in": "Sign In",
     "sign_up": "Sign Up",
     "features": "Features",
+    "pricing": "Pricing",
     "about": "About",
     "product": "Product",
     "docs": "Docs",
@@ -202,6 +203,71 @@
     "plan_interval_year": "year",
     "plan_interval_per_event": "event",
     "next_renew_date": "Your subscription renews on {date}"
+  },
+  "PricingPage": {
+    "meta_title": "Pricing",
+    "meta_description": "Choose the perfect plan for your events. Start free, upgrade anytime.",
+    "hero_title": "Simple, Transparent Pricing",
+    "hero_subtitle": "Start free, upgrade when you're ready. No hidden fees.",
+    "hero_disclaimer": "During beta, all features are free. Paid plans are coming soon.",
+    "billing": {
+      "forever_free": "forever",
+      "per_event": "event",
+      "per_month": "month"
+    },
+    "plans": {
+      "free": {
+        "name": "Free",
+        "description": "Perfect for trying Bashly"
+      },
+      "celebration": {
+        "name": "Celebration",
+        "description": "For a single unforgettable event"
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "For recurring event hosts"
+      },
+      "planner": {
+        "name": "Planner",
+        "description": "For professional event planners"
+      }
+    },
+    "badges": {
+      "most_popular": "Most Popular"
+    },
+    "cta_free": "Get Started",
+    "cta_coming_soon": "Coming Soon",
+    "features": {
+      "active_events_label": "active event(s)",
+      "guests_per_event_label": "guests per event",
+      "song_requests_label": "song requests",
+      "streaming_export_label": "Spotify export",
+      "registry_links_label": "registry links",
+      "email_notifications_label": "email notifications",
+      "qr_codes_label": "QR code generation",
+      "schedule_label": "event schedule",
+      "team_roles_label": "team roles (DJ, co-host)",
+      "vendor_portal_label": "vendor portal",
+      "white_label_label": "white-label pages",
+      "priority_support_label": "priority support",
+      "unlimited": "Unlimited"
+    },
+    "beta_note": "All plans include unlimited email support and access to new features during beta. You won't be charged without your consent.",
+    "contact_note": "Questions about pricing or paid plans? <contact_link>Contact us</contact_link> and we'll help you choose the right fit.",
+    "faq": {
+      "heading": "Frequently Asked Questions",
+      "q1_title": "When will paid plans be available?",
+      "q1_body": "Paid plans are coming soon! During beta, all features are free. We'll notify you well in advance before any charges, and you'll never be charged without your explicit consent.",
+      "q2_title": "Can I upgrade or downgrade anytime?",
+      "q2_body": "Yes. You can change your plan at any time. Upgrades take effect immediately, and downgrades take effect at the end of your billing cycle.",
+      "q3_title": "What payment methods do you accept?",
+      "q3_body": "We accept all major credit cards (Visa, Mastercard, Amex) via Stripe. We do not store your payment information — it's handled securely by Stripe.",
+      "q4_title": "Is there a refund policy?",
+      "q4_body": "Yes. If you're not satisfied with your purchase, contact us within 30 days for a full refund. No questions asked.",
+      "q5_title": "Do you offer discounts for nonprofits?",
+      "q5_body": "Yes! We offer 50% off all paid plans for verified nonprofit organizations. Contact us at hello@bashly.app with your EIN for verification."
+    }
   },
   "FAQ": {
     "question": "How do I invite guests?",

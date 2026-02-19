@@ -39,6 +39,9 @@ export const Navbar = () => {
           <Link href="/features">{t('features')}</Link>
         </li>
         <li>
+          <Link href="/pricing">{t('pricing')}</Link>
+        </li>
+        <li>
           <Link href="/about">{t('about')}</Link>
         </li>
         <li>
