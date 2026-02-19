@@ -77,10 +77,19 @@ export const Footer = () => {
         legalLinks={(
           <>
             <li>
-              <Link href="/sign-up">{t('terms_of_service')}</Link>
+              <Link href="/terms" className="hover:text-foreground">
+                {t('terms_of_service')}
+              </Link>
             </li>
             <li>
-              <Link href="/sign-up">{t('privacy_policy')}</Link>
+              <Link href="/privacy" className="hover:text-foreground">
+                {t('privacy_policy')}
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="hover:text-foreground">
+                {t('contact')}
+              </Link>
             </li>
           </>
         )}
