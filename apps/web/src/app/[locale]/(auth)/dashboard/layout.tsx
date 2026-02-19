@@ -26,17 +26,20 @@ export default function DashboardLayout(props: { children: React.ReactNode }) {
             menu={[
               {
                 href: '/dashboard',
-                label: t('home'),
+                label: t('my_events'),
               },
               {
                 href: '/dashboard/organization-profile/organization-members',
                 label: t('members'),
               },
               {
+                href: '/dashboard/billing',
+                label: t('billing'),
+              },
+              {
                 href: '/dashboard/organization-profile',
                 label: t('settings'),
               },
-              // PRO: Link to the /dashboard/billing page
             ]}
           />
         </div>

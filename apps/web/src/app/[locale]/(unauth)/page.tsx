@@ -1,40 +1,47 @@
+import type { Metadata } from 'next';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 
-import { CTA } from '@/templates/CTA';
-import { DemoBanner } from '@/templates/DemoBanner';
-import { FAQ } from '@/templates/FAQ';
-import { Features } from '@/templates/Features';
-import { Footer } from '@/templates/Footer';
-import { Hero } from '@/templates/Hero';
-import { Navbar } from '@/templates/Navbar';
-import { Pricing } from '@/templates/Pricing';
+import { CTASection } from '@/features/landing/CTASection';
+import { EventShowcase } from '@/features/landing/EventShowcase';
+import { Features } from '@/features/landing/Features';
+import { Hero } from '@/features/landing/Hero';
+import { HowItWorks } from '@/features/landing/HowItWorks';
+import { BaseTemplate } from '@/templates/BaseTemplate';
 
-export async function generateMetadata(props: { params: { locale: string } }) {
+export async function generateMetadata(props: {
+  params: { locale: string };
+}): Promise<Metadata> {
   const t = await getTranslations({
     locale: props.params.locale,
     namespace: 'Index',
   });
 
+  const title = t('meta_title');
+  const description = t('meta_description');
+
   return {
-    title: t('meta_title'),
-    description: t('meta_description'),
+    title,
+    description,
+    openGraph: {
+      title,
+      description:
+        'Plan Sweet 16s, graduations, and celebrations with RSVP management, song requests, and streaming playlist export.',
+      type: 'website',
+    },
   };
 }
 
-const IndexPage = (props: { params: { locale: string } }) => {
+const IndexPage = async (props: { params: { locale: string } }) => {
   unstable_setRequestLocale(props.params.locale);
 
   return (
-    <>
-      <DemoBanner />
-      <Navbar />
+    <BaseTemplate>
       <Hero />
       <Features />
-      <Pricing />
-      <FAQ />
-      <CTA />
-      <Footer />
-    </>
+      <HowItWorks />
+      <EventShowcase />
+      <CTASection />
+    </BaseTemplate>
   );
 };
 
