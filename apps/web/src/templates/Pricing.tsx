@@ -9,6 +9,18 @@ import { PLAN_ID } from '@/utils/AppConfig';
 export const Pricing = () => {
   const t = useTranslations('Pricing');
 
+  const signUpButton = (
+    <Link
+      className={buttonVariants({
+        size: 'sm',
+        className: 'mt-5 w-full',
+      })}
+      href="/sign-up"
+    >
+      {t('button_text')}
+    </Link>
+  );
+
   return (
     <Section
       subtitle={t('section_subtitle')}
@@ -17,39 +29,10 @@ export const Pricing = () => {
     >
       <PricingInformation
         buttonList={{
-          [PLAN_ID.FREE]: (
-            <Link
-              className={buttonVariants({
-                size: 'sm',
-                className: 'mt-5 w-full',
-              })}
-              href="/sign-up"
-            >
-              {t('button_text')}
-            </Link>
-          ),
-          [PLAN_ID.PREMIUM]: (
-            <Link
-              className={buttonVariants({
-                size: 'sm',
-                className: 'mt-5 w-full',
-              })}
-              href="/sign-up"
-            >
-              {t('button_text')}
-            </Link>
-          ),
-          [PLAN_ID.ENTERPRISE]: (
-            <Link
-              className={buttonVariants({
-                size: 'sm',
-                className: 'mt-5 w-full',
-              })}
-              href="/sign-up"
-            >
-              {t('button_text')}
-            </Link>
-          ),
+          [PLAN_ID.FREE]: signUpButton,
+          [PLAN_ID.CELEBRATION]: signUpButton,
+          [PLAN_ID.PREMIUM]: signUpButton,
+          [PLAN_ID.PLANNER]: signUpButton,
         }}
       />
     </Section>
