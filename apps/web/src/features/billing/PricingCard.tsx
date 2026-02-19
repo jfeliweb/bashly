@@ -1,18 +1,23 @@
 import { useTranslations } from 'next-intl';
 import React from 'react';
 
-import type { BillingInterval } from '@/types/Subscription';
-
-type PlanId = 'enterprise' | 'free' | 'premium';
+import type { PlanId } from '@/utils/AppConfig';
 
 export const PricingCard = (props: {
   planId: PlanId;
   price: number;
-  interval: BillingInterval;
+  billing?: 'per-event' | 'monthly';
   button: React.ReactNode;
   children: React.ReactNode;
 }) => {
   const t = useTranslations('PricingPlan');
+
+  const intervalKey
+    = props.billing === 'monthly'
+      ? 'plan_interval_month'
+      : props.billing === 'per-event'
+        ? 'plan_interval_per_event'
+        : null;
 
   return (
     <div className="rounded-xl border border-border px-6 py-8 text-center">
@@ -25,9 +30,11 @@ export const PricingCard = (props: {
           {`$${props.price}`}
         </div>
 
-        <div className="ml-1 text-muted-foreground">
-          {`/ ${t(`plan_interval_${props.interval}`)}`}
-        </div>
+        {intervalKey && (
+          <div className="ml-1 text-muted-foreground">
+            {`/ ${t(intervalKey)}`}
+          </div>
+        )}
       </div>
 
       <div className="mt-2 text-sm text-muted-foreground">
