@@ -48,7 +48,8 @@ export function SignUpForm() {
       if (result.error) {
         setError(result.error.message || 'Failed to create account');
       } else {
-        router.push('/dashboard');
+        const searchParams = new URLSearchParams({ welcome: 'true' });
+        router.push(`/dashboard?${searchParams.toString()}`);
         router.refresh();
       }
     } catch {
