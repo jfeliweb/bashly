@@ -7,6 +7,7 @@ const intlMiddleware = createMiddleware({
   locales: AllLocales,
   localePrefix: AppConfig.localePrefix,
   defaultLocale: AppConfig.defaultLocale,
+  localeDetection: false,
 });
 
 const protectedPaths = ['/dashboard', '/onboarding'];
