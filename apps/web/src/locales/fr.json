@@ -37,6 +37,28 @@
     "section_description": "Un template gratuit et open-source de landing page pour votre entreprise SaaS, construit avec React, TypeScript, Shadcn UI et Tailwind CSS.",
     "button_text": "Démarrer"
   },
+  "DashboardStats": {
+    "total_rsvps_title": "RSVPs totaux",
+    "total_rsvps_change": "+12 % ce mois-ci",
+    "song_requests_title": "Demandes de chansons",
+    "song_requests_pending": "{count} en attente",
+    "active_events_title": "Événements actifs",
+    "active_events_change": "Voir tout",
+    "engagement_title": "Engagement",
+    "engagement_change": "+8 % vs dernier événement"
+  },
+  "DashboardQuickActions": {
+    "title": "Actions rapides",
+    "create_event_label": "Créer un événement",
+    "create_event_description": "Commencez à planifier votre prochaine fête",
+    "share_link_label": "Partager le lien",
+    "share_link_description": "Envoyez des invitations à vos invités",
+    "export_guests_label": "Exporter la liste d'invités",
+    "export_guests_description": "Télécharger les RSVPs en CSV",
+    "import_guests_label": "Importer des invités",
+    "import_guests_description": "Import en masse depuis un tableur",
+    "soon_badge": "Bientôt"
+  },
   "PricingPlan": {
     "free_plan_name": "Gratuit",
     "premium_plan_name": "Premium",

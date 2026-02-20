@@ -501,6 +501,28 @@
     "song_count": "Canciones",
     "guest_count": "Invitados"
   },
+  "DashboardStats": {
+    "total_rsvps_title": "Total de RSVPs",
+    "total_rsvps_change": "+12% este mes",
+    "song_requests_title": "Solicitudes de canciones",
+    "song_requests_pending": "{count} pendientes",
+    "active_events_title": "Eventos activos",
+    "active_events_change": "Ver todos",
+    "engagement_title": "Participación",
+    "engagement_change": "+8% vs último evento"
+  },
+  "DashboardQuickActions": {
+    "title": "Acciones rápidas",
+    "create_event_label": "Crear evento",
+    "create_event_description": "Comienza a planear tu próxima celebración",
+    "share_link_label": "Compartir enlace",
+    "share_link_description": "Envía invitaciones a tus invitados",
+    "export_guests_label": "Exportar lista de invitados",
+    "export_guests_description": "Descarga los RSVPs como CSV",
+    "import_guests_label": "Importar invitados",
+    "import_guests_description": "Carga masiva desde una hoja de cálculo",
+    "soon_badge": "Pronto"
+  },
   "DashboardIndex": {
     "title_bar": "Dashboard",
     "title_bar_description": "Your events at a glance"
