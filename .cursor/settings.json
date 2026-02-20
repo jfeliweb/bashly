@@ -1,0 +1,16 @@
+{
+  "plugins": {
+    "vercel": {
+      "enabled": true
+    },
+    "neon-postgres": {
+      "enabled": true
+    },
+    "sentry": {
+      "enabled": true
+    },
+    "stripe": {
+      "enabled": true
+    }
+  }
+}
