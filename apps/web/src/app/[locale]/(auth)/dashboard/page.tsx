@@ -1,5 +1,6 @@
 import { and, count, desc, eq, ne } from 'drizzle-orm';
 import { Calendar } from 'lucide-react';
+import { Suspense } from 'react';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -7,11 +8,14 @@ import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/EmptyState';
+import { EventStatusBadge } from '@/components/EventStatusBadge';
+import { StatsCardSkeleton } from '@/components/Skeleton';
+import { StatsCards } from '@/features/dashboard/StatsCards';
+import { QuickActions } from '@/features/dashboard/QuickActions';
 import { DashboardWelcomeOverlay } from '@/features/onboarding/DashboardWelcomeOverlay';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable, rsvpTable } from '@/models/Schema';
-import { cn } from '@/utils/Helpers';
 
 type EventCard = {
   id: string;
@@ -268,6 +272,14 @@ export default async function DashboardEventsPage(props: PageProps) {
 
   const t = await getTranslations('EventsList');
 
+  const totalRsvps = events.reduce(
+    (sum, ev) => sum + (ev.userRole === 'vendor' ? 0 : ev.rsvp_count),
+    0,
+  );
+  const activeEvents = events.filter(
+    ev => (ev.status ?? 'draft') === 'published',
+  ).length;
+
   return (
     <>
       <DashboardWelcomeOverlay
@@ -291,6 +303,32 @@ export default async function DashboardEventsPage(props: PageProps) {
             <Link href="/dashboard/events/new">{t('new_event_button')}</Link>
           </Button>
         </div>
+      </div>
+
+      <div className="space-y-6">
+        <Suspense
+          fallback={(
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <StatsCardSkeleton
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`stats-card-fallback-${i.toString()}`}
+                />
+              ))}
+            </div>
+          )}
+        >
+          <StatsCards
+            stats={{
+              totalRsvps,
+              totalSongs: 0,
+              activeEvents,
+              pendingSongs: 0,
+            }}
+          />
+        </Suspense>
+
+        <QuickActions />
       </div>
 
       {events.length === 0
@@ -332,27 +370,11 @@ export default async function DashboardEventsPage(props: PageProps) {
                     </p>
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span
-                          className={cn(
-                            'inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-xs font-semibold',
-                            status === 'draft'
-                            && 'border-border bg-muted text-muted-foreground',
-                            status === 'published'
-                            && 'border-[rgb(48,153,0)] bg-[rgb(238,255,229)] text-[rgb(48,153,0)] dark:border-[rgb(116,255,51)] dark:bg-[rgb(116,255,51)]/10 dark:text-[rgb(116,255,51)]',
-                            status === 'completed'
-                            && 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-400/10 dark:text-blue-300',
-                            status === 'cancelled'
-                            && 'border-destructive/50 bg-destructive/10 text-destructive',
-                          )}
-                        >
-                          {status === 'published' && (
-                            <span
-                              className="mr-1.5 size-1.5 rounded-full bg-current motion-safe:animate-pulse"
-                              aria-hidden
-                            />
-                          )}
-                          {t(`status_${status}` as 'status_draft')}
-                        </span>
+                        <EventStatusBadge
+                          status={status as 'draft' | 'published' | 'completed' | 'cancelled'}
+                          label={t(`status_${status}` as 'status_draft')}
+                          showPulse={status === 'published'}
+                        />
                         {ev.userRole === 'co_host' && (
                           <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
                             {t('co_host_badge')}
