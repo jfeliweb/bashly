@@ -22,6 +22,8 @@ export const Env = createEnv({
     MAPBOX_SECRET_TOKEN: z.string().min(1),
     SPOTIFY_CLIENT_ID: z.string().min(1),
     SPOTIFY_REDIRECT_URI: z.string().url(),
+    GOOGLE_CLIENT_ID: z.string().min(1),
+    GOOGLE_CLIENT_SECRET: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().optional(),
@@ -49,6 +51,8 @@ export const Env = createEnv({
     MAPBOX_SECRET_TOKEN: process.env.MAPBOX_SECRET_TOKEN,
     SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
     SPOTIFY_REDIRECT_URI: process.env.SPOTIFY_REDIRECT_URI,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,

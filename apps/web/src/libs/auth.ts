@@ -12,9 +12,10 @@ import {
 } from '@/models/AuthSchema';
 
 import { db } from './DB';
+import { Env } from './Env';
 import { sendEmail } from './resend';
 
-const appUrl = process.env.BETTER_AUTH_URL || 'http://127.0.0.1:3000';
+const appUrl = Env.BETTER_AUTH_URL || 'http://127.0.0.1:3000';
 
 export const auth = betterAuth({
   baseURL: appUrl,
@@ -46,6 +47,12 @@ export const auth = betterAuth({
       });
     },
     sendOnSignUp: true,
+  },
+  socialProviders: {
+    google: {
+      clientId: Env.GOOGLE_CLIENT_ID,
+      clientSecret: Env.GOOGLE_CLIENT_SECRET,
+    },
   },
   session: {
     cookieCache: {

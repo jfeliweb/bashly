@@ -452,13 +452,13 @@
     "meta_title": "Sign in",
     "meta_description": "Seamlessly sign in to your account with our user-friendly login process.",
     "or_continue_with": "Or continue with",
-    "social_coming_soon_hint": "Social login coming soon. For now, use email and password."
+    "social_coming_soon_hint": "Apple sign-in coming soon."
   },
   "SignUp": {
     "meta_title": "Sign up",
     "meta_description": "Effortlessly create an account through our intuitive sign-up process.",
     "or_continue_with": "Or continue with",
-    "social_coming_soon_hint": "Social login coming soon. For now, use email and password."
+    "social_coming_soon_hint": "Apple sign-in coming soon."
   },
   "SocialLoginPlaceholder": {
     "continue_google": "Continue with Google",
@@ -467,7 +467,7 @@
   },
   "BetaBanner": {
     "beta_note_title": "Beta Note:",
-    "beta_note_message": "Social login (Google, Apple) is coming soon. For now, please sign in with email and password.",
+    "beta_note_message": "Apple sign-in is coming soon. Sign in with Google or email and password.",
     "dismiss_aria": "Dismiss"
   },
   "DashboardLayout": {

@@ -1,9 +1,11 @@
 'use client';
 
-import { Apple, Chrome } from 'lucide-react';
+import { Apple, Chrome, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 import { ComingSoonBadge } from '@/components/placeholders/ComingSoonBadge';
+import { authClient } from '@/libs/auth-client';
 import { cn } from '@/utils/Helpers';
 
 type SocialLoginPlaceholderProps = {
@@ -16,6 +18,7 @@ export function SocialLoginPlaceholder({
   disabled = true,
 }: SocialLoginPlaceholderProps) {
   const t = useTranslations('SocialLoginPlaceholder');
+  const [isLoading, setIsLoading] = useState(false);
 
   const config = {
     google: {
@@ -34,16 +37,38 @@ export function SocialLoginPlaceholder({
     },
   };
 
-  const { icon: Icon, labelKey, bgColor, borderColor, textColor } =
-    config[provider];
+  const {
+    icon: Icon,
+    labelKey,
+    bgColor,
+    borderColor,
+    textColor,
+  } = config[provider];
   const label = t(labelKey);
+
+  const handleClick = async () => {
+    if (disabled || isLoading) {
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider,
+        callbackURL: '/dashboard',
+      });
+    } catch {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="relative">
       <button
         type="button"
-        disabled={disabled}
+        disabled={disabled || isLoading}
+        aria-disabled={disabled || isLoading}
         aria-label={label}
+        onClick={handleClick}
         className={cn(
           'relative flex w-full items-center justify-center gap-3 rounded-[100px] border px-4 py-2.5 text-sm font-semibold transition-colors outline-none focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--focus-ring)] focus-visible:outline-offset-[3px]',
           borderColor,
@@ -51,10 +76,12 @@ export function SocialLoginPlaceholder({
           textColor,
           disabled
             ? 'cursor-not-allowed opacity-50'
-            : 'hover:opacity-90'
+            : 'hover:opacity-90',
         )}
       >
-        <Icon className="h-5 w-5" aria-hidden />
+        {isLoading
+          ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+          : <Icon className="h-5 w-5" aria-hidden />}
         <span>{label}</span>
       </button>
       {disabled && (

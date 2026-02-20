@@ -29,7 +29,7 @@ const SignUpPage = () => {
           </div>
         </div>
         <div className="space-y-3">
-          <SocialLoginPlaceholder provider="google" disabled />
+          <SocialLoginPlaceholder provider="google" disabled={false} />
           <SocialLoginPlaceholder provider="apple" disabled />
         </div>
         <p className="text-center text-xs text-muted-foreground">
