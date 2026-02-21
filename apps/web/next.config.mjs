@@ -15,6 +15,12 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
+const securityHeaders = [
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+];
+
 /** @type {import('next').NextConfig} */
 export default withSentryConfig(
   bundleAnalyzer(
@@ -24,6 +30,14 @@ export default withSentryConfig(
       },
       poweredByHeader: false,
       reactStrictMode: true,
+      async headers() {
+        return [
+          {
+            source: '/(.*)',
+            headers: securityHeaders,
+          },
+        ];
+      },
       images: {
         remotePatterns: [
           {
@@ -40,9 +54,8 @@ export default withSentryConfig(
   {
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
-    // FIXME: Add your Sentry organization and project names
-    org: 'nextjs-boilerplate-org',
-    project: 'nextjs-boilerplate',
+    org: 'bashly',
+    project: 'bashly-web',
 
     // Only print logs for uploading source maps in CI
     silent: !process.env.CI,

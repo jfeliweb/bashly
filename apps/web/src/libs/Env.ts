@@ -3,17 +3,14 @@ import { z } from 'zod';
 
 export const Env = createEnv({
   server: {
-    DATABASE_URL: z.string().optional(),
+    DATABASE_URL: z.string().min(1),
     BETTER_AUTH_SECRET: z.string().min(1),
     BETTER_AUTH_URL: z.string().url().optional(),
     LOGTAIL_SOURCE_TOKEN: z.string().optional(),
-    // STRIPE_SECRET_KEY: z.string().min(1),
-    // STRIPE_WEBHOOK_SECRET: z.string().min(1),
-    // BILLING_PLAN_ENV: z.enum(['dev', 'test', 'prod']),
     STRIPE_SECRET_KEY: z.string().optional(),
     STRIPE_WEBHOOK_SECRET: z.string().optional(),
     BILLING_PLAN_ENV: z.enum(['dev', 'test', 'prod']).optional(),
-    RESEND_API_KEY: z.string().optional(),
+    RESEND_API_KEY: z.string().min(1),
     R2_ENDPOINT: z.string().min(1),
     R2_ACCESS_KEY_ID: z.string().min(1),
     R2_SECRET_ACCESS_KEY: z.string().min(1),
@@ -27,9 +24,9 @@ export const Env = createEnv({
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().optional(),
-    // NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
     NEXT_PUBLIC_MAPBOX_TOKEN: z.string().min(1),
+    NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
   },
   shared: {
     NODE_ENV: z.enum(['test', 'development', 'production']).optional(),
@@ -57,6 +54,7 @@ export const Env = createEnv({
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_MAPBOX_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_TOKEN,
+    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
     NODE_ENV: process.env.NODE_ENV,
   },
 });
