@@ -16,6 +16,9 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:create-event": "dotenv -e .env.local -- playwright test tests/e2e/CreateEvent.e2e.ts",
+    "test:a11y": "playwright test tests/e2e/Accessibility.e2e.ts",
+    "test:a11y:public": "playwright test tests/e2e/Accessibility.e2e.ts --grep \"public pages\"",
+    "test:a11y:dashboard": "playwright test tests/e2e/Accessibility.e2e.ts --grep \"authenticated\"",
     "test:guest": "node scripts/verify-guest-page.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "dotenv -e .env.local -- drizzle-kit migrate",
@@ -75,6 +78,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.27.3",
+    "@axe-core/playwright": "^4.11.1",
     "@eslint-react/eslint-plugin": "^1.15.0",
     "@faker-js/faker": "^9.0.3",
     "@next/bundle-analyzer": "^14.2.35",

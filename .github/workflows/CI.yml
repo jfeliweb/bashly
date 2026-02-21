@@ -74,6 +74,13 @@ jobs:
       - name: Run storybook tests
         run: npm run test-storybook:ci
 
+      - name: Run a11y tests
+        run: npx playwright test tests/e2e/Accessibility.e2e.ts
+        env:
+          E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
+          E2E_TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_USER_PASSWORD }}
+          TEST_EVENT_SLUG: ${{ secrets.TEST_EVENT_SLUG }}
+
       - name: Run E2E tests
         run: npx percy exec -- npm run test:e2e
         env:
