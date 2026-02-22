@@ -6,7 +6,7 @@ import { Bricolage_Grotesque, JetBrains_Mono, Nunito } from 'next/font/google';
 import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
-import { DemoBadge } from '@/components/DemoBadge';
+// import { DemoBadge } from '@/components/DemoBadge';
 import { AllLocales } from '@/utils/AppConfig';
 
 const bricolage = Bricolage_Grotesque({
@@ -73,7 +73,7 @@ export default function RootLayout(props: {
         >
           {props.children}
 
-          <DemoBadge />
+          {/* <DemoBadge /> */}
         </NextIntlClientProvider>
       </body>
     </html>
