@@ -14,14 +14,14 @@
     --popover: 0 0% 100%;
     --popover-foreground: 200 70% 10%;
 
-    --primary: 199 52% 50%;
+    --primary: 199 52% 30%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 199 52% 93%;
     --secondary-foreground: 200 48% 23%;
 
     --muted: 199 52% 93%;
-    --muted-foreground: 199 27% 48%;
+    --muted-foreground: 199 35% 40%;
 
     --accent: 107 100% 30%;
     --accent-foreground: 0 0% 100%;
@@ -108,7 +108,7 @@
     @apply text-foreground;
   }
   .prose-cerulean a {
-    @apply text-cerulean-600 hover:text-cerulean-700 focus:outline focus:outline-2 focus:outline-offset-2;
+    @apply text-cerulean-700 underline underline-offset-2 hover:text-cerulean-800 focus:outline focus:outline-2 focus:outline-offset-2;
   }
   .prose-cerulean a:focus-visible {
     outline-width: 3px;

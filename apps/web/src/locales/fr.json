@@ -242,7 +242,10 @@
     "blog": "Blog",
     "community": "Communauté",
     "company": "Entreprise",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
     "terms_of_service": "Conditions d'utilisation",
+    "contact": "Contact",
     "privacy_policy": "Politique de confidentialité",
     "footer_text": "© {year} Bashly. Fait avec ♥ pour les célébrations."
   },

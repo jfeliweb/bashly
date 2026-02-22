@@ -42,7 +42,7 @@ export async function EventShowcase() {
               <h3 className="mt-3 font-semibold text-foreground">
                 {t(`${key}_title`)}
               </h3>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-xs text-foreground">
                 {t(`${key}_description`)}
               </p>
             </div>

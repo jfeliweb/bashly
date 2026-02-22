@@ -109,38 +109,37 @@ async function signIn(page: import('@playwright/test').Page) {
 test.describe('a11y — public pages', () => {
   test('homepage (/)', async ({ page }) => {
     await page.goto(url('/'));
-    // Wait for hero content to fully render before auditing
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await auditPage(page, url('/'));
   });
 
   test('sign-in page (/sign-in)', async ({ page }) => {
     await page.goto(url('/sign-in'));
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await auditPage(page, url('/sign-in'));
   });
 
   test('sign-up page (/sign-up)', async ({ page }) => {
     await page.goto(url('/sign-up'));
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await auditPage(page, url('/sign-up'));
   });
 
   test('privacy policy (/privacy)', async ({ page }) => {
     await page.goto(url('/privacy'));
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await auditPage(page, url('/privacy'));
   });
 
   test('terms of service (/terms)', async ({ page }) => {
     await page.goto(url('/terms'));
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await auditPage(page, url('/terms'));
   });
 
   test('contact page (/contact)', async ({ page }) => {
     await page.goto(url('/contact'));
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await auditPage(page, url('/contact'));
   });
 
@@ -154,7 +153,7 @@ test.describe('a11y — public pages', () => {
 
     // Guest event page lives outside the [locale] segment
     await page.goto(`/e/${slug}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Wait for Mapbox GL JS to finish rendering (it injects canvas elements)
     await page.waitForTimeout(1_500);
@@ -174,19 +173,19 @@ test.describe('a11y — authenticated dashboard pages', () => {
 
   test('dashboard home (/dashboard)', async ({ page }) => {
     await page.goto(url('/dashboard'));
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await auditPage(page, url('/dashboard'));
   });
 
   test('event list (/dashboard/events)', async ({ page }) => {
     await page.goto(url('/dashboard/events'));
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await auditPage(page, url('/dashboard/events'));
   });
 
   test('create event form (/dashboard/events/new)', async ({ page }) => {
     await page.goto(url('/dashboard/events/new'));
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     // Audit step 1 of the multi-step form
     await auditPage(page, url('/dashboard/events/new') + ' (step 1)');
 
@@ -214,7 +213,7 @@ test.describe('a11y — interactive states', () => {
     }
 
     await page.goto(`/e/${slug}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Open the RSVP modal
     const rsvpButton = page.getByRole('button', { name: /rsvp/i });
@@ -229,7 +228,7 @@ test.describe('a11y — interactive states', () => {
 
   test('sign-in form shows accessible error state on invalid submit', async ({ page }) => {
     await page.goto(url('/sign-in'));
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Submit with empty fields to trigger validation errors
     await page.getByRole('button', { name: /sign in/i }).click();

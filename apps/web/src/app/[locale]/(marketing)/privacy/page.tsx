@@ -102,7 +102,7 @@ export default async function PrivacyPage(props: {
                   email: chunks => (
                     <a
                       href="mailto:privacy@bashly.app"
-                      className="text-cerulean-600 hover:text-cerulean-700 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
+                      className="text-cerulean-700 underline underline-offset-2 hover:text-cerulean-800 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
                     >
                       {chunks}
                     </a>
@@ -131,7 +131,7 @@ export default async function PrivacyPage(props: {
                   email: chunks => (
                     <a
                       href="mailto:privacy@bashly.app"
-                      className="text-cerulean-600 hover:text-cerulean-700 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
+                      className="text-cerulean-700 underline underline-offset-2 hover:text-cerulean-800 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
                     >
                       {chunks}
                     </a>
