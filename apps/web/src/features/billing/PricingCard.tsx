@@ -3,6 +3,20 @@ import React from 'react';
 
 import type { PlanId } from '@/utils/AppConfig';
 
+const PLAN_NAME_KEY = {
+  free: 'free_plan_name',
+  celebration: 'celebration_plan_name',
+  premium: 'premium_plan_name',
+  planner: 'planner_plan_name',
+} as const satisfies Record<PlanId, string>;
+
+const PLAN_DESC_KEY = {
+  free: 'free_plan_description',
+  celebration: 'celebration_plan_description',
+  premium: 'premium_plan_description',
+  planner: 'planner_plan_description',
+} as const satisfies Record<PlanId, string>;
+
 export const PricingCard = (props: {
   planId: PlanId;
   price: number;
@@ -22,7 +36,7 @@ export const PricingCard = (props: {
   return (
     <div className="rounded-xl border border-border px-6 py-8 text-center">
       <div className="text-lg font-semibold">
-        {t(`${props.planId}_plan_name`)}
+        {t(PLAN_NAME_KEY[props.planId])}
       </div>
 
       <div className="mt-3 flex items-center justify-center">
@@ -38,7 +52,7 @@ export const PricingCard = (props: {
       </div>
 
       <div className="mt-2 text-sm text-muted-foreground">
-        {t(`${props.planId}_plan_description`)}
+        {t(PLAN_DESC_KEY[props.planId])}
       </div>
 
       {props.button}
