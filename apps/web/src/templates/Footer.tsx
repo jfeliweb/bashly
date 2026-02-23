@@ -11,7 +11,7 @@ export const Footer = () => {
   const t = useTranslations('Footer');
 
   return (
-    <Section className="pb-16 pt-0">
+    <Section className="pb-16 pt-8">
       <CenteredFooter
         // logo={<Logo />}
         logo={(
