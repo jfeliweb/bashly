@@ -1,8 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import { BetaBanner } from '@/components/placeholders/BetaBanner';
+import { BashlyLogo } from '@/components/BashlyLogo';
 import { SocialLoginPlaceholder } from '@/components/placeholders/SocialLoginPlaceholder';
 import { SignInForm } from '@/features/auth/SignInForm';
 
@@ -11,7 +12,11 @@ const SignInPage = () => {
 
   return (
     <div className="w-full max-w-md space-y-6 rounded-lg border bg-card p-8 shadow-sm">
-      <BetaBanner />
+      <div className="flex justify-center">
+        <Link href="/" aria-label="Bashly home">
+          <BashlyLogo className="text-2xl" />
+        </Link>
+      </div>
       <div className="space-y-2 text-center">
         <h1 className="text-2xl font-bold">{t('meta_title')}</h1>
         <p className="text-sm text-muted-foreground">{t('meta_description')}</p>
@@ -30,11 +35,8 @@ const SignInPage = () => {
         </div>
         <div className="space-y-3">
           <SocialLoginPlaceholder provider="google" disabled={false} />
-          <SocialLoginPlaceholder provider="apple" disabled />
+          {/* <SocialLoginPlaceholder provider="apple" disabled /> */}
         </div>
-        <p className="text-center text-xs text-muted-foreground">
-          {t('social_coming_soon_hint')}
-        </p>
       </div>
     </div>
   );
