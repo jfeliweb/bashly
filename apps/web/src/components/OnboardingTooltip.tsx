@@ -1,7 +1,7 @@
 'use client';
 
 import { Info, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type OnboardingTooltipProps = {
   id: string;
@@ -16,12 +16,16 @@ export function OnboardingTooltip({
   description,
   position = 'bottom',
 }: OnboardingTooltipProps) {
-  const [dismissed, setDismissed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.localStorage.getItem(`tooltip-${id}-dismissed`) === 'true';
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
     }
-    return false;
-  });
+    if (window.localStorage.getItem(`tooltip-${id}-dismissed`) === 'true') {
+      setDismissed(true);
+    }
+  }, [id]);
 
   function handleDismiss() {
     setDismissed(true);
@@ -30,7 +34,9 @@ export function OnboardingTooltip({
     }
   }
 
-  if (dismissed) return null;
+  if (dismissed) {
+    return null;
+  }
 
   const positionClasses = {
     bottom: 'top-full mt-2 left-0',

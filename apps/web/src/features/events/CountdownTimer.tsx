@@ -35,10 +35,18 @@ export function CountdownTimer({
     minutes: number;
     seconds: number;
   } | null>(null);
+  /** Only set in useEffect so initial server and client render match (no Date.now() in render). */
+  const [eventEnded, setEventEnded] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (!eventDate) {
       setUnits(null);
+      setEventEnded(null);
+      return;
+    }
+    const isPast = eventDate.getTime() <= Date.now();
+    setEventEnded(isPast);
+    if (isPast) {
       return;
     }
     const tick = () => setUnits(diff(eventDate));
@@ -58,8 +66,11 @@ export function CountdownTimer({
     return <p className={`font-nunito ${muteClass}`}>{formattedFallback}</p>;
   }
 
-  const isPast = eventDate.getTime() <= Date.now();
-  if (isPast) {
+  if (eventEnded === null || (eventEnded === false && units === null)) {
+    return <p className={`font-nunito ${muteClass}`}>{formattedFallback}</p>;
+  }
+
+  if (eventEnded === true) {
     return (
       <p className={`font-nunito ${muteClass}`} role="status">
         {t('event_ended')}
@@ -67,7 +78,7 @@ export function CountdownTimer({
     );
   }
 
-  if (units === null) {
+  if (!units) {
     return <p className={`font-nunito ${muteClass}`}>{formattedFallback}</p>;
   }
 
