@@ -380,3 +380,5 @@ npm run commit
 - `bashly-brand-guidelines.html` — design tokens, typography, color system
 - `bashly-host-dashboard.html` — host dashboard wireframe reference
 - `guest-event-page.html` — guest event page wireframe reference
+
+Built by Jeazy
