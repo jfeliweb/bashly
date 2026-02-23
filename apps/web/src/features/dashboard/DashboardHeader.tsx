@@ -28,18 +28,6 @@ export const DashboardHeader = (props: {
           <Logo />
         </Link>
 
-        <svg
-          className="size-8 stroke-muted-foreground max-sm:hidden"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" />
-          <path d="M17 5 7 19" />
-        </svg>
-
         <nav className="ml-3 max-lg:hidden">
           <ul className="flex flex-row items-center gap-x-3 text-lg font-medium [&_a:hover]:opacity-100 [&_a]:opacity-75">
             {props.menu.map(item => (
