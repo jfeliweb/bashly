@@ -25,7 +25,7 @@ export async function HowItWorks() {
 
         <div className="mx-auto mt-16 max-w-4xl">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {stepKeys.map((step, idx) => (
+            {stepKeys.map((step) => (
               <div key={step} className="relative">
                 <div className="flex flex-col items-center text-center">
                   <div
@@ -41,12 +41,6 @@ export async function HowItWorks() {
                     {t(`step_${step}_description`)}
                   </p>
                 </div>
-                {idx < stepKeys.length - 1 && (
-                  <div
-                    className="absolute left-1/2 top-6 hidden h-px w-full bg-cerulean-300 lg:block dark:bg-cerulean-700"
-                    aria-hidden
-                  />
-                )}
               </div>
             ))}
           </div>
