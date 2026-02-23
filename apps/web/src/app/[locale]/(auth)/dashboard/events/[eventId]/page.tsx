@@ -6,6 +6,9 @@ import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
 import { DeleteEventButton } from '@/features/events/DeleteEventButton';
+import { CopyGuestUrl } from '@/features/invites/CopyGuestUrl';
+import { InviteLinksPanel } from '@/features/invites/InviteLinksPanel';
+import { QrCodePreview } from '@/features/invites/QrCodePreview';
 import { PublishEventButton } from '@/features/events/PublishEventButton';
 import { RegistryLinksPanel } from '@/features/registry/RegistryLinksPanel';
 import { SongQueuePanel } from '@/features/songs/SongQueuePanel';
@@ -409,6 +412,58 @@ export default async function EventDetailPage({ params }: PageProps) {
               <SongQueuePanel eventId={eventId} guestPagePath={`/e/${event.slug}`} />
             </div>
           )}
+
+          {/* ── Invites & QR Code ──────────────────────────────────────────── */}
+          <section className="space-y-4" aria-labelledby="invites-qr-heading">
+            {event.status === 'published' && (
+              <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                <h2
+                  id="invites-qr-heading"
+                  className="font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-[rgb(48,153,0)] dark:text-[rgb(116,255,51)]"
+                >
+                  {t('qr_code_heading')}
+                </h2>
+
+                <div className="mt-4 flex flex-col items-center gap-6 sm:flex-row sm:items-start">
+                  <div className="shrink-0">
+                    <QrCodePreview eventId={eventId} slug={event.slug} />
+                  </div>
+
+                  <div className="flex flex-1 flex-col gap-4">
+                    <div>
+                      <p className="mb-1 text-xs font-medium text-muted-foreground">
+                        {t('guest_page_url_label')}
+                      </p>
+                      <CopyGuestUrl
+                        url={`${process.env.NEXT_PUBLIC_APP_URL ?? ''}/e/${event.slug}`}
+                      />
+                    </div>
+
+                    <div className="flex gap-2">
+                      <a
+                        href={`/api/events/${eventId}/qr?format=png`}
+                        download={`${event.slug}-qr.png`}
+                        className="inline-flex min-h-[44px] items-center rounded-[100px] bg-[rgb(81,255,0)] px-4 py-2 text-sm font-bold text-[rgb(9,21,27)] hover:bg-[rgb(65,204,0)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
+                        aria-label={t('download_png')}
+                      >
+                        ↓ PNG
+                      </a>
+                      <a
+                        href={`/api/events/${eventId}/qr?format=svg`}
+                        download={`${event.slug}-qr.svg`}
+                        className="inline-flex min-h-[44px] items-center rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-muted focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
+                        aria-label={t('download_svg')}
+                      >
+                        SVG
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <InviteLinksPanel eventId={eventId} eventSlug={event.slug} />
+          </section>
         </div>
 
         {/* Welcome Message */}

@@ -768,7 +768,11 @@
     "delete_event_confirm_description": "This cannot be undone. The event and all its data (RSVPs, song queue, registry links) will be permanently removed.",
     "delete_event_cancel": "Cancel",
     "delete_event_confirm": "Delete event",
-    "delete_event_deleting": "Deleting…"
+    "delete_event_deleting": "Deleting…",
+    "qr_code_heading": "Código QR e Invitaciones",
+    "guest_page_url_label": "Enlace de la página del evento",
+    "download_png": "Descargar código QR en PNG",
+    "download_svg": "Descargar código QR en SVG"
   },
   "Streaming": {
     "connect_button_label": "Connect Spotify",
