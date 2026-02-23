@@ -381,4 +381,4 @@ npm run commit
 - `bashly-host-dashboard.html` — host dashboard wireframe reference
 - `guest-event-page.html` — guest event page wireframe reference
 
-Built by Jeazy
+Built by [Jeazy](https://jfeliweb.com)
