@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="380" height="150" viewBox="0 0 380 150" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@800&amp;display=swap');
+    </style>
+  </defs>
+  <!-- Single word "bashly" with two colors -->
+  <text x="50" y="105" font-family="'Bricolage Grotesque', sans-serif" font-weight="800" font-size="100" letter-spacing="-4" fill="rgb(116, 255, 51)">bash<tspan fill="rgb(100, 171, 206)">ly</tspan></text>
+</svg>
