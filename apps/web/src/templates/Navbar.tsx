@@ -1,7 +1,7 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import { BashlyLogo } from '@/components/BashlyLogo';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { buttonVariants } from '@/components/ui/buttonVariants';
 import { CenteredMenu } from '@/features/landing/CenteredMenu';
@@ -13,10 +13,24 @@ export const Navbar = () => {
   return (
     <Section className="px-3 py-6">
       <CenteredMenu
+        logoLinkAriaLabel="Bashly home"
         logo={(
-          <Link href="/" className="flex items-center">
-            <BashlyLogo className="text-xl" />
-          </Link>
+          <span className="flex items-center">
+            <Image
+              src="/logos/wordmark-light-bg.svg"
+              alt="Bashly"
+              width={140}
+              height={32}
+              className="h-8 w-auto dark:hidden"
+            />
+            <Image
+              src="/logos/wordmark-dark-bg.svg"
+              alt="Bashly"
+              width={140}
+              height={32}
+              className="hidden h-8 w-auto dark:block"
+            />
+          </span>
         )}
         rightMenu={(
           <>
