@@ -14,8 +14,12 @@ const protectedPaths = ['/dashboard', '/onboarding'];
 
 const LOCAL_ORIGIN_127 = 'http://127.0.0.1:3000';
 
-/** In dev, force all redirects to use 127.0.0.1 so we never send Location: localhost (Spotify requires 127.0.0.1). */
-function ensureRedirectUses127(response: NextResponse): NextResponse {
+/**
+ * In dev, force all redirects to use 127.0.0.1 so we never send Location: localhost
+ * (Spotify OAuth requires 127.0.0.1, not localhost).
+ * `origin` is used to resolve relative Location headers so they don't fall back to 127.
+ */
+function ensureRedirectUses127(response: NextResponse, origin: string): NextResponse {
   if (response.status < 300 || response.status > 399) {
     return response;
   }
@@ -24,7 +28,7 @@ function ensureRedirectUses127(response: NextResponse): NextResponse {
     return response;
   }
   try {
-    const url = new URL(location, LOCAL_ORIGIN_127);
+    const url = new URL(location, origin);
     if (url.hostname === 'localhost') {
       const target = LOCAL_ORIGIN_127 + url.pathname + url.search;
       return NextResponse.redirect(target, response.status as 301 | 302 | 303 | 307 | 308);
@@ -54,6 +58,11 @@ export default async function middleware(request: NextRequest) {
   const sessionToken = request.cookies.get('better-auth.session_token');
   const { pathname } = request.nextUrl;
 
+  // In production use the real request origin; in dev force 127.0.0.1 so
+  // Spotify OAuth never sees "localhost" (Spotify rejects localhost redirect URIs).
+  const isDev = process.env.NODE_ENV === 'development';
+  const appOrigin = isDev ? LOCAL_ORIGIN_127 : request.nextUrl.origin;
+
   // API routes live outside [locale]/ — never run intl middleware on them
   if (pathname.startsWith('/api')) {
     if (pathname.startsWith('/api/auth')) {
@@ -79,9 +88,10 @@ export default async function middleware(request: NextRequest) {
     const locale = pathname.match(/^\/([a-z]{2})\//)?.at(1) ?? '';
     const signInUrl = new URL(
       locale ? `/${locale}/sign-in` : '/sign-in',
-      LOCAL_ORIGIN_127,
+      appOrigin,
     );
-    return ensureRedirectUses127(NextResponse.redirect(signInUrl));
+    const redirect = NextResponse.redirect(signInUrl);
+    return isDev ? ensureRedirectUses127(redirect, appOrigin) : redirect;
   }
 
   // Redirect authenticated users away from sign-in/sign-up pages
@@ -93,9 +103,10 @@ export default async function middleware(request: NextRequest) {
     const locale = pathname.match(/^\/([a-z]{2})\//)?.at(1) ?? '';
     const dashboardUrl = new URL(
       locale ? `/${locale}/dashboard` : '/dashboard',
-      LOCAL_ORIGIN_127,
+      appOrigin,
     );
-    return ensureRedirectUses127(NextResponse.redirect(dashboardUrl));
+    const redirect = NextResponse.redirect(dashboardUrl);
+    return isDev ? ensureRedirectUses127(redirect, appOrigin) : redirect;
   }
 
   // Next.js 14 re-runs middleware on paths produced by internal rewrites.
@@ -109,7 +120,7 @@ export default async function middleware(request: NextRequest) {
   }
 
   const response = await intlMiddleware(request);
-  return ensureRedirectUses127(response);
+  return isDev ? ensureRedirectUses127(response, appOrigin) : response;
 }
 
 export const config = {
