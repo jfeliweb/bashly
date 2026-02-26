@@ -11,6 +11,8 @@ import {
 } from '@react-email/components';
 import type { ReactNode } from 'react';
 
+import { getBaseUrl } from '@/utils/Helpers';
+
 type BaseEmailTemplateProps = {
   preview: string;
   heading: string;
@@ -81,7 +83,7 @@ export function BaseEmailTemplate({
           {/* Header with logo */}
           <Section style={styles.header}>
             <Img
-              src="https://pub-5855515c58c843e09cc3539fffe40fc6.r2.dev/bashly-logo-email.png"
+              src={`${getBaseUrl()}/logos/bashly-lockup-light-2x.png`}
               alt="Bashly"
               width="120"
               height="40"

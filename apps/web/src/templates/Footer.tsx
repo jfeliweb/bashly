@@ -1,8 +1,7 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-// import { Logo } from './Logo';
-import { BashlyLogo } from '@/components/BashlyLogo';
 import { CenteredFooter } from '@/features/landing/CenteredFooter';
 import { Section } from '@/features/landing/Section';
 import { AppConfig } from '@/utils/AppConfig';
@@ -13,10 +12,22 @@ export const Footer = () => {
   return (
     <Section className="pb-16 pt-8">
       <CenteredFooter
-        // logo={<Logo />}
         logo={(
-          <Link href="/" className="flex items-center">
-            <BashlyLogo className="text-xl" />
+          <Link href="/" className="flex items-center" aria-label="Bashly home">
+            <Image
+              src="/logos/wordmark-light-bg.svg"
+              alt="Bashly"
+              width={140}
+              height={32}
+              className="h-8 w-auto dark:hidden"
+            />
+            <Image
+              src="/logos/wordmark-dark-bg.svg"
+              alt="Bashly"
+              width={140}
+              height={32}
+              className="hidden h-8 w-auto dark:block"
+            />
           </Link>
         )}
         name={AppConfig.name}
