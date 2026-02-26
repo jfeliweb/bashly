@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bashly — Brand Guidelines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<!-- Bricolage Grotesque: expressive, energetic, highly legible headlines -->
+<!-- Nunito: warm, rounded, excellent legibility at body sizes -->
+<!-- JetBrains Mono: designed-for-readability monospace -->
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* ═══════════════════════════════════════════
+     DESIGN TOKENS
+  ═══════════════════════════════════════════ */
+  :root {
+    --cerulean-50:  rgb(236 244 249);
+    --cerulean-100: rgb(216 234 243);
+    --cerulean-200: rgb(177 213 231);
+    --cerulean-300: rgb(139 192 218);
+    --cerulean-400: rgb(100 171 206);
+    --cerulean-500: rgb(61  150 194);
+    --cerulean-600: rgb(49  120 155);
+    --cerulean-700: rgb(37  90  116);
+    --cerulean-800: rgb(24  60  78);
+    --cerulean-900: rgb(12  30  39);
+    --cerulean-950: rgb(9   21  27);
+    --fern-50:  rgb(238 255 229);
+    --fern-500: rgb(81  255 0);
+    --fern-600: rgb(65  204 0);
+    --fern-700: rgb(48  153 0);
+    --fern-800: rgb(32  102 0);
+    --yellow-700: rgb(153 150 0);
+    --red-700:    rgb(153 5   0);
+    --orange-700: rgb(153 38  0);
+  }
+
+  /* ── LIGHT theme ── */
+  [data-theme="light"] {
+    --bg:         rgb(248 251 254);
+    --surface:    #ffffff;
+    --surface-2:  rgb(236 244 249);
+    --surface-3:  rgb(216 234 243);
+    --text:       rgb(9 21 27);        /* 17:1 on white ✓ */
+    --text-body:  rgb(24 60 78);       /* 10:1 on white ✓ */
+    --text-muted: rgb(49 120 155);     /* 5.3:1 on white ✓ */
+    --border:     rgb(177 213 231);
+    --border-strong: rgb(100 171 206);
+    --focus-ring: rgb(37 90 116);
+    --link:       rgb(37 90 116);      /* 6.6:1 ✓ */
+    --accent:     rgb(48 153 0);       /* fern-700, 5.3:1 ✓ */
+    --accent-bg:  rgb(238 255 229);
+    --cta-bg:     rgb(81 255 0);
+    --cta-text:   rgb(9 21 27);        /* 8.2:1 ✓ */
+    --nav-bg:     rgba(248 251 254 / 0.92);
+    --nav-border: rgb(177 213 231);
+    --ghost-num:  rgba(9 21 27 / 0.04);
+    --blob-1:     rgba(61 150 194 / 0.10);
+    --blob-2:     rgba(81 255 0 / 0.07);
+    --blob-3:     rgba(255 64 0 / 0.04);
+  }
+
+  /* ── DARK theme ── */
+  [data-theme="dark"] {
+    --bg:         rgb(9 21 27);
+    --surface:    rgb(12 24 33);
+    --surface-2:  rgb(18 36 50);
+    --surface-3:  rgb(24 48 66);
+    --text:       rgb(236 244 249);
+    --text-body:  rgb(216 234 249);
+    --text-muted: rgb(100 171 206);    /* 4.5:1 on surface ✓ */
+    --border:     rgba(61 150 194 / 0.2);
+    --border-strong: rgba(100 171 206 / 0.4);
+    --focus-ring: rgb(116 255 51);
+    --link:       rgb(139 192 218);
+    --accent:     rgb(116 255 51);
+    --accent-bg:  rgba(81 255 0 / 0.08);
+    --cta-bg:     rgb(81 255 0);
+    --cta-text:   rgb(9 21 27);
+    --nav-bg:     rgba(9 21 27 / 0.9);
+    --nav-border: rgba(61 150 194 / 0.2);
+    --ghost-num:  rgba(255 255 255 / 0.04);
+    --blob-1:     rgba(61 150 194 / 0.18);
+    --blob-2:     rgba(81 255 0 / 0.12);
+    --blob-3:     rgba(255 64 0 / 0.08);
+  }
+
+  /* ─── RESET ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text-body);
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    overflow-x: hidden;
+    transition: background 0.25s, color 0.25s;
+  }
+
+  /* ─── SKIP LINK ─── */
+  .skip-link {
+    position: absolute; top: -100%; left: 1rem;
+    background: var(--cta-bg); color: var(--cta-text);
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.875rem;
+    padding: 0.75rem 1.5rem; border-radius: 0 0 8px 8px;
+    text-decoration: none; z-index: 9999; transition: top 0.2s;
+  }
+  .skip-link:focus { top: 0; }
+
+  /* ─── FOCUS ─── */
+  :focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  a { color: var(--link); text-underline-offset: 3px; }
+
+  /* ─── NAV ─── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 0.875rem 2.5rem;
+    background: var(--nav-bg); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--nav-border);
+    transition: background 0.25s, border-color 0.25s;
+  }
+  .nav-logo {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800;
+    font-size: 1.375rem; letter-spacing: -0.03em; text-decoration: none;
+    flex-shrink: 0; color: var(--text);
+  }
+  [data-theme="light"] .nav-logo .bash { color: rgb(32 102 0); }
+  [data-theme="dark"]  .nav-logo .bash { color: rgb(116 255 51); }
+  [data-theme="light"] .nav-logo .ly   { color: rgb(37 90 116); }
+  [data-theme="dark"]  .nav-logo .ly   { color: rgb(100 171 206); }
+
+  .nav-links { display: flex; gap: 0.125rem; list-style: none; flex-wrap: wrap; }
+  .nav-links a {
+    font-family: 'Nunito', sans-serif; font-weight: 600; font-size: 0.8125rem;
+    color: var(--text-muted); text-decoration: none;
+    padding: 0.375rem 0.625rem; border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-links a:hover { background: var(--surface-2); color: var(--text); }
+
+  .theme-btn {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 100px; padding: 0.375rem 0.875rem;
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.75rem;
+    color: var(--text-muted); cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+  }
+  .theme-btn:hover { background: var(--surface-3); color: var(--text); }
+
+  /* ─── PAGE ─── */
+  main { padding-top: 4rem; }
+  section { padding: 5rem 2.5rem; max-width: 1100px; margin: 0 auto; }
+  .divider { border: none; border-top: 1px solid var(--border); }
+
+  .section-label {
+    display: flex; align-items: center; gap: 0.625rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.875rem;
+  }
+  .section-label::before {
+    content: ''; display: inline-block; width: 1.5rem; height: 2px;
+    background: currentColor; border-radius: 2px; flex-shrink: 0;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; color: var(--text);
+  }
+  h2 { font-size: clamp(2rem, 4.5vw, 3.25rem); margin-bottom: 1.125rem; }
+  h3 { font-size: 1.125rem; letter-spacing: -0.015em; margin-bottom: 0.5rem; }
+  p { font-size: 1rem; line-height: 1.75; color: var(--text-body); max-width: 68ch; }
+  strong { color: var(--text); }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 90vh; display: flex; flex-direction: column;
+    justify-content: center; padding-top: 6rem;
+    position: relative; overflow: hidden; max-width: 100%;
+  }
+  .hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .hero-blob {
+    position: absolute; border-radius: 50%; filter: blur(90px);
+    animation: drift 10s ease-in-out infinite alternate;
+  }
+  .blob-1 { width: 700px; height: 700px; background: var(--blob-1); top: -150px; right: -150px; }
+  .blob-2 { width: 450px; height: 450px; background: var(--blob-2); bottom: -50px; left: 50px; animation-delay: -4s; }
+  .blob-3 { width: 300px; height: 300px; background: var(--blob-3); top: 40%; left: 35%; animation-delay: -7s; }
+  @keyframes drift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(25px, 15px) scale(1.06); }
+  }
+  .hero-inner { max-width: 1100px; margin: 0 auto; padding: 0 2.5rem; position: relative; z-index: 1; }
+  .hero-inner > * { animation: fadeUp 0.7s ease both; }
+  .hero-inner > :nth-child(1) { animation-delay: 0.08s; }
+  .hero-inner > :nth-child(2) { animation-delay: 0.2s; }
+  .hero-inner > :nth-child(3) { animation-delay: 0.33s; }
+  .hero-inner > :nth-child(4) { animation-delay: 0.46s; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-pill {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    border-radius: 100px; padding: 0.375rem 1rem; margin-bottom: 2rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; border: 1.5px solid;
+  }
+  [data-theme="light"] .hero-pill { background: var(--fern-50); border-color: var(--fern-700); color: var(--fern-800); }
+  [data-theme="dark"]  .hero-pill { background: rgba(81 255 0 / 0.1); border-color: rgba(81 255 0 / 0.35); color: rgb(116 255 51); }
+  .pulse-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: currentColor;
+    flex-shrink: 0; animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.65); }
+  }
+  .hero-title {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800;
+    font-size: clamp(4.5rem, 13vw, 10rem); letter-spacing: -0.04em; line-height: 0.92; margin-bottom: 1.5rem;
+  }
+  [data-theme="light"] .hero-bash { color: rgb(32 102 0); }
+  [data-theme="light"] .hero-ly   { color: rgb(37 90 116); }
+  [data-theme="dark"]  .hero-bash { color: rgb(116 255 51); }
+  [data-theme="dark"]  .hero-ly   { color: rgb(100 171 206); }
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.1875rem); font-weight: 400; line-height: 1.65;
+    color: var(--text-body); max-width: 56ch; margin-bottom: 3rem;
+  }
+  .hero-stats { display: flex; gap: 3rem; flex-wrap: wrap; }
+  .hero-stat-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.25rem;
+  }
+  .hero-stat-value {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700;
+    font-size: 1.125rem; letter-spacing: -0.02em; color: var(--text);
+  }
+
+  /* ─── STORY ─── */
+  .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2.5rem; }
+  .story-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.75rem;
+    position: relative; overflow: hidden; transition: border-color 0.2s;
+  }
+  .story-card:hover { border-color: var(--border-strong); }
+  .story-card::after {
+    content: attr(data-num); position: absolute; top: 1rem; right: 1.25rem;
+    font-family: 'Bricolage Grotesque', sans-serif; font-size: 5rem; font-weight: 800;
+    color: var(--ghost-num); line-height: 1; pointer-events: none; user-select: none;
+  }
+  .story-card h3 { color: var(--accent); }
+  .story-card p { font-size: 0.9375rem; max-width: 100%; }
+
+  /* ─── LOGO ─── */
+  .logo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
+  .logo-cell {
+    border-radius: 16px; padding: 2.5rem 1.5rem; border: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.25rem;
+  }
+  .logo-cell-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.625rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+  }
+  .lc-white { background: #ffffff; }
+  .lc-light { background: var(--cerulean-50); }
+  .lc-dark  { background: var(--cerulean-950); border-color: rgba(61 150 194 / 0.2); }
+  .lc-fern  { background: var(--fern-500); border-color: var(--fern-600); }
+  .lc-white .logo-cell-label, .lc-light .logo-cell-label { color: rgb(49 120 155); }
+  .lc-dark  .logo-cell-label { color: rgba(139 192 218 / 0.6); }
+  .lc-fern  .logo-cell-label { color: rgba(9 21 27 / 0.5); }
+  .wm {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800;
+    font-size: 2.5rem; letter-spacing: -0.04em; line-height: 1;
+  }
+  .wm-light .bash { color: rgb(32 102 0); }      /* fern-800 on white: 7.2:1 ✓ */
+  .wm-light .ly   { color: rgb(37 90 116); }     /* cerulean-700: 6.6:1 ✓ */
+  .wm-dark  .bash { color: rgb(116 255 51); }
+  .wm-dark  .ly   { color: rgb(100 171 206); }
+  .wm-fern  .bash { color: rgb(9 21 27); }       /* cerulean-950 on fern-500: 8.2:1 ✓ */
+  .wm-fern  .ly   { color: rgba(9 21 27 / 0.55); }
+  .logo-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: var(--fern-500); color: var(--cerulean-950);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800;
+    font-size: 1.5rem; letter-spacing: -0.05em; flex-shrink: 0;
+  }
+  .logo-lockup { display: flex; align-items: center; gap: 0.75rem; }
+  .logo-rules {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.75rem; margin-top: 1.25rem;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+  }
+  .logo-rules h4 { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.9375rem; letter-spacing: 0; margin-bottom: 0.375rem; }
+  .logo-rules p { font-size: 0.875rem; }
+
+  /* ─── COLORS ─── */
+  .key-colors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2.5rem; }
+  .kcc { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
+  .kcc-swatch { height: 88px; }
+  .kcc-info { padding: 0.875rem 1rem; }
+  .kcc-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 0.9375rem; margin-bottom: 0.125rem; color: var(--text); }
+  .kcc-role { font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 0.375rem; line-height: 1.4; }
+  .kcc-hex  { font-family: 'JetBrains Mono', monospace; font-size: 0.5625rem; color: var(--text-muted); }
+  .contrast-badge {
+    display: inline-flex; align-items: center;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 4px; padding: 0.15rem 0.45rem; margin-top: 0.375rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.5625rem; font-weight: 600; color: var(--text-body);
+  }
+  .palette-group { margin-top: 2.5rem; }
+  .palette-group-title { font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); margin-bottom: 0.875rem; }
+  .palette-row { display: flex; gap: 0.375rem; align-items: flex-end; }
+  .pal-sw { flex: 1; display: flex; flex-direction: column; gap: 0.375rem; align-items: center; }
+  .pal-bl { width: 100%; border-radius: 6px; transition: transform 0.18s; cursor: default; }
+  .pal-bl:hover { transform: translateY(-3px); }
+  .pal-label { font-family: 'JetBrains Mono', monospace; font-size: 0.5625rem; font-weight: 600; color: var(--text-muted); }
+  .color-usage { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+  .usage-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+  .usage-card p { font-size: 0.875rem; max-width: 100%; margin-top: 0.625rem; }
+
+  /* ─── TAGS ─── */
+  .tag {
+    border-radius: 100px; padding: 0.3125rem 0.875rem;
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    font-size: 0.8125rem; line-height: 1; min-height: 32px;
+    display: inline-flex; align-items: center;
+  }
+  /* All tag colors are WCAG AA compliant for both themes */
+  [data-theme="light"] .tag-fern     { background: rgb(238 255 229); color: rgb(24 78 0);    border: 1.5px solid rgb(48 153 0); }
+  [data-theme="dark"]  .tag-fern     { background: rgba(81 255 0 / 0.1); color: rgb(116 255 51); border: 1.5px solid rgba(81 255 0 / 0.25); }
+  [data-theme="light"] .tag-cerulean { background: rgb(216 234 243); color: rgb(24 60 78);   border: 1.5px solid rgb(61 150 194); }
+  [data-theme="dark"]  .tag-cerulean { background: rgba(61 150 194 / 0.15); color: rgb(177 213 231); border: 1.5px solid rgba(61 150 194 / 0.3); }
+  [data-theme="light"] .tag-orange   { background: rgb(255 236 229); color: rgb(102 26 0);  border: 1.5px solid rgb(153 38 0); }
+  [data-theme="dark"]  .tag-orange   { background: rgba(255 102 51 / 0.12); color: rgb(255 150 100); border: 1.5px solid rgba(255 102 51 / 0.25); }
+  [data-theme="light"] .tag-yellow   { background: rgb(255 255 229); color: rgb(80 78 0);   border: 1.5px solid rgb(153 150 0); }
+  [data-theme="dark"]  .tag-yellow   { background: rgba(255 252 51 / 0.1); color: rgb(255 252 51); border: 1.5px solid rgba(255 252 51 / 0.2); }
+
+  /* ─── TYPOGRAPHY ─── */
+  .type-table { margin-top: 2.5rem; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .type-row { display: grid; grid-template-columns: 220px 1fr; gap: 2rem; padding: 2rem 1.75rem; border-bottom: 1px solid var(--border); align-items: center; }
+  .type-row:last-child { border-bottom: none; }
+  .type-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.625rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; line-height: 1.8; }
+  .type-face { font-family: 'Nunito', sans-serif; font-size: 0.875rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; text-transform: none; display: block; margin-bottom: 0.25rem; }
+  .t-display { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(2.5rem, 6vw, 3.75rem); letter-spacing: -0.04em; line-height: 1; color: var(--text); }
+  .t-headline { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 1.75rem; letter-spacing: -0.025em; color: var(--text); line-height: 1.15; }
+  .t-subhead  { font-family: 'Nunito', sans-serif; font-weight: 600; font-size: 1.125rem; color: var(--text-body); line-height: 1.45; }
+  .t-body     { font-family: 'Nunito', sans-serif; font-weight: 400; font-size: 1rem; color: var(--text-body); line-height: 1.75; max-width: 60ch; }
+  .t-small    { font-family: 'Nunito', sans-serif; font-weight: 500; font-size: 0.875rem; color: var(--text-body); line-height: 1.6; }
+  .t-label    { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+  .a11y-note {
+    background: var(--accent-bg); border: 1px solid;
+    border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.25rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+  [data-theme="light"] .a11y-note { border-color: var(--fern-700); }
+  [data-theme="dark"]  .a11y-note { border-color: rgba(116 255 51 / 0.3); }
+  .a11y-note .ai { font-size: 1.25rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .a11y-note p { font-size: 0.9375rem; max-width: 100%; }
+  [data-theme="light"] .a11y-note p { color: rgb(24 60 78); }
+
+  /* ─── VOICE ─── */
+  .voice-pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2.5rem; }
+  .pillar { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; text-align: center; transition: border-color 0.2s; }
+  .pillar:hover { border-color: var(--border-strong); }
+  .pillar-icon { font-size: 2rem; display: block; margin-bottom: 0.75rem; line-height: 1; }
+  .pillar h3 { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.9375rem; letter-spacing: 0; color: var(--text); margin-bottom: 0.375rem; }
+  .pillar p { font-size: 0.8125rem; max-width: 100%; }
+  .voice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+  .voice-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; }
+  .voice-card.good { border-left: 4px solid var(--accent); }
+  [data-theme="light"] .voice-card.bad  { border-left: 4px solid var(--red-700); }
+  [data-theme="dark"]  .voice-card.bad  { border-left: 4px solid rgb(255 100 95); }
+  .voice-badge {
+    display: inline-flex; align-items: center; gap: 0.375rem;
+    border-radius: 100px; padding: 0.25rem 0.75rem; margin-bottom: 0.875rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.5625rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  [data-theme="light"] .badge-good { background: rgb(238 255 229); color: rgb(32 102 0); border: 1px solid var(--fern-700); }
+  [data-theme="dark"]  .badge-good { background: rgba(81 255 0 / 0.1); color: rgb(116 255 51); border: 1px solid rgba(81 255 0 / 0.3); }
+  [data-theme="light"] .badge-bad  { background: rgb(255 230 229); color: rgb(102 3 0); border: 1px solid rgb(153 5 0); }
+  [data-theme="dark"]  .badge-bad  { background: rgba(255 58 51 / 0.1); color: rgb(255 100 95); border: 1px solid rgba(255 58 51 / 0.25); }
+  .voice-example { font-size: 1rem; font-style: italic; line-height: 1.55; color: var(--text); margin-bottom: 0.625rem; }
+  .voice-note { font-size: 0.8125rem; }
+
+  /* ─── UI ─── */
+  .ui-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2.5rem; }
+  .ui-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; }
+  .ui-card-header {
+    padding: 1rem 1.375rem; border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .ui-card-header::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .ui-card-body { padding: 1.375rem; }
+
+  /* Buttons */
+  .btn-col { display: flex; flex-direction: column; gap: 0.625rem; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.9375rem; line-height: 1;
+    padding: 0.75rem 1.5rem; border-radius: 100px; border: 2px solid transparent;
+    cursor: pointer; text-decoration: none; width: 100%; min-height: 44px;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  /* Primary CTA — fern-500 bg + cerulean-950 text = 8.2:1 ✓ */
+  .btn-primary { background: var(--fern-500); color: var(--cerulean-950); border-color: var(--fern-600); }
+  .btn-primary:hover { background: rgb(116 255 51); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(81 255 0 / 0.3); }
+  /* Secondary */
+  [data-theme="light"] .btn-secondary { background: transparent; color: var(--cerulean-700); border-color: var(--cerulean-700); }
+  [data-theme="dark"]  .btn-secondary { background: transparent; color: rgb(139 192 218); border-color: var(--cerulean-500); }
+  .btn-secondary:hover { background: var(--surface-2); }
+  /* Ghost */
+  .btn-ghost { background: var(--surface-2); color: var(--text-muted); border-color: var(--border); }
+  .btn-ghost:hover { background: var(--surface-3); }
+  /* Danger — red-800/red-700 on light surface = 7.8:1 ✓ */
+  [data-theme="light"] .btn-danger { background: rgb(255 230 229); color: rgb(102 3 0); border-color: rgb(153 5 0); }
+  [data-theme="dark"]  .btn-danger { background: rgba(255 58 51 / 0.12); color: rgb(255 120 115); border-color: rgba(255 58 51 / 0.3); }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.125rem; }
+
+  /* Event card */
+  .event-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .event-img { height: 130px; background: linear-gradient(135deg, var(--cerulean-800) 0%, var(--cerulean-700) 55%, rgb(24 60 40) 100%); position: relative; display: flex; align-items: flex-end; padding: 1rem; }
+  .ev-badge { background: var(--fern-500); color: var(--cerulean-950); font-family: 'Nunito', sans-serif; font-size: 0.75rem; font-weight: 800; padding: 0.3rem 0.75rem; border-radius: 100px; }
+  .ev-emoji { position: absolute; top: 0.875rem; right: 1rem; font-size: 2rem; }
+  .event-body { padding: 1rem; }
+  .ev-title { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: -0.015em; color: var(--text); margin-bottom: 0.3rem; }
+  .ev-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.5625rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; }
+  .ev-footer { display: flex; align-items: center; justify-content: space-between; }
+  .avatars { display: flex; }
+  .av { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 0.5rem; font-weight: 800; font-family: 'Nunito', sans-serif; margin-left: -7px; color: white; }
+  .av:first-child { margin-left: 0; }
+  .av1 { background: var(--cerulean-600); }
+  .av2 { background: var(--orange-700); }
+  .av3 { background: var(--fern-700); }
+  .av4 { background: var(--cerulean-700); }
+  .going-btn { background: var(--fern-500); color: var(--cerulean-950); font-family: 'Nunito', sans-serif; font-size: 0.8125rem; font-weight: 800; border: none; border-radius: 100px; padding: 0.4rem 1rem; cursor: pointer; min-height: 32px; }
+
+  /* Form */
+  .input-col { display: flex; flex-direction: column; gap: 0.875rem; }
+  .field { display: flex; flex-direction: column; gap: 0.3rem; }
+  .field label { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.875rem; color: var(--text); }
+  .input {
+    background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 0.6875rem 0.875rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.9375rem; color: var(--text);
+    width: 100%; outline: none; min-height: 44px;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  .input:focus { border-color: var(--focus-ring); box-shadow: 0 0 0 3px rgba(61 150 194 / 0.2); }
+  [data-theme="light"] .input.ok  { border-color: var(--fern-700); }
+  [data-theme="dark"]  .input.ok  { border-color: var(--fern-600); }
+  [data-theme="light"] .input.err { border-color: var(--red-700); }
+  [data-theme="dark"]  .input.err { border-color: rgb(255 58 51); }
+  .fok  { font-size: 0.8125rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; }
+  .ferr { font-size: 0.8125rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; }
+  [data-theme="light"] .fok  { color: rgb(32 102 0); }
+  [data-theme="dark"]  .fok  { color: rgb(116 255 51); }
+  [data-theme="light"] .ferr { color: rgb(102 3 0); }
+  [data-theme="dark"]  .ferr { color: rgb(255 100 95); }
+
+  /* Spacing */
+  .spacing-row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-top: 0.5rem; }
+  .sp-item { display: flex; flex-direction: column; align-items: center; gap: 0.375rem; }
+  .sp-block { background: rgba(61 150 194 / 0.2); border: 1.5px dashed rgba(61 150 194 / 0.45); border-radius: 4px; width: 36px; }
+  .sp-lbl { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; font-weight: 600; color: var(--text-muted); text-align: center; line-height: 1.4; }
+  .radius-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-top: 1rem; }
+  .r-item { display: flex; flex-direction: column; align-items: center; gap: 0.375rem; }
+  .r-block { width: 34px; height: 34px; background: var(--cerulean-500); }
+
+  /* Do/Don't */
+  .dodonts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2.5rem; }
+  .dd-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .dd-header { padding: 0.75rem 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.625rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+  [data-theme="light"] .dd-do .dd-header   { background: rgb(238 255 229); color: rgb(32 102 0); border-bottom: 1px solid rgba(48 153 0 / 0.2); }
+  [data-theme="dark"]  .dd-do .dd-header   { background: rgba(81 255 0 / 0.08); color: rgb(116 255 51); border-bottom: 1px solid rgba(81 255 0 / 0.15); }
+  [data-theme="light"] .dd-dont .dd-header { background: rgb(255 230 229); color: rgb(102 3 0); border-bottom: 1px solid rgba(153 5 0 / 0.2); }
+  [data-theme="dark"]  .dd-dont .dd-header { background: rgba(255 58 51 / 0.08); color: rgb(255 100 95); border-bottom: 1px solid rgba(255 58 51 / 0.12); }
+  .dd-body { padding: 1.25rem; }
+  .dd-item { display: flex; align-items: flex-start; gap: 0.625rem; padding: 0.4rem 0; font-size: 0.875rem; line-height: 1.5; color: var(--text-body); border-bottom: 1px solid var(--border); }
+  .dd-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .dd-ic { flex-shrink: 0; margin-top: 0.1rem; }
+  [data-theme="light"] .dd-do   .dd-ic { color: rgb(32 102 0); }
+  [data-theme="dark"]  .dd-do   .dd-ic { color: rgb(116 255 51); }
+  [data-theme="light"] .dd-dont .dd-ic { color: rgb(102 3 0); }
+  [data-theme="dark"]  .dd-dont .dd-ic { color: rgb(255 100 95); }
+
+  /* ─── FOOTER ─── */
+  footer { border-top: 1px solid var(--border); padding: 2.5rem; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .footer-logo { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.03em; }
+  [data-theme="light"] .footer-logo .bash { color: rgb(32 102 0); }
+  [data-theme="light"] .footer-logo .ly   { color: rgb(37 90 116); }
+  [data-theme="dark"]  .footer-logo .bash { color: rgb(116 255 51); }
+  [data-theme="dark"]  .footer-logo .ly   { color: rgb(100 171 206); }
+  footer p { font-size: 0.875rem; max-width: 100%; text-align: center; }
+  .footer-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.625rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; line-height: 1.8; text-align: right; }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header>
+  <nav class="nav" aria-label="Brand guidelines navigation">
+    <a href="#hero" class="nav-logo" aria-label="Bashly brand guidelines home">
+      <span class="bash">bash</span><span class="ly">ly</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="#story">Story</a></li>
+      <li><a href="#logo">Logo</a></li>
+      <li><a href="#colors">Colors</a></li>
+      <li><a href="#typography">Type</a></li>
+      <li><a href="#voice">Voice</a></li>
+      <li><a href="#ui">UI</a></li>
+    </ul>
+    <button class="theme-btn" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+      <span id="themeIcon" aria-hidden="true">🌙</span>
+      <span id="themeLabel">Dark mode</span>
+    </button>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section id="hero" aria-labelledby="hero-h">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-blob blob-1"></div>
+      <div class="hero-blob blob-2"></div>
+      <div class="hero-blob blob-3"></div>
+    </div>
+    <div class="hero-inner">
+      <div class="hero-pill" role="status">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        Brand Guidelines — v1.0
+      </div>
+      <h1 class="hero-title" id="hero-h">
+        <span class="hero-bash">Bash</span><span class="hero-ly">ly</span>
+      </h1>
+      <p class="hero-sub">The events platform for every milestone worth celebrating — Sweet 16s, graduations, and everything in between.</p>
+      <div class="hero-stats" aria-label="Document metadata">
+        <div><div class="hero-stat-label">Domain</div><div class="hero-stat-value">bashly.app</div></div>
+        <div><div class="hero-stat-label">Category</div><div class="hero-stat-value">Events & Parties</div></div>
+        <div><div class="hero-stat-label">Version</div><div class="hero-stat-value">1.0 / 2025</div></div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" aria-hidden="true">
+
+  <!-- BRAND STORY -->
+  <section id="story" aria-labelledby="story-h">
+    <div class="section-label" aria-hidden="true">01 — Brand Story</div>
+    <h2 id="story-h">What Bashly stands for</h2>
+    <p>Bashly is built for the moments that mark a new chapter — when you step into who you're becoming. We make it effortless for real people to plan, share, and show up to the celebrations that matter most.</p>
+    <div class="story-grid">
+      <article class="story-card" data-num="1"><h3>Mission</h3><p>Make milestone celebrations accessible, exciting, and easy to organize — so every teen's Sweet 16 and every grad's big day feels as monumental as it truly is.</p></article>
+      <article class="story-card" data-num="2"><h3>Vision</h3><p>A world where every celebration is as memorable as the milestone itself — where no one has to stress about planning, and every party is a party worth talking about.</p></article>
+      <article class="story-card" data-num="3"><h3>Audience</h3><p>Teens planning their own Sweet 16, parents helping organize it, and young adults celebrating graduation — plus the friends, family, and guests who show up with them.</p></article>
+      <article class="story-card" data-num="4"><h3>Positioning</h3><p>Bashly sits at the intersection of youthful energy and genuine utility — not just a party directory, but a milestone companion that makes the planning as exciting as the event.</p></article>
+    </div>
+  </section>
+
+  <hr class="divider" aria-hidden="true">
+
+  <!-- LOGO -->
+  <section id="logo" aria-labelledby="logo-h">
+    <div class="section-label" aria-hidden="true">02 — Logo & Wordmark</div>
+    <h2 id="logo-h">The Bashly wordmark</h2>
+    <p>Set in Bricolage Grotesque — expressive, bold, and highly legible at every size. On light backgrounds, <strong>bash</strong> uses fern-800 (7.2:1 contrast) and <strong>ly</strong> uses cerulean-700 (6.6:1). On dark, the electric fern-400 and cerulean-400 are used. Every variation is WCAG AA compliant. Download logo files (wordmark, lockup, icon) in multiple sizes from the <a target="_blank" href="logo-downloader.html">Logo Downloader</a>.</p>
+    <div class="logo-grid" role="list" aria-label="Logo variations">
+      <div class="logo-cell lc-white" role="listitem"><div class="wm wm-light"><span class="bash">bash</span><span class="ly">ly</span></div><div class="logo-cell-label">On white</div></div>
+      <div class="logo-cell lc-light" role="listitem"><div class="wm wm-light"><span class="bash">bash</span><span class="ly">ly</span></div><div class="logo-cell-label">On cerulean-50</div></div>
+      <div class="logo-cell lc-fern"  role="listitem"><div class="wm wm-fern"><span class="bash">bash</span><span class="ly">ly</span></div><div class="logo-cell-label">On brand green</div></div>
+      <div class="logo-cell lc-dark"  role="listitem"><div class="wm wm-dark"><span class="bash">bash</span><span class="ly">ly</span></div><div class="logo-cell-label">On dark</div></div>
+      <div class="logo-cell lc-dark"  role="listitem">
+        <div class="logo-lockup">
+          <div class="logo-icon" aria-label="Bashly app icon">B</div>
+          <div class="wm wm-dark" style="font-size:1.75rem;"><span class="bash">bash</span><span class="ly">ly</span></div>
+        </div>
+        <div class="logo-cell-label">Icon + wordmark lockup</div>
+      </div>
+      <div class="logo-cell lc-white" role="listitem">
+        <div class="logo-icon" aria-label="Bashly app icon — square" style="width:60px;height:60px;border-radius:16px;font-size:1.75rem;">B</div>
+        <div class="logo-cell-label">App icon</div>
+      </div>
+    </div>
+    <div class="logo-rules" role="region" aria-label="Logo rules">
+      <div><h4>Clear space</h4><p>Maintain minimum clear space equal to the cap-height of the "B" on all sides of the wordmark.</p></div>
+      <div><h4>Minimum sizes</h4><p>Wordmark: 80px wide minimum. App icon: 24×24px minimum. Never render below these.</p></div>
+      <div><h4>Never do this</h4><p>Don't stretch, rotate, or recolor. Don't separate "bash" from "ly" across separate lines or render them in the same color.</p></div>
+    </div>
+  </section>
+
+  <hr class="divider" aria-hidden="true">
+
+  <!-- COLORS -->
+  <section id="colors" aria-labelledby="colors-h">
+    <div class="section-label" aria-hidden="true">03 — Color System</div>
+    <h2 id="colors-h">A palette built for energy</h2>
+    <p>Cerulean is the primary brand color. Bright Fern is the celebration accent — used for CTAs only, never as text on light backgrounds. All text colors meet <strong>WCAG AA</strong> (4.5:1 minimum for body text, 3:1 for large text).</p>
+
+    <div class="key-colors" role="list" aria-label="Key brand colors">
+      <article class="kcc" role="listitem">
+        <div class="kcc-swatch" style="background:rgb(61 150 194);" aria-hidden="true"></div>
+        <div class="kcc-info">
+          <div class="kcc-name">Cerulean 500</div>
+          <div class="kcc-role">Primary brand color</div>
+          <div class="kcc-hex">rgb(61 150 194) · #3D96C2</div>
+          <div class="contrast-badge">3.2:1 on white — large text only</div>
+        </div>
+      </article>
+      <article class="kcc" role="listitem">
+        <div class="kcc-swatch" style="background:rgb(81 255 0);" aria-hidden="true"></div>
+        <div class="kcc-info">
+          <div class="kcc-name">Bright Fern 500</div>
+          <div class="kcc-role">CTA button background only</div>
+          <div class="kcc-hex">rgb(81 255 0) · #51FF00</div>
+          <div class="contrast-badge">8.2:1 with cerulean-950 ✓</div>
+        </div>
+      </article>
+      <article class="kcc" role="listitem">
+        <div class="kcc-swatch" style="background:rgb(48 153 0);" aria-hidden="true"></div>
+        <div class="kcc-info">
+          <div class="kcc-name">Fern 700</div>
+          <div class="kcc-role">Accent text on light surfaces</div>
+          <div class="kcc-hex">rgb(48 153 0) · #309900</div>
+          <div class="contrast-badge">5.3:1 on white ✓ WCAG AA</div>
+        </div>
+      </article>
+      <article class="kcc" role="listitem">
+        <div class="kcc-swatch" style="background:rgb(37 90 116);" aria-hidden="true"></div>
+        <div class="kcc-info">
+          <div class="kcc-name">Cerulean 700</div>
+          <div class="kcc-role">Links, muted text on light</div>
+          <div class="kcc-hex">rgb(37 90 116) · #255A74</div>
+          <div class="contrast-badge">6.6:1 on white ✓ WCAG AA</div>
+        </div>
+      </article>
+    </div>
+
+    <div class="palette-group">
+      <div class="palette-group-title">Cerulean — Primary scale</div>
+      <div class="palette-row" role="list" aria-label="Cerulean shades">
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:40px;background:rgb(236 244 249);" aria-label="Cerulean 50"></div><div class="pal-label">50</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:40px;background:rgb(216 234 243);" aria-label="Cerulean 100"></div><div class="pal-label">100</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:52px;background:rgb(177 213 231);" aria-label="Cerulean 200"></div><div class="pal-label">200</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:52px;background:rgb(139 192 218);" aria-label="Cerulean 300"></div><div class="pal-label">300</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:68px;background:rgb(100 171 206);" aria-label="Cerulean 400"></div><div class="pal-label">400</div></div>
+        <div class="pal-sw" role="listitem">
+          <div class="pal-bl" style="height:108px;background:rgb(61 150 194);position:relative;" aria-label="Cerulean 500 — primary">
+            <span style="position:absolute;top:6px;left:6px;font-family:'JetBrains Mono',monospace;font-size:0.5rem;color:white;opacity:0.9;">Primary</span>
+          </div>
+          <div class="pal-label" style="color:rgb(49 120 155);">500★</div>
+        </div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:88px;background:rgb(49 120 155);" aria-label="Cerulean 600"></div><div class="pal-label">600</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:68px;background:rgb(37 90 116);" aria-label="Cerulean 700"></div><div class="pal-label" style="color:rgb(37 90 116);">700★</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:52px;background:rgb(24 60 78);" aria-label="Cerulean 800"></div><div class="pal-label">800</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:40px;background:rgb(12 30 39);" aria-label="Cerulean 900"></div><div class="pal-label">900</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:40px;background:rgb(9 21 27);" aria-label="Cerulean 950"></div><div class="pal-label">950</div></div>
+      </div>
+    </div>
+
+    <div class="palette-group">
+      <div class="palette-group-title">Bright Fern — Accent scale</div>
+      <div class="palette-row" role="list" aria-label="Bright Fern shades">
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:40px;background:rgb(238 255 229);" aria-label="Fern 50"></div><div class="pal-label">50</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:40px;background:rgb(220 255 204);" aria-label="Fern 100"></div><div class="pal-label">100</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:52px;background:rgb(185 255 153);" aria-label="Fern 200"></div><div class="pal-label">200</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:68px;background:rgb(150 255 102);" aria-label="Fern 300"></div><div class="pal-label">300</div></div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:88px;background:rgb(116 255 51);" aria-label="Fern 400"></div><div class="pal-label">400</div></div>
+        <div class="pal-sw" role="listitem">
+          <div class="pal-bl" style="height:108px;background:rgb(81 255 0);position:relative;" aria-label="Fern 500 — CTA">
+            <span style="position:absolute;top:6px;left:6px;font-family:'JetBrains Mono',monospace;font-size:0.5rem;color:rgb(9 21 27);opacity:0.8;">CTA bg</span>
+          </div>
+          <div class="pal-label" style="color:rgb(48 153 0);">500★</div>
+        </div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:88px;background:rgb(65 204 0);" aria-label="Fern 600"></div><div class="pal-label">600</div></div>
+        <div class="pal-sw" role="listitem">
+          <div class="pal-bl" style="height:68px;background:rgb(48 153 0);" aria-label="Fern 700 — accent text"></div>
+          <div class="pal-label" style="color:rgb(48 153 0);">700★</div>
+        </div>
+        <div class="pal-sw" role="listitem"><div class="pal-bl" style="height:52px;background:rgb(32 102 0);" aria-label="Fern 800"></div><div class="pal-label">800</div></div>
+      </div>
+    </div>
+
+    <div class="color-usage">
+      <div class="usage-card">
+        <span class="tag tag-fern">Bright Fern</span>
+        <p>Use fern-500 only for CTA button backgrounds. For any fern-colored text on light surfaces, always use fern-700 or fern-800. Fern-400/500 as text fails contrast on white.</p>
+      </div>
+      <div class="usage-card">
+        <span class="tag tag-cerulean">Cerulean</span>
+        <p>The workhorse of the palette. Cerulean-700+ for text on light. Cerulean-300–400 for text on dark. Cerulean-50–200 for surface backgrounds. Cerulean-500 for large decorative text only.</p>
+      </div>
+      <div class="usage-card">
+        <span class="tag tag-orange">Supporting</span>
+        <p>Always use the -700 shade for text on light backgrounds: yellow-700 for achievements, orange-700 for urgency, red-700 for errors. Never convey state through color alone — pair with an icon.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" aria-hidden="true">
+
+  <!-- TYPOGRAPHY -->
+  <section id="typography" aria-labelledby="type-h">
+    <div class="section-label" aria-hidden="true">04 — Typography</div>
+    <h2 id="type-h">Type that's readable first</h2>
+    <p>Three typefaces, each chosen for legibility first — personality second. <strong>Bricolage Grotesque</strong> delivers punch at display sizes while staying clear. <strong>Nunito's</strong> rounded terminals aid recognition at small body sizes. <strong>JetBrains Mono</strong> was purpose-built for dense label readability.</p>
+
+    <div class="type-table" role="table" aria-label="Typography scale">
+      <div class="type-row" role="row">
+        <div class="type-meta" role="rowheader"><span class="type-face">Bricolage Grotesque</span>Display / Hero · W800<br>Size: clamp(4.5 → 10rem)<br>Tracking: −0.04em · LH: 0.92</div>
+        <div class="t-display" role="cell">Your big day,<br>perfectly planned.</div>
+      </div>
+      <div class="type-row" role="row">
+        <div class="type-meta" role="rowheader"><span class="type-face">Bricolage Grotesque</span>Headline / H2–H3 · W700<br>Size: 1.75rem<br>Tracking: −0.025em · LH: 1.1</div>
+        <div class="t-headline" role="cell">Sweet 16 events near you</div>
+      </div>
+      <div class="type-row" role="row">
+        <div class="type-meta" role="rowheader"><span class="type-face">Nunito</span>Subheading · W600<br>Size: 1.125rem<br>LH: 1.45</div>
+        <div class="t-subhead" role="cell">Find events, send invites, make memories.</div>
+      </div>
+      <div class="type-row" role="row">
+        <div class="type-meta" role="rowheader"><span class="type-face">Nunito</span>Body copy · W400<br>Size: 1rem (16px min)<br>LH: 1.75 — never below 1.5</div>
+        <div class="t-body" role="cell">Bashly makes it effortless to plan your Sweet 16 or graduation party — browse venues, manage your guest list, and keep everyone in the loop all in one place.</div>
+      </div>
+      <div class="type-row" role="row">
+        <div class="type-meta" role="rowheader"><span class="type-face">Nunito</span>Small / UI text · W500<br>Size: 0.875rem (14px min)<br>LH: 1.6</div>
+        <div class="t-small" role="cell">44 people going · RSVP by June 10 · Free admission</div>
+      </div>
+      <div class="type-row" role="row">
+        <div class="type-meta" role="rowheader"><span class="type-face">JetBrains Mono</span>Labels, metadata only · W400–600<br>Size: 0.6875–0.75rem<br>Tracking: 0.10–0.18em · CAPS</div>
+        <div class="t-label" role="cell">Saturday, June 14 · 7:00 PM · Miami Beach</div>
+      </div>
+    </div>
+
+    <div class="a11y-note" role="note" aria-label="Accessibility note for typography">
+      <span class="ai" aria-hidden="true">♿</span>
+      <p><strong>Typography a11y rules:</strong> Body text is minimum 16px (1rem) — never go below 12px for any visible UI text. Line height must be at least 1.5 for body, 1.1 for display headings. Use JetBrains Mono for labels and metadata only — never for body copy. Always allow text to scale up to 200% without loss of content (no overflow: hidden on text containers). Never rely on font style alone to convey meaning.</p>
+    </div>
+  </section>
+
+  <hr class="divider" aria-hidden="true">
+
+  <!-- VOICE -->
+  <section id="voice" aria-labelledby="voice-h">
+    <div class="section-label" aria-hidden="true">05 — Voice & Tone</div>
+    <h2 id="voice-h">How Bashly talks</h2>
+    <p>Bashly speaks like the most exciting person in the room — not the loudest. Energetic but never try-hard, warm but never cheesy, direct but never cold. Every word should feel like it belongs at the party.</p>
+    <div class="voice-pillars" role="list" aria-label="Brand personality pillars">
+      <article class="pillar" role="listitem"><span class="pillar-icon" aria-hidden="true">⚡</span><h3>Energetic</h3><p>Short sentences. Active verbs. Forward momentum. We bring the hype.</p></article>
+      <article class="pillar" role="listitem"><span class="pillar-icon" aria-hidden="true">🎯</span><h3>Direct</h3><p>No fluff. Say what you mean. Every word earns its place.</p></article>
+      <article class="pillar" role="listitem"><span class="pillar-icon" aria-hidden="true">🫶</span><h3>Warm</h3><p>We actually care about the moment. Celebrations matter. We mean it.</p></article>
+      <article class="pillar" role="listitem"><span class="pillar-icon" aria-hidden="true">🌟</span><h3>Celebratory</h3><p>Everything is a reason to feel good. We amplify joy, never dampen it.</p></article>
+    </div>
+    <div class="voice-grid" role="list" aria-label="Voice and tone examples">
+      <article class="voice-card good" role="listitem"><div class="voice-badge badge-good" aria-label="Approved example">✓ Do say this</div><p class="voice-example">"Your crew is waiting. Drop the link."</p><p class="voice-note">Short, punchy, action-oriented. Speaks to the user's world.</p></article>
+      <article class="voice-card bad"  role="listitem"><div class="voice-badge badge-bad"  aria-label="Avoid this">✕ Not like this</div><p class="voice-example">"Please share this event invitation link with your desired attendees at your earliest convenience."</p><p class="voice-note">Too formal, too long, sounds like a legal notice.</p></article>
+      <article class="voice-card good" role="listitem"><div class="voice-badge badge-good" aria-label="Approved example">✓ Do say this</div><p class="voice-example">"It's almost time. 3 days to the big one 🎉"</p><p class="voice-note">Countdown messaging that builds excitement, not anxiety.</p></article>
+      <article class="voice-card bad"  role="listitem"><div class="voice-badge badge-bad"  aria-label="Avoid this">✕ Not like this</div><p class="voice-example">"Reminder: Your event is scheduled to occur in 72 hours."</p><p class="voice-note">Robotic. Treats a milestone like a calendar alert.</p></article>
+      <article class="voice-card good" role="listitem"><div class="voice-badge badge-good" aria-label="Approved example">✓ Do say this</div><p class="voice-example">"You did it. Now celebrate like you mean it."</p><p class="voice-note">Acknowledges the achievement, invites action, feels real.</p></article>
+      <article class="voice-card bad"  role="listitem"><div class="voice-badge badge-bad"  aria-label="Avoid this">✕ Not like this</div><p class="voice-example">"Congratulations on your achievement. We hope you enjoy using our platform."</p><p class="voice-note">Generic corporate congratulations. Could be from any app.</p></article>
+    </div>
+  </section>
+
+  <hr class="divider" aria-hidden="true">
+
+  <!-- UI COMPONENTS -->
+  <section id="ui" aria-labelledby="ui-h">
+    <div class="section-label" aria-hidden="true">06 — UI Components</div>
+    <h2 id="ui-h">Built to celebrate</h2>
+    <p>Every component meets WCAG AA contrast, carries a visible 3px focus ring, and has a minimum 44×44px touch target. Color is never used as the sole indicator of state — every status pairs with a label or icon.</p>
+
+    <div class="ui-grid">
+
+      <div class="ui-card">
+        <div class="ui-card-header">Buttons</div>
+        <div class="ui-card-body">
+          <div class="btn-col">
+            <button class="btn btn-primary" type="button">RSVP Now — It's Free 🎉</button>
+            <button class="btn btn-secondary" type="button">Browse Events</button>
+            <button class="btn btn-ghost" type="button">See All Nearby</button>
+            <button class="btn btn-danger" type="button">Cancel RSVP</button>
+          </div>
+          <div class="tag-row" aria-label="Tag examples">
+            <span class="tag tag-fern">Sweet 16</span>
+            <span class="tag tag-cerulean">Graduation</span>
+            <span class="tag tag-orange">Tonight</span>
+            <span class="tag tag-yellow">Trending</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ui-card">
+        <div class="ui-card-header">Event Card</div>
+        <div class="ui-card-body">
+          <article class="event-card" aria-label="Example event card">
+            <div class="event-img" aria-hidden="true">
+              <span class="ev-badge">Sweet 16 🎂</span>
+              <span class="ev-emoji">🎊</span>
+            </div>
+            <div class="event-body">
+              <h3 class="ev-title">Destiny's Sweet 16 Bash</h3>
+              <div class="ev-meta" aria-label="Event details">Sat Jul 19 · 7:00 PM · Miami Beach, FL</div>
+              <div class="ev-footer">
+                <div class="avatars" aria-label="44 people attending">
+                  <div class="av av1" aria-hidden="true">AK</div>
+                  <div class="av av2" aria-hidden="true">JM</div>
+                  <div class="av av3" aria-hidden="true">TR</div>
+                  <div class="av av4" aria-hidden="true">+41</div>
+                </div>
+                <button class="going-btn" type="button" aria-label="Mark yourself as going to this event">Going ✓</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="ui-card">
+        <div class="ui-card-header">Form Fields</div>
+        <div class="ui-card-body">
+          <div class="input-col">
+            <div class="field">
+              <label for="ev-name">Event Name</label>
+              <input class="input" id="ev-name" type="text" placeholder="e.g. Sofia's Grad Bash 2025" />
+            </div>
+            <div class="field">
+              <label for="ev-date">Date & Time</label>
+              <input class="input ok" id="ev-date" type="text" value="Saturday, June 14 · 7:00 PM" aria-describedby="ok-msg" />
+              <span class="fok" id="ok-msg"><span aria-hidden="true">✓</span> Date confirmed</span>
+            </div>
+            <div class="field">
+              <label for="ev-venue">Venue</label>
+              <input class="input err" id="ev-venue" type="text" value="123 Party Blvd" aria-describedby="err-msg" aria-invalid="true" />
+              <span class="ferr" id="err-msg"><span aria-hidden="true">✕</span> Address not found — try again</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ui-card">
+        <div class="ui-card-header">Spacing & Radius</div>
+        <div class="ui-card-body">
+          <p class="t-label" style="margin-bottom:0.75rem;">Spacing scale</p>
+          <div class="spacing-row" aria-label="Spacing tokens">
+            <div class="sp-item"><div class="sp-block" style="height:4px;" aria-label="4px"></div><div class="sp-lbl">4px<br>xs</div></div>
+            <div class="sp-item"><div class="sp-block" style="height:8px;" aria-label="8px"></div><div class="sp-lbl">8px<br>sm</div></div>
+            <div class="sp-item"><div class="sp-block" style="height:12px;" aria-label="12px"></div><div class="sp-lbl">12px</div></div>
+            <div class="sp-item"><div class="sp-block" style="height:16px;" aria-label="16px"></div><div class="sp-lbl">16px<br>md</div></div>
+            <div class="sp-item"><div class="sp-block" style="height:24px;" aria-label="24px"></div><div class="sp-lbl">24px<br>lg</div></div>
+            <div class="sp-item"><div class="sp-block" style="height:32px;" aria-label="32px"></div><div class="sp-lbl">32px<br>xl</div></div>
+            <div class="sp-item"><div class="sp-block" style="height:48px;" aria-label="48px"></div><div class="sp-lbl">48px<br>2xl</div></div>
+            <div class="sp-item"><div class="sp-block" style="height:64px;" aria-label="64px"></div><div class="sp-lbl">64px<br>3xl</div></div>
+            <div class="sp-item"><div class="sp-block" style="height:96px;" aria-label="96px"></div><div class="sp-lbl">96px<br>4xl</div></div>
+          </div>
+          <p class="t-label" style="margin-top:1.5rem;margin-bottom:0.5rem;">Border radius</p>
+          <div class="radius-row" aria-label="Border radius tokens">
+            <div class="r-item"><div class="r-block" style="border-radius:4px;" aria-label="4px"></div><span class="sp-lbl">4</span></div>
+            <div class="r-item"><div class="r-block" style="border-radius:8px;" aria-label="8px"></div><span class="sp-lbl">8</span></div>
+            <div class="r-item"><div class="r-block" style="border-radius:12px;" aria-label="12px"></div><span class="sp-lbl">12</span></div>
+            <div class="r-item"><div class="r-block" style="border-radius:16px;" aria-label="16px"></div><span class="sp-lbl">16</span></div>
+            <div class="r-item"><div class="r-block" style="border-radius:100px;" aria-label="pill"></div><span class="sp-lbl">pill</span></div>
+            <div class="r-item"><div class="r-block" style="border-radius:50%;" aria-label="circle"></div><span class="sp-lbl">50%</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /ui-grid -->
+
+    <div class="dodonts" role="region" aria-label="Design do's and don'ts">
+      <div class="dd-card dd-do">
+        <div class="dd-header" id="do-hd">✓ Do</div>
+        <div class="dd-body" role="list" aria-labelledby="do-hd">
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✓</span>Use fern-500 only for CTA button backgrounds — never as text color on light backgrounds</div>
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✓</span>Use fern-700 or fern-800 for any fern-colored text on white or light cerulean surfaces</div>
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✓</span>Maintain 44×44px minimum touch targets on all interactive elements</div>
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✓</span>Show visible 3px focus rings on every interactive element for keyboard navigation</div>
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✓</span>Pair color-coded states with text labels or icons (error, success, warning)</div>
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✓</span>Use semantic HTML: &lt;button&gt; for actions, &lt;a&gt; for navigation, &lt;label&gt; for inputs</div>
+        </div>
+      </div>
+      <div class="dd-card dd-dont">
+        <div class="dd-header" id="dont-hd">✕ Don't</div>
+        <div class="dd-body" role="list" aria-labelledby="dont-hd">
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✕</span>Use fern-400 or fern-500 as text on white — contrast ratio ~1.5:1 fails WCAG</div>
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✕</span>Use cerulean-500 for body text on white — 3.2:1 is below the 4.5:1 AA requirement</div>
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✕</span>Remove focus rings with outline:none without providing a custom :focus-visible replacement</div>
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✕</span>Convey state using color alone — always add a label, icon, or pattern alongside</div>
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✕</span>Set body text below 16px or use JetBrains Mono for body copy — both hurt readability</div>
+          <div class="dd-item" role="listitem"><span class="dd-ic" aria-hidden="true">✕</span>Use overflow:hidden on text containers — text must be able to scale to 200%</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer role="contentinfo">
+  <div>
+    <div class="footer-logo" aria-label="Bashly"><span class="bash">bash</span><span class="ly">ly</span></div>
+    <p style="margin-top:0.25rem;">bashly.app</p>
+  </div>
+  <p>Brand Guidelines v1.0<br>For internal & design team use</p>
+  <div class="footer-meta">Version 1.0 · 2025<br>Confidential</div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('themeToggle');
+  const icon   = document.getElementById('themeIcon');
+  const label  = document.getElementById('themeLabel');
+  const html   = document.documentElement;
+
+  toggle.addEventListener('click', () => {
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    icon.textContent  = isDark ? '🌙' : '☀️';
+    label.textContent = isDark ? 'Dark mode' : 'Light mode';
+    toggle.setAttribute('aria-label', isDark ? 'Switch to dark mode' : 'Switch to light mode');
+    toggle.setAttribute('aria-pressed', String(!isDark));
+    try { localStorage.setItem('bashly-theme', next); } catch(e) {}
+  });
+
+  // Restore saved preference
+  try {
+    const saved = localStorage.getItem('bashly-theme');
+    if (saved === 'dark') {
+      html.setAttribute('data-theme', 'dark');
+      icon.textContent  = '☀️';
+      label.textContent = 'Light mode';
+      toggle.setAttribute('aria-label', 'Switch to light mode');
+      toggle.setAttribute('aria-pressed', 'true');
+    }
+  } catch(e) {}
+</script>
+</body>
+</html>

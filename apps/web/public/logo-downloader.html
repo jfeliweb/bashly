@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bashly Logo Downloader</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: system-ui, sans-serif;
+    background: #f8fbfe;
+    padding: 2rem;
+    line-height: 1.6;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #091b1b;
+  }
+  h1 .bash { color: rgb(32, 102, 0); }
+  h1 .ly { color: rgb(37, 90, 116); }
+  .intro {
+    background: white;
+    border: 2px solid #b1d5e7;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  .logo-card {
+    background: white;
+    border: 2px solid #b1d5e7;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .logo-card h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    color: #091b1b;
+  }
+  .logo-card p {
+    font-size: 0.875rem;
+    color: #31789b;
+    margin-bottom: 1rem;
+  }
+  .preview {
+    background: #fff;
+    border: 1px dashed #b1d5e7;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+  }
+  .preview.dark { background: rgb(9, 21, 27); }
+  .controls {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .size-select {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.625rem;
+    border: 1.5px solid #b1d5e7;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    background: white;
+    color: #091b1b;
+  }
+  .btn {
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: rgb(81, 255, 0);
+    color: rgb(9, 21, 27);
+  }
+  .btn-primary:hover {
+    background: rgb(116, 255, 51);
+    transform: translateY(-1px);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: rgb(37, 90, 116);
+    border: 1.5px solid rgb(37, 90, 116);
+  }
+  .btn-secondary:hover {
+    background: rgba(37, 90, 116, 0.05);
+  }
+  canvas { display: none; }
+  .note {
+    background: rgb(238, 255, 229);
+    border: 1.5px solid rgb(48, 153, 0);
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: rgb(24, 60, 78);
+  }
+  .note strong { color: rgb(32, 102, 0); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1><span class="bash">bash</span><span class="ly">ly</span> Logo Downloader</h1>
+  
+  <div class="intro">
+    <p><strong>How to use:</strong> Select your desired resolution, then click "Download PNG" to save transparent logo files. All files use the brand-approved colors and are ready for production use.</p>
+  </div>
+
+  <div class="grid">
+    
+    <!-- Wordmark Light -->
+    <div class="logo-card">
+      <h3>Wordmark — Light Backgrounds</h3>
+      <p>Use on white, cerulean-50, or any light surface</p>
+      <div class="preview" id="preview-wm-light"></div>
+      <div class="controls">
+        <select class="size-select" id="size-wm-light">
+          <option value="1">1x (380×150)</option>
+          <option value="2" selected>2x (760×300)</option>
+          <option value="3">3x (1140×450)</option>
+          <option value="4">4x (1520×600)</option>
+        </select>
+        <button class="btn btn-primary" onclick="downloadLogo('wm-light')">Download PNG</button>
+      </div>
+    </div>
+
+    <!-- Wordmark Dark -->
+    <div class="logo-card">
+      <h3>Wordmark — Dark Backgrounds</h3>
+      <p>Use on dark surfaces (cerulean-950, etc.)</p>
+      <div class="preview dark" id="preview-wm-dark"></div>
+      <div class="controls">
+        <select class="size-select" id="size-wm-dark">
+          <option value="1">1x (380×150)</option>
+          <option value="2" selected>2x (760×300)</option>
+          <option value="3">3x (1140×450)</option>
+          <option value="4">4x (1520×600)</option>
+        </select>
+        <button class="btn btn-primary" onclick="downloadLogo('wm-dark')">Download PNG</button>
+      </div>
+    </div>
+
+    <!-- Icon Square -->
+    <div class="logo-card">
+      <h3>App Icon — Square</h3>
+      <p>App icon with rounded corners</p>
+      <div class="preview" id="preview-icon"></div>
+      <div class="controls">
+        <select class="size-select" id="size-icon">
+          <option value="192">192×192 (web)</option>
+          <option value="256">256×256</option>
+          <option value="512" selected>512×512 (recommended)</option>
+          <option value="1024">1024×1024 (iOS/print)</option>
+        </select>
+        <button class="btn btn-primary" onclick="downloadLogo('icon')">Download PNG</button>
+      </div>
+    </div>
+
+    <!-- Lockup Light -->
+    <div class="logo-card">
+      <h3>Lockup — Light Backgrounds</h3>
+      <p>Icon + wordmark horizontal layout</p>
+      <div class="preview" id="preview-lockup-light"></div>
+      <div class="controls">
+        <select class="size-select" id="size-lockup-light">
+          <option value="1">1x (520×150)</option>
+          <option value="2" selected>2x (1040×300)</option>
+          <option value="3">3x (1560×450)</option>
+          <option value="4">4x (2080×600)</option>
+        </select>
+        <button class="btn btn-primary" onclick="downloadLogo('lockup-light')">Download PNG</button>
+      </div>
+    </div>
+
+    <!-- Lockup Dark -->
+    <div class="logo-card">
+      <h3>Lockup — Dark Backgrounds</h3>
+      <p>Icon + wordmark horizontal layout</p>
+      <div class="preview dark" id="preview-lockup-dark"></div>
+      <div class="controls">
+        <select class="size-select" id="size-lockup-dark">
+          <option value="1">1x (520×150)</option>
+          <option value="2" selected>2x (1040×300)</option>
+          <option value="3">3x (1560×450)</option>
+          <option value="4">4x (2080×600)</option>
+        </select>
+        <button class="btn btn-primary" onclick="downloadLogo('lockup-dark')">Download PNG</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    <strong>✓ Note:</strong> All logos are generated with transparent backgrounds and use WCAG AA compliant colors. Files are optimized for both web and print use.
+  </div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+// Logo rendering functions
+const logos = {
+  'wm-light': {
+    baseWidth: 380,
+    baseHeight: 150,
+    render: (ctx, scale) => {
+      ctx.font = `800 ${100 * scale}px 'Bricolage Grotesque', sans-serif`;
+      ctx.letterSpacing = `${-4 * scale}px`;
+      
+      // Render "bash" in fern
+      ctx.fillStyle = 'rgb(32, 102, 0)';
+      ctx.fillText('bash', 50 * scale, 105 * scale);
+      
+      // Measure "bash" to position "ly" correctly
+      const bashWidth = ctx.measureText('bash').width;
+      
+      // Render "ly" in cerulean right after "bash"
+      ctx.fillStyle = 'rgb(37, 90, 116)';
+      ctx.fillText('ly', 50 * scale + bashWidth, 105 * scale);
+    }
+  },
+  'wm-dark': {
+    baseWidth: 380,
+    baseHeight: 150,
+    render: (ctx, scale) => {
+      ctx.font = `800 ${100 * scale}px 'Bricolage Grotesque', sans-serif`;
+      ctx.letterSpacing = `${-4 * scale}px`;
+      
+      // Render "bash" in fern
+      ctx.fillStyle = 'rgb(116, 255, 51)';
+      ctx.fillText('bash', 50 * scale, 105 * scale);
+      
+      // Measure "bash" to position "ly" correctly
+      const bashWidth = ctx.measureText('bash').width;
+      
+      // Render "ly" in cerulean right after "bash"
+      ctx.fillStyle = 'rgb(100, 171, 206)';
+      ctx.fillText('ly', 50 * scale + bashWidth, 105 * scale);
+    }
+  },
+  'icon': {
+    baseWidth: 256,
+    baseHeight: 256,
+    fixedSize: true,
+    render: (ctx, size) => {
+      const radius = size * 0.25;
+      // Rounded rectangle
+      ctx.beginPath();
+      ctx.moveTo(radius, 0);
+      ctx.lineTo(size - radius, 0);
+      ctx.quadraticCurveTo(size, 0, size, radius);
+      ctx.lineTo(size, size - radius);
+      ctx.quadraticCurveTo(size, size, size - radius, size);
+      ctx.lineTo(radius, size);
+      ctx.quadraticCurveTo(0, size, 0, size - radius);
+      ctx.lineTo(0, radius);
+      ctx.quadraticCurveTo(0, 0, radius, 0);
+      ctx.fillStyle = 'rgb(81, 255, 0)';
+      ctx.fill();
+      
+      // B letter
+      ctx.font = `800 ${size * 0.55}px 'Bricolage Grotesque', sans-serif`;
+      ctx.fillStyle = 'rgb(9, 21, 27)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('B', size / 2, size / 2 + size * 0.04);
+    }
+  },
+  'lockup-light': {
+    baseWidth: 520,
+    baseHeight: 150,
+    render: (ctx, scale) => {
+      // Icon
+      const iconSize = 104 * scale;
+      const iconX = 30 * scale;
+      const iconY = 23 * scale;
+      const radius = 28 * scale;
+      
+      ctx.beginPath();
+      ctx.moveTo(iconX + radius, iconY);
+      ctx.lineTo(iconX + iconSize - radius, iconY);
+      ctx.quadraticCurveTo(iconX + iconSize, iconY, iconX + iconSize, iconY + radius);
+      ctx.lineTo(iconX + iconSize, iconY + iconSize - radius);
+      ctx.quadraticCurveTo(iconX + iconSize, iconY + iconSize, iconX + iconSize - radius, iconY + iconSize);
+      ctx.lineTo(iconX + radius, iconY + iconSize);
+      ctx.quadraticCurveTo(iconX, iconY + iconSize, iconX, iconY + iconSize - radius);
+      ctx.lineTo(iconX, iconY + radius);
+      ctx.quadraticCurveTo(iconX, iconY, iconX + radius, iconY);
+      ctx.fillStyle = 'rgb(81, 255, 0)';
+      ctx.fill();
+      
+      ctx.font = `800 ${68 * scale}px 'Bricolage Grotesque', sans-serif`;
+      ctx.fillStyle = 'rgb(9, 21, 27)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('B', iconX + iconSize / 2, iconY + iconSize / 2 + 3 * scale);
+      
+      // Wordmark
+      ctx.textAlign = 'start';
+      ctx.textBaseline = 'alphabetic';
+      ctx.font = `800 ${80 * scale}px 'Bricolage Grotesque', sans-serif`;
+      ctx.letterSpacing = `${-3 * scale}px`;
+      
+      // Render "bash" in fern
+      ctx.fillStyle = 'rgb(32, 102, 0)';
+      ctx.fillText('bash', 160 * scale, 100 * scale);
+      
+      // Measure "bash" to position "ly" correctly
+      const bashWidth = ctx.measureText('bash').width;
+      
+      // Render "ly" in cerulean right after "bash"
+      ctx.fillStyle = 'rgb(37, 90, 116)';
+      ctx.fillText('ly', 160 * scale + bashWidth, 100 * scale);
+    }
+  },
+  'lockup-dark': {
+    baseWidth: 520,
+    baseHeight: 150,
+    render: (ctx, scale) => {
+      // Icon
+      const iconSize = 104 * scale;
+      const iconX = 30 * scale;
+      const iconY = 23 * scale;
+      const radius = 28 * scale;
+      
+      ctx.beginPath();
+      ctx.moveTo(iconX + radius, iconY);
+      ctx.lineTo(iconX + iconSize - radius, iconY);
+      ctx.quadraticCurveTo(iconX + iconSize, iconY, iconX + iconSize, iconY + radius);
+      ctx.lineTo(iconX + iconSize, iconY + iconSize - radius);
+      ctx.quadraticCurveTo(iconX + iconSize, iconY + iconSize, iconX + iconSize - radius, iconY + iconSize);
+      ctx.lineTo(iconX + radius, iconY + iconSize);
+      ctx.quadraticCurveTo(iconX, iconY + iconSize, iconX, iconY + iconSize - radius);
+      ctx.lineTo(iconX, iconY + radius);
+      ctx.quadraticCurveTo(iconX, iconY, iconX + radius, iconY);
+      ctx.fillStyle = 'rgb(81, 255, 0)';
+      ctx.fill();
+      
+      ctx.font = `800 ${68 * scale}px 'Bricolage Grotesque', sans-serif`;
+      ctx.fillStyle = 'rgb(9, 21, 27)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('B', iconX + iconSize / 2, iconY + iconSize / 2 + 3 * scale);
+      
+      // Wordmark
+      ctx.textAlign = 'start';
+      ctx.textBaseline = 'alphabetic';
+      ctx.font = `800 ${80 * scale}px 'Bricolage Grotesque', sans-serif`;
+      ctx.letterSpacing = `${-3 * scale}px`;
+      
+      // Render "bash" in fern
+      ctx.fillStyle = 'rgb(116, 255, 51)';
+      ctx.fillText('bash', 160 * scale, 100 * scale);
+      
+      // Measure "bash" to position "ly" correctly
+      const bashWidth = ctx.measureText('bash').width;
+      
+      // Render "ly" in cerulean right after "bash"
+      ctx.fillStyle = 'rgb(100, 171, 206)';
+      ctx.fillText('ly', 160 * scale + bashWidth, 100 * scale);
+    }
+  }
+};
+
+// Render preview
+function renderPreview(id) {
+  const preview = document.getElementById(`preview-${id}`);
+  const tempCanvas = document.createElement('canvas');
+  const config = logos[id];
+  
+  if (config.fixedSize) {
+    tempCanvas.width = 128;
+    tempCanvas.height = 128;
+  } else {
+    tempCanvas.width = config.baseWidth * 0.8;
+    tempCanvas.height = config.baseHeight * 0.8;
+  }
+  
+  const ctx = tempCanvas.getContext('2d');
+  config.render(ctx, config.fixedSize ? 128 : 0.8);
+  
+  preview.innerHTML = '';
+  preview.appendChild(tempCanvas);
+  tempCanvas.style.display = 'block';
+  tempCanvas.style.maxWidth = '100%';
+  tempCanvas.style.height = 'auto';
+}
+
+// Download logo
+function downloadLogo(id) {
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const config = logos[id];
+  const sizeSelect = document.getElementById(`size-${id}`);
+  const scale = config.fixedSize ? parseInt(sizeSelect.value) : parseInt(sizeSelect.value);
+  
+  if (config.fixedSize) {
+    canvas.width = scale;
+    canvas.height = scale;
+  } else {
+    canvas.width = config.baseWidth * scale;
+    canvas.height = config.baseHeight * scale;
+  }
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  config.render(ctx, config.fixedSize ? scale : scale);
+  
+  // Download
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `bashly-${id}-${config.fixedSize ? scale : scale + 'x'}.png`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, 'image/png');
+}
+
+// Initialize previews
+document.addEventListener('DOMContentLoaded', () => {
+  Object.keys(logos).forEach(id => renderPreview(id));
+});
+</script>
+
+</body>
+</html>
