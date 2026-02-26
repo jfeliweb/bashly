@@ -55,7 +55,11 @@ function isProtectedPath(pathname: string): boolean {
 }
 
 export default async function middleware(request: NextRequest) {
-  const sessionToken = request.cookies.get('better-auth.session_token');
+  // Better Auth uses the __Secure- prefix on cookie names when baseURL is https://.
+  // Check both names so the middleware works in dev (plain name) and production (__Secure- prefix).
+  const sessionToken
+    = request.cookies.get('better-auth.session_token')
+      ?? request.cookies.get('__Secure-better-auth.session_token');
   const { pathname } = request.nextUrl;
 
   // In production use the real request origin; in dev force 127.0.0.1 so

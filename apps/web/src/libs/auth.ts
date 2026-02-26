@@ -47,6 +47,8 @@ export const auth = betterAuth({
       });
     },
     sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    callbackURL: '/dashboard',
   },
   socialProviders: {
     google: {

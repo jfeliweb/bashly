@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -21,9 +20,9 @@ const signUpSchema = z.object({
 type SignUpValues = z.infer<typeof signUpSchema>;
 
 export function SignUpForm() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -48,9 +47,7 @@ export function SignUpForm() {
       if (result.error) {
         setError(result.error.message || 'Failed to create account');
       } else {
-        const searchParams = new URLSearchParams({ welcome: 'true' });
-        router.push(`/dashboard?${searchParams.toString()}`);
-        router.refresh();
+        setEmailSent(true);
       }
     } catch {
       setError('An unexpected error occurred');
@@ -58,6 +55,31 @@ export function SignUpForm() {
       setLoading(false);
     }
   };
+
+  if (emailSent) {
+    return (
+      <div className="space-y-4 text-center">
+        <div className="rounded-md bg-muted p-4 text-sm text-muted-foreground">
+          <p className="font-medium text-foreground">Check your inbox</p>
+          <p className="mt-1">
+            We sent a verification link to
+            {' '}
+            <span className="font-medium text-foreground">
+              {form.getValues('email')}
+            </span>
+            . Click the link to verify your email and sign in.
+          </p>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Already verified?
+          {' '}
+          <Link href="/sign-in" className="font-medium text-primary hover:underline">
+            Sign in
+          </Link>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
