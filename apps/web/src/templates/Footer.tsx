@@ -116,9 +116,9 @@ export const Footer = () => {
         <li>
           <Link href="/features">{t('features')}</Link>
         </li>
-        <li>
+        {/* <li>
           <Link href="/pricing">{t('pricing')}</Link>
-        </li>
+        </li> */}
         <li>
           <Link href="/about">{t('company')}</Link>
         </li>

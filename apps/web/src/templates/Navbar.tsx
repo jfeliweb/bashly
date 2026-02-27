@@ -52,9 +52,9 @@ export const Navbar = () => {
         <li>
           <Link href="/features">{t('features')}</Link>
         </li>
-        <li>
+        {/* <li>
           <Link href="/pricing">{t('pricing')}</Link>
-        </li>
+        </li> */}
         <li>
           <Link href="/about">{t('about')}</Link>
         </li>
