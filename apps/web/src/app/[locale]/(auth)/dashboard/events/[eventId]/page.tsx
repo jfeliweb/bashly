@@ -6,10 +6,10 @@ import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
 import { DeleteEventButton } from '@/features/events/DeleteEventButton';
+import { PublishEventButton } from '@/features/events/PublishEventButton';
 import { CopyGuestUrl } from '@/features/invites/CopyGuestUrl';
 import { InviteLinksPanel } from '@/features/invites/InviteLinksPanel';
 import { QrCodePreview } from '@/features/invites/QrCodePreview';
-import { PublishEventButton } from '@/features/events/PublishEventButton';
 import { RegistryLinksPanel } from '@/features/registry/RegistryLinksPanel';
 import { SongQueuePanel } from '@/features/songs/SongQueuePanel';
 import {
