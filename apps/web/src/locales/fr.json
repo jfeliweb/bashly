@@ -282,7 +282,15 @@
   },
   "Dashboard": {
     "meta_title": "Tableau de bord Bashly",
-    "meta_description": "Vos événements en un coup d'œil."
+    "meta_description": "Vos événements en un coup d'œil.",
+    "title": "Mes événements",
+    "subtitle": "Gérez vos célébrations",
+    "create_event": "Créer un événement",
+    "empty_state_title": "Aucun événement pour l'instant",
+    "empty_state_description": "Créez votre premier événement pour commencer",
+    "rsvp_count": "RSVPs",
+    "song_count": "Chansons",
+    "guest_count": "Invités"
   },
   "DashboardIndex": {
     "title_bar": "Tableau de bord",
@@ -403,6 +411,10 @@
     "create_and_publish": "Créer et publier",
     "creating": "Création…",
     "error_toast": "Impossible de créer l'événement. Réessayez.",
+    "save_button": "Enregistrer les modifications",
+    "saving": "Enregistrement…",
+    "error_toast_edit": "Impossible d'enregistrer. Réessayez.",
+    "success_toast_edit": "Modifications enregistrées avec succès.",
     "tooltip_event_type_title": "Choisissez le type d'événement",
     "tooltip_event_type_description": "Cela nous aide à personnaliser votre page. Vous pourrez le modifier plus tard."
   },
@@ -620,18 +632,6 @@
     "heading_with_name": "Vous êtes sur la liste, {name} !",
     "request_song": "Demander une chanson →",
     "view_event": "Voir les détails de l'événement →"
-  },
-  "Dashboard": {
-    "meta_title": "Tableau de bord Bashly",
-    "meta_description": "Vos événements en un coup d'œil.",
-    "title": "Mes événements",
-    "subtitle": "Gérez vos célébrations",
-    "create_event": "Créer un événement",
-    "empty_state_title": "Aucun événement pour l'instant",
-    "empty_state_description": "Créez votre premier événement pour commencer",
-    "rsvp_count": "RSVPs",
-    "song_count": "Chansons",
-    "guest_count": "Invités"
   },
   "TermsPage": {
     "meta_title": "Conditions d'utilisation",

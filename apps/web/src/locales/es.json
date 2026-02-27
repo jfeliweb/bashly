@@ -653,6 +653,7 @@
     "save_button": "Save changes",
     "saving": "Saving…",
     "error_toast_edit": "Could not save. Please try again.",
+    "success_toast_edit": "Cambios guardados exitosamente.",
     "songs_per_guest_label": "Songs per guest",
     "tooltip_event_type_title": "Choose Your Event Type",
     "tooltip_event_type_description": "This helps us customize your event page. You can change it later."
