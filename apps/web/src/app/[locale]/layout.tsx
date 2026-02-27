@@ -7,6 +7,7 @@ import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
 // import { DemoBadge } from '@/components/DemoBadge';
+import { PostHogProvider } from '@/components/PostHogProvider';
 import { AllLocales } from '@/utils/AppConfig';
 
 const bricolage = Bricolage_Grotesque({
@@ -92,7 +93,9 @@ export default function RootLayout(props: {
           locale={props.params.locale}
           messages={messages}
         >
-          {props.children}
+          <PostHogProvider>
+            {props.children}
+          </PostHogProvider>
 
           {/* <DemoBadge /> */}
         </NextIntlClientProvider>

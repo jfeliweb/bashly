@@ -27,6 +27,8 @@ export const Env = createEnv({
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
     NEXT_PUBLIC_MAPBOX_TOKEN: z.string().min(1),
     NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
+    NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(),
   },
   shared: {
     NODE_ENV: z.enum(['test', 'development', 'production']).optional(),
@@ -55,6 +57,8 @@ export const Env = createEnv({
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_MAPBOX_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_TOKEN,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     NODE_ENV: process.env.NODE_ENV,
   },
 });
