@@ -74,8 +74,8 @@ function eventToFormDefaults(
     song_requests_per_guest: event.songRequestsPerGuest ?? 5,
     song_voting_enabled: event.songVotingEnabled ?? false,
     registry_enabled: event.registryEnabled ?? true,
-    cover_image_url: event.coverImageUrl ?? '',
-    cover_image_key: event.coverImageKey ?? '',
+    cover_image_url: event.coverImageUrl || undefined,
+    cover_image_key: event.coverImageKey || undefined,
   };
 }
 

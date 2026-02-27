@@ -30,7 +30,7 @@ export const createEventSchema = z.object({
   song_voting_enabled: z.boolean().default(false),
   registry_enabled: z.boolean().default(true),
   private_notes: z.string().max(2000).optional(),
-  cover_image_url: z.string().url().optional(),
+  cover_image_url: z.string().url().optional().or(z.literal('')).transform(v => v || undefined),
   cover_image_key: z.string().optional(),
   status: z.enum(['draft', 'published']).optional(),
 });
