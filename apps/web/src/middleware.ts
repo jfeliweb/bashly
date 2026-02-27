@@ -78,6 +78,9 @@ export default async function middleware(request: NextRequest) {
     if (pathname.startsWith('/api/rsvp/')) {
       return NextResponse.next();
     }
+    if (pathname.startsWith('/api/invites/')) {
+      return NextResponse.next();
+    }
     if (pathname.startsWith('/api/songs/search')) {
       return NextResponse.next();
     }
