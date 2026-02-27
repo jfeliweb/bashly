@@ -1,4 +1,4 @@
-import { and, eq, isNotNull } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -7,7 +7,9 @@ import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import {
   createSpotifyPlaylist,
+  getValidSpotifyToken,
   replaceSpotifyPlaylistTracks,
+  searchSpotifyTrack,
 } from '@/libs/spotify';
 import {
   eventRoleTable,
@@ -64,6 +66,41 @@ export async function POST(_req: NextRequest, { params }: RouteParams) {
       { error: 'Spotify not connected', code: 'NO_CONNECTION' },
       { status: 400 },
     );
+  }
+
+  // Resolve Spotify URIs for any approved songs that are still missing one.
+  // This makes the export a single-click action — no manual pre-step required.
+  const token = await getValidSpotifyToken(session.user.id);
+  if (token) {
+    const unresolved = await db
+      .select({
+        id: songSuggestionTable.id,
+        trackTitle: songSuggestionTable.trackTitle,
+        artistName: songSuggestionTable.artistName,
+        isrc: songSuggestionTable.isrc,
+      })
+      .from(songSuggestionTable)
+      .where(
+        and(
+          eq(songSuggestionTable.eventId, eventId),
+          eq(songSuggestionTable.status, 'approved'),
+          isNull(songSuggestionTable.spotifyUri),
+        ),
+      );
+
+    for (const song of unresolved) {
+      const uri = await searchSpotifyTrack(token, {
+        isrc: song.isrc,
+        trackTitle: song.trackTitle,
+        artistName: song.artistName,
+      });
+      if (uri) {
+        await db
+          .update(songSuggestionTable)
+          .set({ spotifyUri: uri })
+          .where(eq(songSuggestionTable.id, song.id));
+      }
+    }
   }
 
   // Get all approved songs that have been resolved to Spotify URIs

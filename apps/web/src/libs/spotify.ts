@@ -282,6 +282,53 @@ export async function replaceSpotifyPlaylistTracks(
   }
 }
 
+type SpotifySearchResponse = {
+  tracks: {
+    items: Array<{ uri: string }>;
+  };
+};
+
+/**
+ * Search Spotify for a track and return its URI.
+ * Uses ISRC for an exact match; falls back to title + artist keyword search.
+ * Returns `null` if no match is found or the search request fails.
+ */
+export async function searchSpotifyTrack(
+  token: string,
+  opts: { isrc?: string | null; trackTitle: string; artistName: string },
+): Promise<string | null> {
+  const query = opts.isrc
+    ? `isrc:${opts.isrc}`
+    : `track:${opts.trackTitle} artist:${opts.artistName}`;
+
+  const url = new URL('https://api.spotify.com/v1/search');
+  url.searchParams.set('q', query);
+  url.searchParams.set('type', 'track');
+  url.searchParams.set('limit', '1');
+
+  const res = await fetch(url.toString(), {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+
+  const data: SpotifySearchResponse = await res.json();
+  const uri = data.tracks.items[0]?.uri ?? null;
+
+  // If ISRC search returned nothing, retry with title + artist
+  if (!uri && opts.isrc) {
+    return searchSpotifyTrack(token, {
+      isrc: null,
+      trackTitle: opts.trackTitle,
+      artistName: opts.artistName,
+    });
+  }
+
+  return uri;
+}
+
 function chunkArray<T>(array: T[], size: number): T[][] {
   const chunks: T[][] = [];
   for (let i = 0; i < array.length; i += size) {
