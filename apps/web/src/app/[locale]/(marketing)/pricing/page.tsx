@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
 import { Check, X } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 
@@ -228,7 +228,7 @@ export default async function PricingPage(props: { params: { locale: string } })
   return (
     <BaseTemplate>
       <div className="bg-white dark:bg-background">
-        <div className="bg-gradient-to-b from-cerulean-50 to-white dark:from-cerulean-950 dark:to-background py-16 sm:py-24">
+        <div className="bg-gradient-to-b from-cerulean-50 to-white py-16 dark:from-cerulean-950 dark:to-background sm:py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h1 className="font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
@@ -268,30 +268,36 @@ export default async function PricingPage(props: { params: { locale: string } })
                       <p className="mt-1 text-sm text-muted-foreground">{planDescription}</p>
                       <div className="mt-4 flex items-baseline gap-1">
                         <span className="text-4xl font-bold text-foreground">
-                          ${plan.price}
+                          $
+                          {plan.price}
                         </span>
-                        <span className="text-sm text-muted-foreground">/{billingLabel}</span>
+                        <span className="text-sm text-muted-foreground">
+                          /
+                          {billingLabel}
+                        </span>
                       </div>
                     </div>
 
                     <div className="mt-6">
-                      {plan.available ? (
-                        <Link
-                          href="/sign-up"
-                          className="block w-full rounded-full bg-fern-500 py-2.5 text-center text-sm font-semibold text-cerulean-950 hover:bg-fern-400 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
-                        >
-                          {t('cta_free')}
-                        </Link>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled
-                          className="relative w-full rounded-full border border-cerulean-300 bg-cerulean-50 py-2.5 text-center text-sm font-semibold text-cerulean-700 opacity-60 dark:bg-cerulean-900/30 dark:text-cerulean-400"
-                        >
-                          {t('cta_coming_soon')}
-                          <ComingSoonBadge className="absolute -top-2 -right-2" />
-                        </button>
-                      )}
+                      {plan.available
+                        ? (
+                            <Link
+                              href="/sign-up"
+                              className="hover:bg-fern-400 focus:outline-3 focus:outline-offset-3 block w-full rounded-full bg-fern-500 py-2.5 text-center text-sm font-semibold text-cerulean-950 focus:outline focus:outline-[var(--focus-ring)]"
+                            >
+                              {t('cta_free')}
+                            </Link>
+                          )
+                        : (
+                            <button
+                              type="button"
+                              disabled
+                              className="relative w-full rounded-full border border-cerulean-300 bg-cerulean-50 py-2.5 text-center text-sm font-semibold text-cerulean-700 opacity-60 dark:bg-cerulean-900/30 dark:text-cerulean-400"
+                            >
+                              {t('cta_coming_soon')}
+                              <ComingSoonBadge className="absolute -right-2 -top-2" />
+                            </button>
+                          )}
                     </div>
 
                     <ul className="mt-6 space-y-3 text-sm">
@@ -307,11 +313,13 @@ export default async function PricingPage(props: { params: { locale: string } })
                               key={feature.key}
                               className="flex items-start gap-2"
                             >
-                              {value ? (
-                                <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-fern-600" />
-                              ) : (
-                                <X className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground/40" />
-                              )}
+                              {value
+                                ? (
+                                    <Check className="mt-0.5 size-4 shrink-0 text-fern-600" />
+                                  )
+                                : (
+                                    <X className="mt-0.5 size-4 shrink-0 text-muted-foreground/40" />
+                                  )}
                               <span
                                 className={
                                   value ? 'text-muted-foreground' : 'text-muted-foreground/60'
@@ -324,9 +332,9 @@ export default async function PricingPage(props: { params: { locale: string } })
                         }
 
                         const numericValue = rawValue as number;
-                        const isUnlimited =
-                          feature.unlimitedThreshold !== undefined &&
-                          numericValue >= feature.unlimitedThreshold;
+                        const isUnlimited
+                          = feature.unlimitedThreshold !== undefined
+                            && numericValue >= feature.unlimitedThreshold;
 
                         const formattedValue = isUnlimited
                           ? t('features.unlimited')
@@ -337,9 +345,11 @@ export default async function PricingPage(props: { params: { locale: string } })
                             key={feature.key}
                             className="flex items-start gap-2"
                           >
-                            <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-fern-600" />
+                            <Check className="mt-0.5 size-4 shrink-0 text-fern-600" />
                             <span className="text-muted-foreground">
-                              {formattedValue} {label}
+                              {formattedValue}
+                              {' '}
+                              {label}
                             </span>
                           </li>
                         );
@@ -354,10 +364,10 @@ export default async function PricingPage(props: { params: { locale: string } })
               <p className="text-sm text-muted-foreground">{t('beta_note')}</p>
               <p className="mt-2 text-sm text-muted-foreground">
                 {t.rich('contact_note', {
-                  contact_link: (chunks) => (
+                  contact_link: chunks => (
                     <Link
                       href="/contact"
-                      className="font-semibold text-cerulean-600 hover:text-cerulean-700 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
+                      className="focus:outline-3 focus:outline-offset-3 font-semibold text-cerulean-600 hover:text-cerulean-700 focus:outline focus:outline-[var(--focus-ring)]"
                     >
                       {chunks}
                     </Link>
@@ -418,4 +428,3 @@ export default async function PricingPage(props: { params: { locale: string } })
     </BaseTemplate>
   );
 }
-

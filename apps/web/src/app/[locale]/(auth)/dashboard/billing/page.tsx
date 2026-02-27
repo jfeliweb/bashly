@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { TitleBar } from '@/features/dashboard/TitleBar';
 import { auth } from '@/libs/auth';
-import { PlanConfig, PLAN_ID } from '@/utils/AppConfig';
+import { PLAN_ID, PlanConfig } from '@/utils/AppConfig';
 
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({
