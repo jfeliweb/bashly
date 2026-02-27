@@ -116,8 +116,6 @@ export default async function EditEventPage({ params }: PageProps) {
       <div className="mb-6 flex items-center gap-3">
         <Button asChild variant="ghost" size="sm" className="min-h-[44px]">
           <Link href={`/dashboard/events/${eventId}`}>
-            ←
-            {' '}
             {t('back_to_events')}
           </Link>
         </Button>
