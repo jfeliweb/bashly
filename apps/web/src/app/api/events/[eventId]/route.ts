@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable } from '@/models/Schema';
+import { AllLocales } from '@/utils/AppConfig';
 import { geocodeAddress } from '@/utils/geocode';
 
 type RouteParams = { params: Promise<{ eventId: string }> };
@@ -130,7 +131,9 @@ export async function PATCH(
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
-  revalidatePath(`/e/${event.slug}`);
+  for (const locale of AllLocales) {
+    revalidatePath(`/${locale}/e/${event.slug}`);
+  }
 
   return NextResponse.json(event);
 }
