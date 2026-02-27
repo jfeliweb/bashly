@@ -659,6 +659,7 @@
   },
   "SongRequestWidget": {
     "heading": "Request a Song",
+    "subheading": "Search and submit your favorites for this event.",
     "search_placeholder": "Search for a song or artist...",
     "search_aria": "Search for a song",
     "search_button_aria": "Search",
@@ -698,6 +699,9 @@
     "schedule_heading": "Schedule",
     "show_all": "Show all",
     "show_all_schedule": "Show full schedule",
+    "music_section": "Music",
+    "location_heading": "Location",
+    "event_details_heading": "Event Details",
     "dress_code_label": "Dress Code",
     "get_directions": "Get Directions",
     "map_aria": "Map showing {venue}",

@@ -135,19 +135,20 @@ export function SongRequestWidget({
 
   return (
     <div
-      className="mx-auto max-w-[520px] rounded-2xl border p-6 px-4"
+      className="rounded-xl border p-3"
       style={{
-        backgroundColor: 'var(--theme-surface-raised)',
+        background: 'linear-gradient(135deg, var(--theme-primary-light), var(--theme-surface))',
         borderColor: 'var(--theme-border)',
       }}
     >
       <h3
-        className="mb-4 flex items-center gap-2 text-xl font-bold"
+        className="mb-2 flex items-center gap-2 text-base font-bold"
         style={{ color: 'var(--theme-text)' }}
       >
         <Music aria-hidden />
         {t('heading')}
       </h3>
+      <p className="mb-3 font-nunito text-xs text-[var(--theme-text-muted)]">{t('subheading')}</p>
 
       {!selectedSong
         ? (
@@ -165,13 +166,14 @@ export function SongRequestWidget({
                   onClick={handleSearch}
                   disabled={isSearching}
                   aria-label={t('search_button_aria')}
+                  className="rounded-xl"
                 >
                   <Search />
                 </Button>
               </div>
 
               {results.length > 0 && (
-                <div className="max-h-96 space-y-2 overflow-y-auto">
+                <div className="mb-3 max-h-96 space-y-1 overflow-y-auto rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2">
                   {results.map(track => (
                     <button
                       key={track.itunes_track_id}
@@ -180,7 +182,7 @@ export function SongRequestWidget({
                         setSubmitError(null);
                         setSelectedSong(track);
                       }}
-                      className="flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors hover:bg-black/5 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--theme-primary)]"
+                      className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-black/5 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--theme-primary)]"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element -- external album art URL */}
                       <img
@@ -292,7 +294,7 @@ export function SongRequestWidget({
 
       {songRequestsPerGuest > 0 && (
         <p
-          className="mt-3 text-center text-xs"
+          className="mt-2 text-center text-xs"
           style={{ color: 'var(--theme-text-muted)' }}
         >
           {songRequestsPerGuest === 1

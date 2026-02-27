@@ -182,24 +182,25 @@ export function SongVotingList({
 
   return (
     <div className="space-y-3">
-      <h3 className="mb-4 text-xl font-bold" style={{ color: 'var(--theme-text)' }}>
+      <p className="font-mono text-[0.625rem] font-semibold uppercase tracking-[0.14em] text-[var(--theme-text-muted)]">
         {t('heading')}
-      </h3>
+      </p>
 
-      {songs.map((song) => {
+      {songs.map((song, index) => {
         const hasVoted = votedSongs.has(song.id);
 
         return (
           <div
             key={song.id}
-            className="flex items-center gap-3 rounded-lg p-3"
+            className="flex items-center gap-3 rounded-lg border p-2.5"
             style={{
-              backgroundColor: 'var(--theme-surface-raised)',
+              backgroundColor: 'var(--theme-surface)',
               borderColor: 'var(--theme-border)',
-              borderWidth: '1px',
-              borderStyle: 'solid',
             }}
           >
+            <span className="w-4 text-center font-mono text-xs font-semibold text-[var(--theme-primary)]">
+              {index + 1}
+            </span>
             {song.albumArtUrl
               ? (
                   // eslint-disable-next-line @next/next/no-img-element -- external album art URL

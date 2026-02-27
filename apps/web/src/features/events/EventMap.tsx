@@ -30,7 +30,7 @@ export function EventMap({ lat, lng, venueName, venueAddress }: EventMapProps) {
   const hasCoords = lat !== null && lng !== null;
 
   return (
-    <section className="mx-auto max-w-[520px] px-4 pb-6">
+    <div>
       {hasCoords
         ? (
             <div
@@ -39,7 +39,7 @@ export function EventMap({ lat, lng, venueName, venueAddress }: EventMapProps) {
               className="overflow-hidden rounded-xl border"
               style={{ borderColor: 'var(--theme-border)' }}
             >
-              <div className="h-[240px] w-full sm:h-[320px]">
+              <div className="h-[170px] w-full sm:h-[220px]">
                 <Map
                   initialViewState={{
                     longitude: lng,
@@ -75,18 +75,25 @@ export function EventMap({ lat, lng, venueName, venueAddress }: EventMapProps) {
           )}
 
       {(venueAddress || venueName) && (
-        <div className="mt-3 text-center">
+        <div className="mt-3">
+          {venueName && (
+            <p className="font-nunito text-sm font-bold text-[var(--theme-text)]">{venueName}</p>
+          )}
+          {venueAddress && (
+            <p className="mt-0.5 font-nunito text-xs text-[var(--theme-text-muted)]">{venueAddress}</p>
+          )}
           <a
             href={directionsUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={t('directions_aria', { venue: venueName ?? venueAddress ?? '' })}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-[100px] bg-[rgb(81,255,0)] px-6 font-nunito text-sm font-bold text-[rgb(9,21,27)] transition-colors hover:bg-[rgb(65,204,0)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
+            className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center rounded-xl px-6 font-nunito text-sm font-bold text-white transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--theme-primary)]"
+            style={{ backgroundColor: 'var(--theme-primary-dark)' }}
           >
             {t('get_directions')}
           </a>
         </div>
       )}
-    </section>
+    </div>
   );
 }

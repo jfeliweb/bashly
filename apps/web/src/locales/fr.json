@@ -432,6 +432,7 @@
   },
   "SongRequestWidget": {
     "heading": "Demander une chanson",
+    "subheading": "Recherchez et envoyez vos favoris pour cet événement.",
     "search_placeholder": "Rechercher une chanson ou un artiste...",
     "search_aria": "Rechercher une chanson",
     "search_button_aria": "Rechercher",
@@ -547,6 +548,9 @@
     "schedule_heading": "Programme",
     "show_all": "Tout afficher",
     "show_all_schedule": "Voir le programme complet",
+    "music_section": "Musique",
+    "location_heading": "Lieu",
+    "event_details_heading": "Détails de l'événement",
     "dress_code_label": "Tenue",
     "get_directions": "Itinéraire",
     "map_aria": "Carte du lieu {venue}",

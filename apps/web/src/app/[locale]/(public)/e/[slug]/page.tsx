@@ -1,4 +1,5 @@
 import { asc, eq } from 'drizzle-orm';
+import { CalendarDays, Clock3, Info, ListOrdered, MapPin, Music2 } from 'lucide-react';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import Image from 'next/image';
@@ -41,6 +42,29 @@ function formatEventDate(date: Date | null): string {
     hour12: true,
   }).format(date);
   return `${datePart} · ${timePart}`;
+}
+
+function formatDateOnly(date: Date | null): string {
+  if (!date) {
+    return '';
+  }
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+}
+
+function formatTimeOnly(date: Date | null): string {
+  if (!date) {
+    return '';
+  }
+  return new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).format(date);
 }
 
 export async function generateMetadata({
@@ -104,6 +128,8 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
 
   const themeId = event.themeId ?? 'theme1';
   const formattedEventDate = formatEventDate(event.eventDate);
+  const eventDateOnly = formatDateOnly(event.eventDate);
+  const eventTimeOnly = formatTimeOnly(event.eventDate);
 
   return (
     <div
@@ -146,12 +172,14 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
               <div
                 className="absolute inset-0"
                 style={{
-                  background: `linear-gradient(135deg, var(--theme-primary), var(--theme-primary-dark))`,
+                  background:
+                    'linear-gradient(160deg, var(--theme-hero-start, var(--theme-primary-dark)) 0%, var(--theme-hero-mid, var(--theme-primary)) 45%, var(--theme-hero-end, var(--theme-accent)) 100%)',
                 }}
                 aria-hidden
               />
             )}
-        <div className="relative flex h-full flex-col justify-end px-6 pb-8">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/45" aria-hidden />
+        <div className="relative mx-auto flex h-full w-full max-w-[520px] flex-col justify-end px-4 pb-8">
           <span
             className="mb-3 inline-flex w-fit rounded-full border border-white/25 bg-white/20 px-3 py-1.5 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm"
             style={{ letterSpacing: '0.12em' }}
@@ -164,25 +192,31 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
           >
             {event.title}
           </h1>
+          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+            {eventDateOnly && (
+              <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-white/90">
+                <CalendarDays className="size-3.5" aria-hidden />
+                {eventDateOnly}
+              </p>
+            )}
+            {eventTimeOnly && (
+              <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-white/90">
+                <Clock3 className="size-3.5" aria-hidden />
+                {eventTimeOnly}
+              </p>
+            )}
+            {event.venueName && (
+              <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-white/90">
+                <MapPin className="size-3.5" aria-hidden />
+                {event.venueName}
+              </p>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* 2. Event meta bar */}
-      <div className="mx-auto max-w-[520px] p-4">
-        {formattedEventDate && (
-          <p className="font-mono text-sm font-semibold text-[var(--theme-text-muted)]">
-            {formattedEventDate}
-          </p>
-        )}
-        {event.venueName && (
-          <p className="mt-1 font-nunito text-sm text-[var(--theme-text-muted)]">
-            {event.venueName}
-          </p>
-        )}
-      </div>
-
-      {/* 3. Countdown timer */}
-      <div className="bg-[var(--theme-primary-dark)] p-4 text-white">
+      {/* 2. Countdown timer */}
+      <div className="bg-[var(--theme-primary-dark)] px-4 py-3 text-white">
         <div className="mx-auto max-w-[520px]">
           <Suspense
             fallback={
@@ -198,48 +232,14 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
         </div>
       </div>
 
-      {/* 4. RSVP button */}
-      <div className="mx-auto max-w-[520px] px-4 py-6 text-center">
-        <RsvpButton eventSlug={event.slug} eventTitle={event.title} />
-      </div>
-
-      {/* 4b. Song request widget */}
-      {event.songRequestsEnabled && (
-        <Suspense
-          fallback={(
-            <div className="mx-auto max-w-[520px] px-4 pb-6">
-              <div className="h-64" />
-            </div>
-          )}
-        >
-          <SongRequestWidget
-            eventSlug={event.slug}
-            songRequestsEnabled={event.songRequestsEnabled}
-            songRequestsPerGuest={event.songRequestsPerGuest ?? 0}
-          />
-        </Suspense>
-      )}
-
-      {/* 4c. Song voting list */}
-      {event.songVotingEnabled && (
-        <Suspense fallback={<div className="h-64" />}>
-          <div className="mx-auto max-w-[520px] px-4 pb-6">
-            <SongVotingList
-              eventSlug={event.slug}
-              votingEnabled={event.songVotingEnabled}
-            />
-          </div>
-        </Suspense>
-      )}
-
-      {/* 5. Welcome message */}
-      {event.welcomeMessage && (
-        <section className="mx-auto max-w-[520px] px-4 pb-6">
+      <main className="mx-auto max-w-[520px] px-4 py-4">
+        {/* 3. Welcome message */}
+        {event.welcomeMessage && (
           <div
-            className="rounded-2xl px-5 py-4"
+            className="mb-4 rounded-2xl border px-5 py-4 shadow-sm"
             style={{
               backgroundColor: 'var(--theme-surface-raised)',
-              border: '1px solid var(--theme-border)',
+              borderColor: 'var(--theme-border)',
             }}
           >
             <span
@@ -252,55 +252,142 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
               {event.welcomeMessage}
             </p>
           </div>
-        </section>
-      )}
+        )}
 
-      {/* 6. Schedule */}
-      {schedule.length > 0 && (
-        <ScheduleList items={schedule} initialVisible={4} />
-      )}
-
-      {/* 7. Dress code */}
-      {event.dressCode && (
-        <section className="mx-auto max-w-[520px] px-4 pb-6">
-          <div
-            className="rounded-xl px-4 py-3"
-            style={{
-              backgroundColor: 'var(--theme-surface-raised)',
-              border: '1px solid var(--theme-border)',
-            }}
+        {/* 4. Song request + voting */}
+        {(event.songRequestsEnabled || event.songVotingEnabled) && (
+          <section
+            className="mb-4 rounded-2xl border bg-[var(--theme-surface)] p-4 shadow-sm"
+            style={{ borderColor: 'var(--theme-border)' }}
           >
-            <p className="font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-[var(--theme-primary)]">
-              👗
-              {' '}
-              {t('dress_code_label')}
-            </p>
-            <p className="mt-1 font-nunito text-sm text-[var(--theme-text)]">
-              {event.dressCode}
-            </p>
+            <div className="mb-3 flex items-center gap-2">
+              <span className="rounded-xl bg-[var(--theme-primary-light)] p-2 text-[var(--theme-primary)]">
+                <Music2 className="size-4" aria-hidden />
+              </span>
+              <p className="font-nunito text-sm font-bold text-[var(--theme-text)]">
+                {t('music_section')}
+              </p>
+            </div>
+            {event.songRequestsEnabled && (
+              <Suspense fallback={<div className="h-32" />}>
+                <SongRequestWidget
+                  eventSlug={event.slug}
+                  songRequestsEnabled={event.songRequestsEnabled}
+                  songRequestsPerGuest={event.songRequestsPerGuest ?? 0}
+                />
+              </Suspense>
+            )}
+            {event.songVotingEnabled && (
+              <Suspense fallback={<div className="h-32" />}>
+                <SongVotingList
+                  eventSlug={event.slug}
+                  votingEnabled={event.songVotingEnabled}
+                />
+              </Suspense>
+            )}
+          </section>
+        )}
+
+        {/* 5. Schedule */}
+        {schedule.length > 0 && (
+          <section
+            className="mb-4 rounded-2xl border bg-[var(--theme-surface)] p-4 shadow-sm"
+            style={{ borderColor: 'var(--theme-border)' }}
+          >
+            <div className="mb-3 flex items-center gap-2">
+              <span className="rounded-xl bg-[var(--theme-primary-light)] p-2 text-[var(--theme-primary)]">
+                <ListOrdered className="size-4" aria-hidden />
+              </span>
+              <p className="font-nunito text-sm font-bold text-[var(--theme-text)]">
+                {t('schedule_heading')}
+              </p>
+            </div>
+            <ScheduleList items={schedule} initialVisible={6} />
+          </section>
+        )}
+
+        {/* 6. Location */}
+        {(event.venueLat && event.venueLng) || event.venueAddress
+          ? (
+              <section
+                className="mb-4 rounded-2xl border bg-[var(--theme-surface)] p-4 shadow-sm"
+                style={{ borderColor: 'var(--theme-border)' }}
+              >
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="rounded-xl bg-[var(--theme-primary-light)] p-2 text-[var(--theme-primary)]">
+                    <MapPin className="size-4" aria-hidden />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="font-nunito text-sm font-bold text-[var(--theme-text)]">
+                      {t('location_heading')}
+                    </p>
+                    <p className="truncate font-nunito text-xs text-[var(--theme-text-muted)]">
+                      {event.venueName ?? t('venue_tba')}
+                    </p>
+                  </div>
+                </div>
+                <EventMap
+                  lat={event.venueLat ? Number(event.venueLat) : null}
+                  lng={event.venueLng ? Number(event.venueLng) : null}
+                  venueName={event.venueName}
+                  venueAddress={event.venueAddress}
+                />
+              </section>
+            )
+          : null}
+
+        {/* 7. Event details */}
+        {event.dressCode && (
+          <section
+            className="mb-4 rounded-2xl border bg-[var(--theme-surface)] p-4 shadow-sm"
+            style={{ borderColor: 'var(--theme-border)' }}
+          >
+            <div className="mb-3 flex items-center gap-2">
+              <span className="rounded-xl bg-[var(--theme-primary-light)] p-2 text-[var(--theme-primary)]">
+                <Info className="size-4" aria-hidden />
+              </span>
+              <p className="font-nunito text-sm font-bold text-[var(--theme-text)]">
+                {t('event_details_heading')}
+              </p>
+            </div>
+            {event.dressCode && (
+              <div className="mb-3 rounded-xl border px-4 py-3" style={{ borderColor: 'var(--theme-border)' }}>
+                <p className="font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-[var(--theme-primary)]">
+                  {t('dress_code_label')}
+                </p>
+                <p className="mt-1 font-nunito text-sm text-[var(--theme-text)]">
+                  {event.dressCode}
+                </p>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* 8. RSVP banner */}
+        <section
+          className="mb-4 rounded-2xl border bg-[var(--theme-surface)] p-4 shadow-sm"
+          style={{ borderColor: 'var(--theme-border)' }}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-nunito text-sm font-bold text-[var(--theme-text)]">
+                {t('rsvp_now')}
+              </p>
+              <p className="font-nunito text-xs text-[var(--theme-text-muted)]">
+                {formattedEventDate}
+              </p>
+            </div>
+            <RsvpButton eventSlug={event.slug} eventTitle={event.title} />
           </div>
         </section>
-      )}
+      </main>
 
-      {/* 8. Gift Registry */}
       <RegistrySection
         eventId={event.id}
         registryEnabled={event.registryEnabled ?? false}
       />
 
-      {/* 9. Map / Venue directions */}
-      {(event.venueLat && event.venueLng) || event.venueAddress
-        ? (
-            <EventMap
-              lat={event.venueLat ? Number(event.venueLat) : null}
-              lng={event.venueLng ? Number(event.venueLng) : null}
-              venueName={event.venueName}
-              venueAddress={event.venueAddress}
-            />
-          )
-        : null}
-
-      {/* 10. Footer */}
+      {/* 9. Footer */}
       <footer className="border-t px-4 py-6" style={{ borderColor: 'var(--theme-border)' }}>
         <div className="mx-auto flex max-w-[520px] flex-col items-center gap-2 text-center">
           <p className="font-nunito text-sm text-[var(--theme-text-muted)]">

@@ -30,18 +30,15 @@ export function ScheduleList({
   }
 
   return (
-    <section className="mx-auto max-w-[520px] px-4 pb-6">
-      <h2 className="mb-4 font-bricolage text-lg font-extrabold text-[var(--theme-text)]">
-        {t('schedule_heading')}
-      </h2>
+    <div>
       <ol className="flex flex-col gap-0">
         {visibleItems.map((item, index) => (
           <li
             key={item.id}
-            className="flex gap-4"
+            className="flex gap-3"
             style={{ listStyle: 'none' }}
           >
-            <div className="w-14 shrink-0 text-right">
+            <div className="w-12 shrink-0 pt-0.5 text-right">
               <span className="font-mono text-xs font-semibold text-[var(--theme-primary)]">
                 {item.startTime}
               </span>
@@ -60,8 +57,8 @@ export function ScheduleList({
                 />
               )}
             </div>
-            <div className="flex-1 pb-5">
-              <span className="font-nunito text-sm font-semibold text-[var(--theme-text)]">
+            <div className="flex-1 pb-4">
+              <span className="font-nunito text-sm font-bold text-[var(--theme-text)]">
                 {item.title}
               </span>
               {item.note && (
@@ -84,6 +81,6 @@ export function ScheduleList({
           {t('show_all')}
         </button>
       )}
-    </section>
+    </div>
   );
 }

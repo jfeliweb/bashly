@@ -24,7 +24,7 @@ export function RsvpButton({ eventSlug, eventTitle }: RsvpButtonProps) {
         type="button"
         onClick={() => setIsOpen(true)}
         className={cn(
-          'min-h-[44px] min-w-[44px] rounded-[100px] px-8 font-nunito text-base font-bold text-white',
+          'min-h-[44px] min-w-[44px] rounded-xl px-5 font-nunito text-sm font-bold text-white',
           'outline-none transition-opacity hover:opacity-95',
           'focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--theme-primary-dark)]',
         )}

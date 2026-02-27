@@ -23,6 +23,10 @@ function diff(until: Date): { days: number; hours: number; minutes: number; seco
   return { days: d, hours: h, minutes: m, seconds: s };
 }
 
+function twoDigits(value: number): string {
+  return String(value).padStart(2, '0');
+}
+
 export function CountdownTimer({
   eventDate,
   formattedFallback,
@@ -84,55 +88,58 @@ export function CountdownTimer({
 
   return (
     <div
-      className="flex flex-wrap items-center justify-center gap-4 sm:gap-6"
+      className="flex items-start justify-center gap-2 sm:gap-3"
       role="timer"
       aria-label={t('countdown_aria')}
     >
       <div className="flex flex-col items-center">
         <span
-          className={`font-bricolage text-2xl font-extrabold sm:text-3xl ${numClass}`}
+          className={`font-bricolage text-2xl font-extrabold leading-none sm:text-3xl ${numClass}`}
         >
-          {units.days}
+          {twoDigits(units.days)}
         </span>
         <span
-          className={`font-mono text-[0.625rem] font-semibold uppercase tracking-wider ${muteClass}`}
+          className={`mt-0.5 font-mono text-[0.55rem] font-semibold uppercase tracking-[0.14em] ${muteClass}`}
         >
           {t('days')}
         </span>
       </div>
+      <span className={`pt-0.5 font-bricolage text-xl leading-none ${muteClass}`} aria-hidden>:</span>
       <div className="flex flex-col items-center">
         <span
-          className={`font-bricolage text-2xl font-extrabold sm:text-3xl ${numClass}`}
+          className={`font-bricolage text-2xl font-extrabold leading-none sm:text-3xl ${numClass}`}
         >
-          {units.hours}
+          {twoDigits(units.hours)}
         </span>
         <span
-          className={`font-mono text-[0.625rem] font-semibold uppercase tracking-wider ${muteClass}`}
+          className={`mt-0.5 font-mono text-[0.55rem] font-semibold uppercase tracking-[0.14em] ${muteClass}`}
         >
           {t('hours')}
         </span>
       </div>
+      <span className={`pt-0.5 font-bricolage text-xl leading-none ${muteClass}`} aria-hidden>:</span>
       <div className="flex flex-col items-center">
         <span
-          className={`font-bricolage text-2xl font-extrabold sm:text-3xl ${numClass}`}
+          className={`font-bricolage text-2xl font-extrabold leading-none sm:text-3xl ${numClass}`}
         >
-          {units.minutes}
+          {twoDigits(units.minutes)}
         </span>
         <span
-          className={`font-mono text-[0.625rem] font-semibold uppercase tracking-wider ${muteClass}`}
+          className={`mt-0.5 font-mono text-[0.55rem] font-semibold uppercase tracking-[0.14em] ${muteClass}`}
         >
           {t('minutes')}
         </span>
       </div>
+      <span className={`pt-0.5 font-bricolage text-xl leading-none ${muteClass}`} aria-hidden>:</span>
       <div className="flex flex-col items-center">
         <span
-          className={`font-bricolage text-2xl font-extrabold sm:text-3xl ${numClass}`}
+          className={`font-bricolage text-2xl font-extrabold leading-none sm:text-3xl ${numClass}`}
           aria-live="polite"
         >
-          {units.seconds}
+          {twoDigits(units.seconds)}
         </span>
         <span
-          className={`font-mono text-[0.625rem] font-semibold uppercase tracking-wider ${muteClass}`}
+          className={`mt-0.5 font-mono text-[0.55rem] font-semibold uppercase tracking-[0.14em] ${muteClass}`}
         >
           {t('seconds')}
         </span>
