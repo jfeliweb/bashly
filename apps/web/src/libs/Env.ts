@@ -28,7 +28,13 @@ export const Env = createEnv({
     NEXT_PUBLIC_MAPBOX_TOKEN: z.string().min(1),
     NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
     NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
-    NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(),
+    NEXT_PUBLIC_POSTHOG_HOST: z.preprocess(
+      val =>
+        val === '' || (typeof val === 'string' && val.trim() === '')
+          ? undefined
+          : val,
+      z.string().url().optional(),
+    ),
   },
   shared: {
     NODE_ENV: z.enum(['test', 'development', 'production']).optional(),
