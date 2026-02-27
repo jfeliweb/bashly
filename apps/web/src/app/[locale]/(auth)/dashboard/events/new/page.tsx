@@ -9,6 +9,7 @@ import { useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { OnboardingTooltip } from '@/components/OnboardingTooltip';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -20,7 +21,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { OnboardingTooltip } from '@/components/OnboardingTooltip';
 import {
   Select,
   SelectContent,
@@ -44,11 +44,11 @@ const EVENT_TYPES = [
 ] as const;
 
 const THEMES = [
-  { id: 'theme1' as const, labelKey: 'theme_1', gradient: 'from-rose-400 to-pink-500' },
-  { id: 'theme2' as const, labelKey: 'theme_2', gradient: 'from-violet-400 to-purple-500' },
+  { id: 'theme1' as const, labelKey: 'theme_1', gradient: 'from-violet-400 to-purple-500' },
+  { id: 'theme2' as const, labelKey: 'theme_2', gradient: 'from-sky-400 to-cyan-500' },
   { id: 'theme3' as const, labelKey: 'theme_3', gradient: 'from-amber-400 to-orange-500' },
-  { id: 'theme4' as const, labelKey: 'theme_4', gradient: 'from-emerald-400 to-teal-500' },
-  { id: 'theme5' as const, labelKey: 'theme_5', gradient: 'from-sky-400 to-blue-500' },
+  { id: 'theme4' as const, labelKey: 'theme_4', gradient: 'from-emerald-400 to-lime-500' },
+  { id: 'theme5' as const, labelKey: 'theme_5', gradient: 'from-pink-500 to-rose-500' },
 ] as const;
 
 const createEventFormSchema = createEventSchema.omit({
