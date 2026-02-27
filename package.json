@@ -32,5 +32,9 @@
       "path": "@commitlint/cz-commitlint"
     }
   },
-  "packageManager": "npm@10.0.0"
+  "packageManager": "npm@10.0.0",
+  "dependencies": {
+    "posthog-js": "^1.356.1",
+    "posthog-react-native": "^4.36.1"
+  }
 }
