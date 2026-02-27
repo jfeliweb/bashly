@@ -1,5 +1,6 @@
 import { updateEventSchema } from '@saas/validators';
 import { and, eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -128,6 +129,8 @@ export async function PATCH(
   if (!event) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
+
+  revalidatePath(`/e/${event.slug}`);
 
   return NextResponse.json(event);
 }

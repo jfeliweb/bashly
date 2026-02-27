@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { Bricolage_Grotesque, JetBrains_Mono, Nunito } from 'next/font/google';
 import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
+import { Toaster } from 'sonner';
 
 // import { DemoBadge } from '@/components/DemoBadge';
 import { PostHogProvider } from '@/components/PostHogProvider';
@@ -96,6 +97,8 @@ export default function RootLayout(props: {
           <PostHogProvider>
             {props.children}
           </PostHogProvider>
+
+          <Toaster position="top-right" richColors closeButton />
 
           {/* <DemoBadge /> */}
         </NextIntlClientProvider>

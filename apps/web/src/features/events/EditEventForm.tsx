@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -166,12 +167,16 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
       });
       if (!res.ok) {
         const data = await res.json();
-        setApiError(data?.error ?? t('error_toast_edit'));
+        const msg = data?.error ?? t('error_toast_edit');
+        setApiError(msg);
+        toast.error(msg);
         return;
       }
-      router.push(`/dashboard/events/${eventId}`);
+      toast.success(t('success_toast_edit'));
+      router.refresh();
     } catch {
       setApiError(t('error_toast_edit'));
+      toast.error(t('error_toast_edit'));
     }
   };
 
