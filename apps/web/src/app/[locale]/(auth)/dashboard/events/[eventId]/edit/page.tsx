@@ -1,4 +1,3 @@
-import type { InferSelectModel } from 'drizzle-orm';
 import { and, eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import Link from 'next/link';
@@ -42,13 +41,7 @@ const EVENT_TYPE_VALUES = [
 const THEME_IDS = ['theme1', 'theme2', 'theme3', 'theme4', 'theme5'] as const;
 const ADDRESS_VISIBLE = ['always', 'after_rsvp'] as const;
 
-function eventToFormDefaults(
-  event: InferSelectModel<typeof eventTable>,
-): EditEventFormDefaults {
-  const eventDate = event.eventDate;
-  const dateStr = eventDate ? eventDate.toISOString().slice(0, 10) : '';
-  const timeStr = eventDate ? eventDate.toTimeString().slice(0, 5) : '';
-
+function eventToFormDefaults(event: typeof eventTable.$inferSelect): EditEventFormDefaults {
   const eventType = event.eventType ?? 'sweet16';
   const themeId = event.themeId ?? 'theme1';
   const addressVisible = event.addressVisible ?? 'after_rsvp';
@@ -58,8 +51,7 @@ function eventToFormDefaults(
       ? (eventType as (typeof EVENT_TYPE_VALUES)[number])
       : 'sweet16',
     title: event.title ?? '',
-    event_date_str: dateStr,
-    event_time_str: timeStr,
+    event_date_iso: event.eventDate ? event.eventDate.toISOString() : undefined,
     venue_name: event.venueName ?? '',
     venue_address: event.venueAddress ?? '',
     dress_code: event.dressCode ?? '',

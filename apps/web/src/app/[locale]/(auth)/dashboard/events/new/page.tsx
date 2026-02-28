@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { parseLocalDateTimeInput } from '@/features/events/event-date-time';
 import { useRouter } from '@/libs/i18nNavigation';
 import { cn } from '@/utils/Helpers';
 
@@ -83,10 +84,7 @@ const defaultFormValues: CreateEventFormValues = {
 };
 
 function buildApiPayload(values: CreateEventFormValues): CreateEventInput {
-  const event_date
-    = values.event_date_str && values.event_time_str
-      ? new Date(`${values.event_date_str}T${values.event_time_str}`)
-      : undefined;
+  const event_date = parseLocalDateTimeInput(values.event_date_str, values.event_time_str);
   const payload: CreateEventInput = {
     event_type: values.event_type,
     title: values.title,

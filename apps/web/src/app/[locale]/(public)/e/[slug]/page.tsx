@@ -8,6 +8,7 @@ import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 
 import { CountdownTimer } from '@/features/events/CountdownTimer';
+import { EventDateTimeText } from '@/features/events/EventDateTimeText';
 import { EventMap } from '@/features/events/EventMap';
 import type { ScheduleItem } from '@/features/events/ScheduleList';
 import { ScheduleList } from '@/features/events/ScheduleList';
@@ -25,47 +26,6 @@ type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
-
-function formatEventDate(date: Date | null): string {
-  if (!date) {
-    return '';
-  }
-  const datePart = new Intl.DateTimeFormat('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(date);
-  const timePart = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  }).format(date);
-  return `${datePart} · ${timePart}`;
-}
-
-function formatDateOnly(date: Date | null): string {
-  if (!date) {
-    return '';
-  }
-  return new Intl.DateTimeFormat('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(date);
-}
-
-function formatTimeOnly(date: Date | null): string {
-  if (!date) {
-    return '';
-  }
-  return new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  }).format(date);
-}
 
 export async function generateMetadata({
   params,
@@ -127,9 +87,7 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
   }));
 
   const themeId = event.themeId ?? 'theme1';
-  const formattedEventDate = formatEventDate(event.eventDate);
-  const eventDateOnly = formatDateOnly(event.eventDate);
-  const eventTimeOnly = formatTimeOnly(event.eventDate);
+  const eventDateIso = event.eventDate ? event.eventDate.toISOString() : null;
 
   return (
     <div
@@ -193,16 +151,16 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
             {event.title}
           </h1>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
-            {eventDateOnly && (
+            {eventDateIso && (
               <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-white/90">
                 <CalendarDays className="size-3.5" aria-hidden />
-                {eventDateOnly}
+                <EventDateTimeText value={eventDateIso} mode="date" />
               </p>
             )}
-            {eventTimeOnly && (
+            {eventDateIso && (
               <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-white/90">
                 <Clock3 className="size-3.5" aria-hidden />
-                {eventTimeOnly}
+                <EventDateTimeText value={eventDateIso} mode="time" />
               </p>
             )}
             {event.venueName && (
@@ -220,12 +178,15 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
         <div className="mx-auto max-w-[520px]">
           <Suspense
             fallback={
-              <p className="font-nunito text-white/90">{formattedEventDate}</p>
+              (
+                <p className="font-nunito text-white/90">
+                  <EventDateTimeText value={eventDateIso} />
+                </p>
+              )
             }
           >
             <CountdownTimer
               eventDate={event.eventDate}
-              formattedFallback={formattedEventDate}
               inverted
             />
           </Suspense>
@@ -374,7 +335,7 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
                 {t('rsvp_now')}
               </p>
               <p className="font-nunito text-xs text-[var(--theme-text-muted)]">
-                {formattedEventDate}
+                <EventDateTimeText value={eventDateIso} />
               </p>
             </div>
             <RsvpButton eventSlug={event.slug} eventTitle={event.title} />

@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { Button } from '@/components/ui/button';
 import { DeleteEventButton } from '@/features/events/DeleteEventButton';
+import { EventDateTimeText } from '@/features/events/EventDateTimeText';
 import { PublishEventButton } from '@/features/events/PublishEventButton';
 import { CopyGuestUrl } from '@/features/invites/CopyGuestUrl';
 import { InviteLinksPanel } from '@/features/invites/InviteLinksPanel';
@@ -30,20 +31,6 @@ import { cn } from '@/utils/Helpers';
 type PageProps = {
   params: Promise<{ eventId: string; locale: string }>;
 };
-
-function formatEventDate(date: Date | null): string {
-  if (!date) {
-    return '—';
-  }
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-}
 
 function eventTypeToLabel(eventType: string): string {
   const map: Record<string, string> = {
@@ -175,7 +162,7 @@ export default async function EventDetailPage({ params }: PageProps) {
           </h1>
           {event.eventDate && (
             <p className="mt-1 font-mono text-sm text-muted-foreground">
-              {formatEventDate(event.eventDate)}
+              <EventDateTimeText value={event.eventDate.toISOString()} fallback="—" />
             </p>
           )}
         </div>
@@ -306,7 +293,7 @@ export default async function EventDetailPage({ params }: PageProps) {
                   {t('rsvp_deadline')}
                 </dt>
                 <dd className="mt-0.5 font-mono text-sm text-foreground">
-                  {formatEventDate(event.rsvpDeadline)}
+                  <EventDateTimeText value={event.rsvpDeadline.toISOString()} fallback="—" />
                 </dd>
               </div>
             )}

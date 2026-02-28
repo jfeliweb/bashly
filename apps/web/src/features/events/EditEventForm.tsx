@@ -5,7 +5,7 @@ import { createEventSchema } from '@saas/validators';
 import { ImagePlus, Loader2, X } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -30,6 +30,10 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  parseLocalDateTimeInput,
+  splitDateTimeToLocalInputs,
+} from '@/features/events/event-date-time';
 import { useRouter } from '@/libs/i18nNavigation';
 import { cn } from '@/utils/Helpers';
 
@@ -52,13 +56,12 @@ type EditEventFormValues = z.infer<typeof editFormSchema>;
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-export type EditEventFormDefaults = EditEventFormValues;
+export type EditEventFormDefaults = EditEventFormValues & {
+  event_date_iso?: string;
+};
 
 function buildPatchPayload(values: EditEventFormValues): Record<string, unknown> {
-  const event_date
-    = values.event_date_str && values.event_time_str
-      ? new Date(`${values.event_date_str}T${values.event_time_str}`)
-      : undefined;
+  const event_date = parseLocalDateTimeInput(values.event_date_str, values.event_time_str);
   return {
     ...(values.title !== undefined && { title: values.title }),
     ...(values.event_type !== undefined && { event_type: values.event_type }),
@@ -94,9 +97,20 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
   const [coverError, setCoverError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const formDefaults = useMemo<EditEventFormValues>(() => {
+    const { event_date_iso: _eventDateIso, ...restDefaults } = defaultValues;
+    const localDateTimeDefaults = splitDateTimeToLocalInputs(defaultValues.event_date_iso);
+
+    return {
+      ...restDefaults,
+      event_date_str: restDefaults.event_date_str ?? localDateTimeDefaults.dateStr,
+      event_time_str: restDefaults.event_time_str ?? localDateTimeDefaults.timeStr,
+    };
+  }, [defaultValues]);
+
   const form = useForm<EditEventFormValues>({
     resolver: zodResolver(editFormSchema),
-    defaultValues: defaultValues as EditEventFormValues,
+    defaultValues: formDefaults,
   });
 
   const welcomeMessage = form.watch('welcome_message') ?? '';

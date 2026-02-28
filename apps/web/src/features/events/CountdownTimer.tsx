@@ -1,11 +1,12 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+
+import { formatLocalDateTime } from '@/features/events/event-date-time';
 
 type CountdownTimerProps = {
   eventDate: Date | null;
-  formattedFallback: string;
   /** When true, use light text (for dark strip background) */
   inverted?: boolean;
 };
@@ -29,9 +30,9 @@ function twoDigits(value: number): string {
 
 export function CountdownTimer({
   eventDate,
-  formattedFallback,
   inverted = false,
 }: CountdownTimerProps) {
+  const locale = useLocale();
   const t = useTranslations('GuestEvent');
   const [units, setUnits] = useState<{
     days: number;
@@ -65,13 +66,14 @@ export function CountdownTimer({
   const numClass = inverted
     ? 'text-[var(--theme-primary-light)]'
     : 'text-[var(--theme-primary)]';
+  const fallbackText = formatLocalDateTime(eventDate, locale);
 
   if (!eventDate) {
-    return <p className={`font-nunito ${muteClass}`}>{formattedFallback}</p>;
+    return <p className={`font-nunito ${muteClass}`}>{fallbackText}</p>;
   }
 
   if (eventEnded === null || (eventEnded === false && units === null)) {
-    return <p className={`font-nunito ${muteClass}`}>{formattedFallback}</p>;
+    return <p className={`font-nunito ${muteClass}`}>{fallbackText}</p>;
   }
 
   if (eventEnded === true) {
@@ -83,7 +85,7 @@ export function CountdownTimer({
   }
 
   if (!units) {
-    return <p className={`font-nunito ${muteClass}`}>{formattedFallback}</p>;
+    return <p className={`font-nunito ${muteClass}`}>{fallbackText}</p>;
   }
 
   return (
