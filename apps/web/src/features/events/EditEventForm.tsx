@@ -34,7 +34,10 @@ import {
   parseLocalDateTimeInput,
   splitDateTimeToLocalInputs,
 } from '@/features/events/event-date-time';
-import { VenueAddressAutofill } from '@/features/events/VenueAddressAutofill';
+import {
+  VenueAddressAutofill,
+  type VenueAddressParts,
+} from '@/features/events/VenueAddressAutofill';
 import { useRouter } from '@/libs/i18nNavigation';
 import { cn } from '@/utils/Helpers';
 
@@ -51,6 +54,10 @@ const editFormSchema = createEventSchema
   .extend({
     event_date_str: z.string().optional(),
     event_time_str: z.string().optional(),
+    venue_unit: z.string().optional(),
+    venue_city: z.string().optional(),
+    venue_state: z.string().optional(),
+    venue_postal_code: z.string().optional(),
   });
 
 type EditEventFormValues = z.infer<typeof editFormSchema>;
@@ -61,14 +68,60 @@ export type EditEventFormDefaults = EditEventFormValues & {
   event_date_iso?: string;
 };
 
+function parseStructuredAddress(address: string | undefined): {
+  unit: string;
+  city: string;
+  state: string;
+  postalCode: string;
+} {
+  if (!address) {
+    return { unit: '', city: '', state: '', postalCode: '' };
+  }
+
+  const parts = address
+    .split(',')
+    .map(part => part.trim())
+    .filter(Boolean);
+
+  if (parts.length < 2) {
+    return { unit: '', city: '', state: '', postalCode: '' };
+  }
+
+  const postalCode = parts.at(-1) ?? '';
+  const state = parts.at(-2) ?? '';
+  const city = parts.at(-3) ?? '';
+  const maybeUnit = parts.length > 4 ? parts.slice(1, -3).join(', ') : '';
+
+  return {
+    unit: maybeUnit,
+    city,
+    state,
+    postalCode,
+  };
+}
+
+function composeVenueAddress(values: EditEventFormValues): string | undefined {
+  const line1 = values.venue_address?.trim();
+  const line2 = values.venue_unit?.trim();
+  const city = values.venue_city?.trim();
+  const state = values.venue_state?.trim();
+  const postalCode = values.venue_postal_code?.trim();
+
+  const cityStateZip = [city, state, postalCode].filter(Boolean).join(', ');
+  const fullAddress = [line1, line2, cityStateZip].filter(Boolean).join(', ');
+
+  return fullAddress || undefined;
+}
+
 function buildPatchPayload(values: EditEventFormValues): Record<string, unknown> {
   const event_date = parseLocalDateTimeInput(values.event_date_str, values.event_time_str);
+  const venueAddress = composeVenueAddress(values);
   return {
     ...(values.title !== undefined && { title: values.title }),
     ...(values.event_type !== undefined && { event_type: values.event_type }),
     ...(event_date !== undefined && { event_date: event_date.toISOString() }),
     ...(values.venue_name !== undefined && { venue_name: values.venue_name || undefined }),
-    ...(values.venue_address !== undefined && { venue_address: values.venue_address || undefined }),
+    ...(values.venue_address !== undefined && { venue_address: venueAddress }),
     ...(values.dress_code !== undefined && { dress_code: values.dress_code || undefined }),
     ...(values.welcome_message !== undefined && { welcome_message: values.welcome_message || undefined }),
     ...(values.theme_id !== undefined && { theme_id: values.theme_id }),
@@ -101,11 +154,16 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
   const formDefaults = useMemo<EditEventFormValues>(() => {
     const { event_date_iso: _eventDateIso, ...restDefaults } = defaultValues;
     const localDateTimeDefaults = splitDateTimeToLocalInputs(defaultValues.event_date_iso);
+    const parsedAddress = parseStructuredAddress(defaultValues.venue_address);
 
     return {
       ...restDefaults,
       event_date_str: restDefaults.event_date_str ?? localDateTimeDefaults.dateStr,
       event_time_str: restDefaults.event_time_str ?? localDateTimeDefaults.timeStr,
+      venue_unit: restDefaults.venue_unit ?? parsedAddress.unit,
+      venue_city: restDefaults.venue_city ?? parsedAddress.city,
+      venue_state: restDefaults.venue_state ?? parsedAddress.state,
+      venue_postal_code: restDefaults.venue_postal_code ?? parsedAddress.postalCode,
     };
   }, [defaultValues]);
 
@@ -192,6 +250,21 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
     } catch {
       setApiError(t('error_toast_edit'));
       toast.error(t('error_toast_edit'));
+    }
+  };
+
+  const applyRetrievedAddressParts = (parts: VenueAddressParts) => {
+    if (parts.line2) {
+      form.setValue('venue_unit', parts.line2);
+    }
+    if (parts.city) {
+      form.setValue('venue_city', parts.city);
+    }
+    if (parts.state) {
+      form.setValue('venue_state', parts.state);
+    }
+    if (parts.postalCode) {
+      form.setValue('venue_postal_code', parts.postalCode);
     }
   };
 
@@ -337,13 +410,71 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
                 <FormItem>
                   <FormLabel htmlFor="edit-venue-address">{t('venue_address_label')}</FormLabel>
                   <FormControl>
-                    <VenueAddressAutofill id="edit-venue-address" {...field} />
+                    <VenueAddressAutofill
+                      id="edit-venue-address"
+                      onAddressRetrieve={applyRetrievedAddressParts}
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>{t('venue_address_help')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="venue_unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="edit-venue-unit">{t('venue_unit_label')}</FormLabel>
+                    <FormControl>
+                      <Input id="edit-venue-unit" placeholder={t('venue_unit_placeholder')} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="venue_city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="edit-venue-city">{t('venue_city_label')}</FormLabel>
+                    <FormControl>
+                      <Input id="edit-venue-city" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="venue_state"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="edit-venue-state">{t('venue_state_label')}</FormLabel>
+                    <FormControl>
+                      <Input id="edit-venue-state" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="venue_postal_code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="edit-venue-postal-code">{t('venue_postal_code_label')}</FormLabel>
+                    <FormControl>
+                      <Input id="edit-venue-postal-code" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="dress_code"

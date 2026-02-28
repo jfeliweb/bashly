@@ -31,7 +31,10 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { parseLocalDateTimeInput } from '@/features/events/event-date-time';
-import { VenueAddressAutofill } from '@/features/events/VenueAddressAutofill';
+import {
+  VenueAddressAutofill,
+  type VenueAddressParts,
+} from '@/features/events/VenueAddressAutofill';
 import { useRouter } from '@/libs/i18nNavigation';
 import { cn } from '@/utils/Helpers';
 
@@ -60,6 +63,10 @@ const createEventFormSchema = createEventSchema.omit({
   event_date_str: z.string().optional(),
   event_time_str: z.string().optional(),
   publish_after_create: z.boolean().optional(),
+  venue_unit: z.string().optional(),
+  venue_city: z.string().optional(),
+  venue_state: z.string().optional(),
+  venue_postal_code: z.string().optional(),
 });
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -73,6 +80,10 @@ const defaultFormValues: CreateEventFormValues = {
   event_time_str: '',
   venue_name: '',
   venue_address: '',
+  venue_unit: '',
+  venue_city: '',
+  venue_state: '',
+  venue_postal_code: '',
   dress_code: '',
   welcome_message: '',
   theme_id: 'theme1',
@@ -84,14 +95,28 @@ const defaultFormValues: CreateEventFormValues = {
   publish_after_create: false,
 };
 
+function composeVenueAddress(values: CreateEventFormValues): string | undefined {
+  const line1 = values.venue_address?.trim();
+  const line2 = values.venue_unit?.trim();
+  const city = values.venue_city?.trim();
+  const state = values.venue_state?.trim();
+  const postalCode = values.venue_postal_code?.trim();
+
+  const cityStateZip = [city, state, postalCode].filter(Boolean).join(', ');
+  const fullAddress = [line1, line2, cityStateZip].filter(Boolean).join(', ');
+
+  return fullAddress || undefined;
+}
+
 function buildApiPayload(values: CreateEventFormValues): CreateEventInput {
   const event_date = parseLocalDateTimeInput(values.event_date_str, values.event_time_str);
+  const venueAddress = composeVenueAddress(values);
   const payload: CreateEventInput = {
     event_type: values.event_type,
     title: values.title,
     event_date,
     venue_name: values.venue_name || undefined,
-    venue_address: values.venue_address || undefined,
+    venue_address: venueAddress,
     dress_code: values.dress_code || undefined,
     welcome_message: values.welcome_message || undefined,
     theme_id: values.theme_id,
@@ -192,6 +217,21 @@ export default function NewEventPage() {
     form.setValue('event_type', value);
     setStep(2);
     setTimeout(() => document.getElementById('event-title')?.focus(), 0);
+  };
+
+  const applyRetrievedAddressParts = (parts: VenueAddressParts) => {
+    if (parts.line2) {
+      form.setValue('venue_unit', parts.line2);
+    }
+    if (parts.city) {
+      form.setValue('venue_city', parts.city);
+    }
+    if (parts.state) {
+      form.setValue('venue_state', parts.state);
+    }
+    if (parts.postalCode) {
+      form.setValue('venue_postal_code', parts.postalCode);
+    }
   };
 
   const onStep2Next = async () => {
@@ -439,13 +479,71 @@ export default function NewEventPage() {
                     <FormItem>
                       <FormLabel htmlFor="venue-address">{t('venue_address_label')}</FormLabel>
                       <FormControl>
-                        <VenueAddressAutofill id="venue-address" {...field} />
+                        <VenueAddressAutofill
+                          id="venue-address"
+                          onAddressRetrieve={applyRetrievedAddressParts}
+                          {...field}
+                        />
                       </FormControl>
                       <FormDescription>{t('venue_address_help')}</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="venue_unit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="venue-unit">{t('venue_unit_label')}</FormLabel>
+                        <FormControl>
+                          <Input id="venue-unit" placeholder={t('venue_unit_placeholder')} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="venue_city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="venue-city">{t('venue_city_label')}</FormLabel>
+                        <FormControl>
+                          <Input id="venue-city" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="venue_state"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="venue-state">{t('venue_state_label')}</FormLabel>
+                        <FormControl>
+                          <Input id="venue-state" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="venue_postal_code"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="venue-postal-code">{t('venue_postal_code_label')}</FormLabel>
+                        <FormControl>
+                          <Input id="venue-postal-code" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="dress_code"

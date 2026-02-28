@@ -5,8 +5,19 @@ import { type ComponentPropsWithoutRef, forwardRef, useRef } from 'react';
 
 import { Input } from '@/components/ui/input';
 
+export type VenueAddressParts = {
+  line1?: string;
+  line2?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  fullAddress?: string;
+};
+
 type VenueAddressAutofillProps = Omit<ComponentPropsWithoutRef<typeof Input>, 'autoComplete'> & {
   autoComplete?: string;
+  onAddressRetrieve?: (parts: VenueAddressParts) => void;
 };
 
 type UnknownRecord = Record<string, unknown>;
@@ -21,26 +32,27 @@ function getString(record: UnknownRecord, key: string): string | undefined {
 }
 
 function resolveRetrievedAddress(result: unknown): string | undefined {
+  const parts = resolveRetrievedParts(result);
+  return parts.fullAddress;
+}
+
+function resolveRetrievedParts(result: unknown): VenueAddressParts {
   if (!isRecord(result)) {
-    return undefined;
+    return {};
   }
 
   const features = result.features;
   if (!Array.isArray(features) || features.length === 0 || !isRecord(features[0])) {
-    return undefined;
+    return {};
   }
 
   const firstFeature = features[0];
   const properties = isRecord(firstFeature.properties) ? firstFeature.properties : firstFeature;
 
-  const formattedAddress
+  const fullAddress
     = getString(properties, 'full_address')
       ?? getString(properties, 'place_formatted')
       ?? getString(firstFeature, 'place_name');
-
-  if (formattedAddress) {
-    return formattedAddress;
-  }
 
   const line1 = getString(properties, 'address_line1');
   const line2 = getString(properties, 'address_line2');
@@ -49,15 +61,26 @@ function resolveRetrievedAddress(result: unknown): string | undefined {
   const postcode = getString(properties, 'postcode');
   const country = getString(properties, 'country');
 
-  const street = [line1, line2].filter(Boolean).join(' ');
-  const locality = [place, region, postcode].filter(Boolean).join(', ');
-  const full = [street, locality, country].filter(Boolean).join(', ');
+  return {
+    line1,
+    line2,
+    city: place,
+    state: region,
+    postalCode: postcode,
+    country,
+    fullAddress,
+  };
+}
 
-  return full || undefined;
+function getPrimaryInputValue(parts: VenueAddressParts): string | undefined {
+  if (parts.line1) {
+    return parts.line1;
+  }
+  return parts.fullAddress;
 }
 
 export const VenueAddressAutofill = forwardRef<HTMLInputElement, VenueAddressAutofillProps>(
-  ({ autoComplete = 'street-address', ...props }, ref) => {
+  ({ autoComplete = 'street-address', onAddressRetrieve, ...props }, ref) => {
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -80,13 +103,21 @@ export const VenueAddressAutofill = forwardRef<HTMLInputElement, VenueAddressAut
       <AddressAutofill
         accessToken={mapboxToken}
         onRetrieve={(result) => {
+          const parts = resolveRetrievedParts(result);
           const fullAddress = resolveRetrievedAddress(result);
           const node = inputRef.current;
-          if (!fullAddress || !node) {
+
+          onAddressRetrieve?.({
+            ...parts,
+            fullAddress,
+          });
+
+          const inputValue = getPrimaryInputValue(parts);
+          if (!inputValue || !node) {
             return;
           }
 
-          node.value = fullAddress;
+          node.value = inputValue;
           node.dispatchEvent(new Event('input', { bubbles: true }));
           node.dispatchEvent(new Event('change', { bubbles: true }));
         }}
