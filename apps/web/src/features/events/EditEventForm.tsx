@@ -34,6 +34,7 @@ import {
   parseLocalDateTimeInput,
   splitDateTimeToLocalInputs,
 } from '@/features/events/event-date-time';
+import { VenueAddressAutofill } from '@/features/events/VenueAddressAutofill';
 import { useRouter } from '@/libs/i18nNavigation';
 import { cn } from '@/utils/Helpers';
 
@@ -336,7 +337,7 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
                 <FormItem>
                   <FormLabel htmlFor="edit-venue-address">{t('venue_address_label')}</FormLabel>
                   <FormControl>
-                    <Input id="edit-venue-address" {...field} />
+                    <VenueAddressAutofill id="edit-venue-address" {...field} />
                   </FormControl>
                   <FormDescription>{t('venue_address_help')}</FormDescription>
                   <FormMessage />

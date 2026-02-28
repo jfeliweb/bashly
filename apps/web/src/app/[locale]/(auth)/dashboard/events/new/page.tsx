@@ -31,6 +31,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { parseLocalDateTimeInput } from '@/features/events/event-date-time';
+import { VenueAddressAutofill } from '@/features/events/VenueAddressAutofill';
 import { useRouter } from '@/libs/i18nNavigation';
 import { cn } from '@/utils/Helpers';
 
@@ -438,7 +439,7 @@ export default function NewEventPage() {
                     <FormItem>
                       <FormLabel htmlFor="venue-address">{t('venue_address_label')}</FormLabel>
                       <FormControl>
-                        <Input id="venue-address" {...field} />
+                        <VenueAddressAutofill id="venue-address" {...field} />
                       </FormControl>
                       <FormDescription>{t('venue_address_help')}</FormDescription>
                       <FormMessage />
