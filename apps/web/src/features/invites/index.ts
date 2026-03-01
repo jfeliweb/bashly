@@ -1,4 +1,4 @@
-export { InviteLinksPanel } from './InviteLinksPanel';
-export { InviteClaimButton } from './InviteClaimButton';
 export { CopyGuestUrl } from './CopyGuestUrl';
+export { InviteClaimButton } from './InviteClaimButton';
+export { InviteLinksPanel } from './InviteLinksPanel';
 export { QrCodePreview } from './QrCodePreview';

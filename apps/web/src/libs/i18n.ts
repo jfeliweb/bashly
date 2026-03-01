@@ -15,7 +15,7 @@ import { AllLocales } from '@/utils/AppConfig';
 
 // Using internationalization in Server Components
 export default getRequestConfig(async ({ requestLocale }) => {
-  let locale = await requestLocale;
+  const locale = await requestLocale;
 
   // Validate that the incoming locale is valid
   if (!locale || !(AllLocales as readonly string[]).includes(locale)) {
