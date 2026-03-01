@@ -12,6 +12,7 @@ type SendEmailParams = {
   subject: string;
   react: ReactElement;
   from?: string;
+  replyTo?: string;
 };
 
 /**
@@ -24,6 +25,7 @@ export async function sendEmail({
   subject,
   react,
   from = 'Bashly <noreply@updates.bashly.app>',
+  replyTo,
 }: SendEmailParams): Promise<boolean> {
   if (!resend) {
     logger.warn({ to, subject }, 'Resend not configured; skipping email send');
@@ -36,6 +38,7 @@ export async function sendEmail({
       to,
       subject,
       react,
+      ...(replyTo && { replyTo }),
     });
 
     if (error) {

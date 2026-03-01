@@ -110,10 +110,20 @@ export async function POST(req: NextRequest, context: RouteContext) {
       });
     }
 
-    return NextResponse.json(
+    const res = NextResponse.json(
       { rsvp_id: existing.id, message: 'RSVP updated' },
       { status: 200 },
     );
+    if (data.status === 'attending' && fingerprint) {
+      res.cookies.set('bashly_rsvp_fp', fingerprint, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        path: '/',
+      });
+    }
+    return res;
   }
 
   // Insert new RSVP
@@ -141,10 +151,20 @@ export async function POST(req: NextRequest, context: RouteContext) {
     });
   }
 
-  return NextResponse.json(
+  const res = NextResponse.json(
     { rsvp_id: rsvp?.id, message: 'RSVP confirmed' },
     { status: 201 },
   );
+  if (data.status === 'attending' && fingerprint) {
+    res.cookies.set('bashly_rsvp_fp', fingerprint, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      path: '/',
+    });
+  }
+  return res;
 }
 
 /* ------------------------------------------------------------------ */

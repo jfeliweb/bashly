@@ -1,12 +1,13 @@
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 import { CalendarDays, Clock3, Info, ListOrdered, MapPin, Music2 } from 'lucide-react';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 
+import { GuestContactSection } from '@/features/events/components/GuestContactSection';
 import { CountdownTimer } from '@/features/events/CountdownTimer';
 import { EventDateTimeText } from '@/features/events/EventDateTimeText';
 import { EventMap } from '@/features/events/EventMap';
@@ -18,7 +19,7 @@ import { SongRequestWidget } from '@/features/songs/SongRequestWidget';
 import { SongVotingList } from '@/features/songs/SongVotingList';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
-import { eventTable, scheduleItemTable } from '@/models/Schema';
+import { eventTable, rsvpTable, scheduleItemTable } from '@/models/Schema';
 
 export const revalidate = 60;
 
@@ -86,6 +87,31 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
     note: row.note,
   }));
 
+  const cookieStore = await cookies();
+  const rsvpFingerprint = cookieStore.get('bashly_rsvp_fp')?.value ?? '';
+  const guestHasRsvped = rsvpFingerprint
+    ? Boolean(
+        await db.query.rsvpTable.findFirst({
+          where: and(
+            eq(rsvpTable.eventId, event.id),
+            eq(rsvpTable.fingerprint, rsvpFingerprint),
+            eq(rsvpTable.status, 'attending'),
+          ),
+          columns: { id: true },
+        }),
+      )
+    : false;
+
+  const showContactSection = event.contactEnabled ?? false;
+  const showContactForm
+    = showContactSection
+      && (event.contactFormVisible === 'always' || guestHasRsvped);
+  const showPhone
+    = Boolean(event.contactPhone)
+      && (event.contactPhoneVisible === 'always' || guestHasRsvped);
+  const showLockedHint
+    = showContactSection && !showContactForm && !showPhone;
+
   const themeId = event.themeId ?? 'theme1';
   const eventDateIso = event.eventDate ? event.eventDate.toISOString() : null;
 
@@ -137,7 +163,7 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
               />
             )}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/45" aria-hidden />
-        <div className="relative mx-auto flex h-full w-full max-w-[520px] flex-col justify-end px-4 pb-8">
+        <div className="relative mx-auto flex size-full max-w-[520px] flex-col justify-end px-4 pb-8">
           <span
             className="mb-3 inline-flex w-fit rounded-full border border-white/25 bg-white/20 px-3 py-1.5 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm"
             style={{ letterSpacing: '0.12em' }}
@@ -193,7 +219,7 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
         </div>
       </div>
 
-      <main className="mx-auto max-w-[520px] px-4 py-4">
+      <main className="mx-auto max-w-[520px] p-4">
         {/* 3. Welcome message */}
         {event.welcomeMessage && (
           <div
@@ -348,7 +374,20 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
         registryEnabled={event.registryEnabled ?? false}
       />
 
-      {/* 9. Footer */}
+      {/* 9. Contact the Host */}
+      {showContactSection && (
+        <div className="mx-auto max-w-[520px] px-4 pb-6">
+          <GuestContactSection
+            eventSlug={event.slug}
+            showForm={showContactForm}
+            showPhone={showPhone}
+            phone={event.contactPhone}
+            showLockedHint={showLockedHint}
+          />
+        </div>
+      )}
+
+      {/* 10. Footer */}
       <footer className="border-t px-4 py-6" style={{ borderColor: 'var(--theme-border)' }}>
         <div className="mx-auto flex max-w-[520px] flex-col items-center gap-2 text-center">
           <p className="font-nunito text-sm text-[var(--theme-text-muted)]">
