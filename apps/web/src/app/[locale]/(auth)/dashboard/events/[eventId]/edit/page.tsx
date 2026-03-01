@@ -40,11 +40,15 @@ const EVENT_TYPE_VALUES = [
 ] as const;
 const THEME_IDS = ['theme1', 'theme2', 'theme3', 'theme4', 'theme5'] as const;
 const ADDRESS_VISIBLE = ['always', 'after_rsvp'] as const;
+const CONTACT_FORM_VISIBLE = ['always', 'after_rsvp'] as const;
+const CONTACT_PHONE_VISIBLE = ['always', 'after_rsvp'] as const;
 
 function eventToFormDefaults(event: typeof eventTable.$inferSelect): EditEventFormDefaults {
   const eventType = event.eventType ?? 'sweet16';
   const themeId = event.themeId ?? 'theme1';
   const addressVisible = event.addressVisible ?? 'after_rsvp';
+  const contactFormVisible = event.contactFormVisible ?? 'always';
+  const contactPhoneVisible = event.contactPhoneVisible ?? 'always';
 
   return {
     event_type: EVENT_TYPE_VALUES.includes(eventType as (typeof EVENT_TYPE_VALUES)[number])
@@ -62,6 +66,14 @@ function eventToFormDefaults(event: typeof eventTable.$inferSelect): EditEventFo
     address_visible: ADDRESS_VISIBLE.includes(addressVisible as (typeof ADDRESS_VISIBLE)[number])
       ? (addressVisible as (typeof ADDRESS_VISIBLE)[number])
       : 'after_rsvp',
+    contact_enabled: event.contactEnabled ?? false,
+    contact_form_visible: CONTACT_FORM_VISIBLE.includes(contactFormVisible as (typeof CONTACT_FORM_VISIBLE)[number])
+      ? (contactFormVisible as (typeof CONTACT_FORM_VISIBLE)[number])
+      : 'always',
+    contact_phone: event.contactPhone ?? null,
+    contact_phone_visible: CONTACT_PHONE_VISIBLE.includes(contactPhoneVisible as (typeof CONTACT_PHONE_VISIBLE)[number])
+      ? (contactPhoneVisible as (typeof CONTACT_PHONE_VISIBLE)[number])
+      : 'always',
     song_requests_enabled: event.songRequestsEnabled ?? true,
     song_requests_per_guest: event.songRequestsPerGuest ?? 5,
     song_voting_enabled: event.songVotingEnabled ?? false,

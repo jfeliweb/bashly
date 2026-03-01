@@ -58,6 +58,10 @@ const editFormSchema = createEventSchema
     venue_city: z.string().optional(),
     venue_state: z.string().optional(),
     venue_postal_code: z.string().optional(),
+    contact_enabled: z.boolean().optional(),
+    contact_form_visible: z.enum(['always', 'after_rsvp']).optional(),
+    contact_phone: z.string().max(20).nullable().optional(),
+    contact_phone_visible: z.enum(['always', 'after_rsvp']).optional(),
   });
 
 type EditEventFormValues = z.infer<typeof editFormSchema>;
@@ -126,6 +130,10 @@ function buildPatchPayload(values: EditEventFormValues): Record<string, unknown>
     ...(values.welcome_message !== undefined && { welcome_message: values.welcome_message || undefined }),
     ...(values.theme_id !== undefined && { theme_id: values.theme_id }),
     ...(values.address_visible !== undefined && { address_visible: values.address_visible }),
+    ...(values.contact_enabled !== undefined && { contact_enabled: values.contact_enabled }),
+    ...(values.contact_form_visible !== undefined && { contact_form_visible: values.contact_form_visible }),
+    ...(values.contact_phone !== undefined && { contact_phone: values.contact_phone }),
+    ...(values.contact_phone_visible !== undefined && { contact_phone_visible: values.contact_phone_visible }),
     ...(values.song_requests_enabled !== undefined && { song_requests_enabled: values.song_requests_enabled }),
     ...(values.song_requests_per_guest !== undefined && { song_requests_per_guest: values.song_requests_per_guest }),
     ...(values.song_voting_enabled !== undefined && { song_voting_enabled: values.song_voting_enabled }),
@@ -659,6 +667,106 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
                 </FormItem>
               )}
             />
+
+            {/* Contact & Communication */}
+            <div className="space-y-4 rounded-lg border border-border p-4">
+              <h3 className="font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-[rgb(48,153,0)] dark:text-[rgb(116,255,51)]">
+                {t('contact_section')}
+              </h3>
+              <FormField
+                control={form.control}
+                name="contact_enabled"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div>
+                      <FormLabel htmlFor="edit-contact-enabled" className="cursor-pointer">
+                        {t('contact_enable_label')}
+                      </FormLabel>
+                      <FormDescription className="mt-1">
+                        {t('contact_enable_desc')}
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        id="edit-contact-enabled"
+                        checked={field.value ?? false}
+                        onCheckedChange={field.onChange}
+                        role="switch"
+                        aria-checked={field.value ?? false}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              {form.watch('contact_enabled') && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="contact_form_visible"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="edit-contact-form-visible">{t('contact_form_visibility')}</FormLabel>
+                        <Select value={field.value ?? 'always'} onValueChange={field.onChange}>
+                          <FormControl>
+                            <SelectTrigger id="edit-contact-form-visible">
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="always">{t('visibility_always')}</SelectItem>
+                            <SelectItem value="after_rsvp">{t('visibility_after_rsvp')}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+              <FormField
+                control={form.control}
+                name="contact_phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="edit-contact-phone">{t('contact_phone_label')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="edit-contact-phone"
+                        placeholder={t('contact_phone_placeholder')}
+                        {...field}
+                        value={field.value ?? ''}
+                        onChange={e => field.onChange(e.target.value || null)}
+                      />
+                    </FormControl>
+                    <FormDescription>{t('contact_phone_desc')}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {form.watch('contact_phone') && (
+                <FormField
+                  control={form.control}
+                  name="contact_phone_visible"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="edit-contact-phone-visible">{t('contact_phone_visibility')}</FormLabel>
+                      <Select value={field.value ?? 'always'} onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger id="edit-contact-phone-visible">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="always">{t('visibility_always')}</SelectItem>
+                          <SelectItem value="after_rsvp">{t('visibility_after_rsvp')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
           </div>
         </section>
 
