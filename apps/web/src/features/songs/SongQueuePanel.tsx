@@ -43,7 +43,9 @@ export function SongQueuePanel({ eventId, djMode = false, guestPagePath }: SongQ
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleShareLink = useCallback(() => {
-    if (typeof window === 'undefined' || !guestPagePath) return;
+    if (typeof window === 'undefined' || !guestPagePath) {
+      return;
+    }
     const url = `${window.location.origin}${guestPagePath}`;
     void window.navigator.clipboard.writeText(url);
     // Could add toast here; for now copy is silent per spec
