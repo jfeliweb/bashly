@@ -1,16 +1,16 @@
-import type { Metadata } from 'next';
 import {
-  Users,
+  Calendar,
+  Lock,
+  MessageSquare,
   Music,
   QrCode,
-  Sparkles,
-  Calendar,
   Share2,
+  Sparkles,
   UserPlus,
-  MessageSquare,
-  Lock,
+  Users,
   Zap,
 } from 'lucide-react';
+import type { Metadata } from 'next';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 
 import { BaseTemplate } from '@/templates/BaseTemplate';
@@ -112,7 +112,7 @@ export default async function FeaturesPage(props: {
                   >
                     <div className="flex-1">
                       <div className="inline-flex items-center justify-center rounded-lg bg-cerulean-100 p-3 dark:bg-cerulean-900">
-                        <Icon className="h-8 w-8 text-cerulean-600 dark:text-cerulean-400" />
+                        <Icon className="size-8 text-cerulean-600 dark:text-cerulean-400" />
                       </div>
                       <h2 className="mt-4 text-2xl font-bold text-foreground">
                         {t(`features.${featureId}.title`)}
@@ -121,10 +121,10 @@ export default async function FeaturesPage(props: {
                         {t(`features.${featureId}.description`)}
                       </p>
                       <ul className="mt-6 space-y-2">
-                        {details.map((detail) => (
+                        {details.map(detail => (
                           <li key={detail} className="flex items-start gap-2">
                             <svg
-                              className="mt-0.5 h-5 w-5 flex-shrink-0 text-fern-600"
+                              className="mt-0.5 size-5 shrink-0 text-fern-600"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -170,7 +170,7 @@ export default async function FeaturesPage(props: {
               <div className="mt-8">
                 <a
                   href="/sign-up"
-                  className="inline-flex items-center justify-center rounded-full bg-fern-500 px-8 py-3 text-base font-semibold text-cerulean-950 shadow-sm hover:bg-fern-600 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3 min-h-[44px]"
+                  className="focus:outline-3 focus:outline-offset-3 inline-flex min-h-[44px] items-center justify-center rounded-full bg-fern-500 px-8 py-3 text-base font-semibold text-cerulean-950 shadow-sm hover:bg-fern-600 focus:outline focus:outline-[var(--focus-ring)]"
                 >
                   {t('cta_button')}
                 </a>

@@ -31,7 +31,8 @@ export default async function AboutPage(props: { params: { locale: string } }) {
 
             <div className="mt-8 space-y-6 text-lg text-muted-foreground">
               <p>
-                <strong className="text-foreground">{t('intro_strong')}</strong>{' '}
+                <strong className="text-foreground">{t('intro_strong')}</strong>
+                {' '}
                 {t('intro_rest')}
               </p>
 
@@ -50,26 +51,34 @@ export default async function AboutPage(props: { params: { locale: string } }) {
               <ul className="list-disc space-y-2 pl-6">
                 <li>
                   <strong className="text-foreground">
-                    {t('why_guest_title')}:
-                  </strong>{' '}
+                    {t('why_guest_title')}
+                    :
+                  </strong>
+                  {' '}
                   {t('why_guest_text')}
                 </li>
                 <li>
                   <strong className="text-foreground">
-                    {t('why_music_title')}:
-                  </strong>{' '}
+                    {t('why_music_title')}
+                    :
+                  </strong>
+                  {' '}
                   {t('why_music_text')}
                 </li>
                 <li>
                   <strong className="text-foreground">
-                    {t('why_free_title')}:
-                  </strong>{' '}
+                    {t('why_free_title')}
+                    :
+                  </strong>
+                  {' '}
                   {t('why_free_text')}
                 </li>
                 <li>
                   <strong className="text-foreground">
-                    {t('why_care_title')}:
-                  </strong>{' '}
+                    {t('why_care_title')}
+                    :
+                  </strong>
+                  {' '}
                   {t('why_care_text')}
                 </li>
               </ul>
@@ -82,7 +91,7 @@ export default async function AboutPage(props: { params: { locale: string } }) {
                 <p className="mt-2">
                   <a
                     href="mailto:hello@bashly.app"
-                    className="font-semibold text-cerulean-600 hover:text-cerulean-700 dark:text-cerulean-400 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
+                    className="focus:outline-3 focus:outline-offset-3 font-semibold text-cerulean-600 hover:text-cerulean-700 focus:outline focus:outline-[var(--focus-ring)] dark:text-cerulean-400"
                   >
                     hello@bashly.app
                   </a>

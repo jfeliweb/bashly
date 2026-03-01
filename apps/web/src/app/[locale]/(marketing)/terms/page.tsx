@@ -67,10 +67,20 @@ export default async function TermsPage(props: { params: { locale: string } }) {
 
               <h2>{t('s5_heading')}</h2>
               <p>
-                <strong>{t('s5_your_label')}:</strong> {t('s5_your_text')}
+                <strong>
+                  {t('s5_your_label')}
+                  :
+                </strong>
+                {' '}
+                {t('s5_your_text')}
               </p>
               <p>
-                <strong>{t('s5_third_label')}:</strong> {t('s5_third_text')}
+                <strong>
+                  {t('s5_third_label')}
+                  :
+                </strong>
+                {' '}
+                {t('s5_third_text')}
               </p>
 
               <h2>{t('s6_heading')}</h2>
@@ -79,7 +89,7 @@ export default async function TermsPage(props: { params: { locale: string } }) {
                   link: chunks => (
                     <Link
                       href="/privacy"
-                      className="text-cerulean-700 underline underline-offset-2 hover:text-cerulean-800 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
+                      className="focus:outline-3 focus:outline-offset-3 text-cerulean-700 underline underline-offset-2 hover:text-cerulean-800 focus:outline focus:outline-[var(--focus-ring)]"
                     >
                       {chunks}
                     </Link>
@@ -96,7 +106,7 @@ export default async function TermsPage(props: { params: { locale: string } }) {
                   email: chunks => (
                     <a
                       href="mailto:hello@bashly.app"
-                      className="text-cerulean-700 underline underline-offset-2 hover:text-cerulean-800 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
+                      className="focus:outline-3 focus:outline-offset-3 text-cerulean-700 underline underline-offset-2 hover:text-cerulean-800 focus:outline focus:outline-[var(--focus-ring)]"
                     >
                       {chunks}
                     </a>
@@ -119,7 +129,7 @@ export default async function TermsPage(props: { params: { locale: string } }) {
                   email: chunks => (
                     <a
                       href="mailto:hello@bashly.app"
-                      className="text-cerulean-700 underline underline-offset-2 hover:text-cerulean-800 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
+                      className="focus:outline-3 focus:outline-offset-3 text-cerulean-700 underline underline-offset-2 hover:text-cerulean-800 focus:outline focus:outline-[var(--focus-ring)]"
                     >
                       {chunks}
                     </a>

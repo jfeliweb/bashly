@@ -1,17 +1,17 @@
 import { and, count, desc, eq, ne } from 'drizzle-orm';
 import { Calendar } from 'lucide-react';
-import { Suspense } from 'react';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { Suspense } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/EmptyState';
 import { EventStatusBadge } from '@/components/EventStatusBadge';
 import { StatsCardSkeleton } from '@/components/Skeleton';
-import { StatsCards } from '@/features/dashboard/StatsCards';
+import { Button } from '@/components/ui/button';
 import { QuickActions } from '@/features/dashboard/QuickActions';
+import { StatsCards } from '@/features/dashboard/StatsCards';
 import { DashboardWelcomeOverlay } from '@/features/onboarding/DashboardWelcomeOverlay';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
@@ -311,7 +311,7 @@ export default async function DashboardEventsPage(props: PageProps) {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {Array.from({ length: 4 }).map((_, i) => (
                 <StatsCardSkeleton
-                  // eslint-disable-next-line react/no-array-index-key
+
                   key={`stats-card-fallback-${i.toString()}`}
                 />
               ))}

@@ -1,5 +1,5 @@
+import { Bug, Mail, MessageSquare } from 'lucide-react';
 import type { Metadata } from 'next';
-import { Mail, MessageSquare, Bug } from 'lucide-react';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 
 import { BaseTemplate } from '@/templates/BaseTemplate';
@@ -28,7 +28,7 @@ export default async function ContactPage(props: {
       <div className="bg-white dark:bg-background">
         <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <div className="mx-auto max-w-3xl">
-            <h1 className="font-heading text-center text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            <h1 className="text-center font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
               {t('title')}
             </h1>
             <p className="mt-4 text-center text-lg text-muted-foreground">
@@ -39,7 +39,7 @@ export default async function ContactPage(props: {
               <div className="rounded-xl border border-cerulean-200 bg-white p-6 text-center dark:border-cerulean-800 dark:bg-cerulean-950">
                 <div className="mx-auto mb-4 inline-flex items-center justify-center rounded-lg bg-cerulean-100 p-3 dark:bg-cerulean-900">
                   <Mail
-                    className="h-6 w-6 text-cerulean-600 dark:text-cerulean-400"
+                    className="size-6 text-cerulean-600 dark:text-cerulean-400"
                     aria-hidden
                   />
                 </div>
@@ -51,7 +51,7 @@ export default async function ContactPage(props: {
                 </p>
                 <a
                   href="mailto:hello@bashly.app"
-                  className="mt-4 inline-block font-semibold text-cerulean-600 hover:text-cerulean-700 dark:text-cerulean-400 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
+                  className="focus:outline-3 focus:outline-offset-3 mt-4 inline-block font-semibold text-cerulean-600 hover:text-cerulean-700 focus:outline focus:outline-[var(--focus-ring)] dark:text-cerulean-400"
                 >
                   {t('general_email')}
                 </a>
@@ -60,7 +60,7 @@ export default async function ContactPage(props: {
               <div className="rounded-xl border border-cerulean-200 bg-white p-6 text-center dark:border-cerulean-800 dark:bg-cerulean-950">
                 <div className="mx-auto mb-4 inline-flex items-center justify-center rounded-lg bg-cerulean-100 p-3 dark:bg-cerulean-900">
                   <MessageSquare
-                    className="h-6 w-6 text-cerulean-600 dark:text-cerulean-400"
+                    className="size-6 text-cerulean-600 dark:text-cerulean-400"
                     aria-hidden
                   />
                 </div>
@@ -72,7 +72,7 @@ export default async function ContactPage(props: {
                 </p>
                 <a
                   href="mailto:support@bashly.app"
-                  className="mt-4 inline-block font-semibold text-cerulean-600 hover:text-cerulean-700 dark:text-cerulean-400 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
+                  className="focus:outline-3 focus:outline-offset-3 mt-4 inline-block font-semibold text-cerulean-600 hover:text-cerulean-700 focus:outline focus:outline-[var(--focus-ring)] dark:text-cerulean-400"
                 >
                   {t('support_email')}
                 </a>
@@ -81,7 +81,7 @@ export default async function ContactPage(props: {
               <div className="rounded-xl border border-cerulean-200 bg-white p-6 text-center dark:border-cerulean-800 dark:bg-cerulean-950">
                 <div className="mx-auto mb-4 inline-flex items-center justify-center rounded-lg bg-cerulean-100 p-3 dark:bg-cerulean-900">
                   <Bug
-                    className="h-6 w-6 text-cerulean-600 dark:text-cerulean-400"
+                    className="size-6 text-cerulean-600 dark:text-cerulean-400"
                     aria-hidden
                   />
                 </div>
@@ -93,7 +93,7 @@ export default async function ContactPage(props: {
                 </p>
                 <a
                   href="mailto:bugs@bashly.app"
-                  className="mt-4 inline-block font-semibold text-cerulean-600 hover:text-cerulean-700 dark:text-cerulean-400 focus:outline focus:outline-3 focus:outline-[var(--focus-ring)] focus:outline-offset-3"
+                  className="focus:outline-3 focus:outline-offset-3 mt-4 inline-block font-semibold text-cerulean-600 hover:text-cerulean-700 focus:outline focus:outline-[var(--focus-ring)] dark:text-cerulean-400"
                 >
                   {t('bugs_email')}
                 </a>
@@ -106,7 +106,8 @@ export default async function ContactPage(props: {
               </h2>
               <p className="mt-4 text-muted-foreground">{t('beta_p1')}</p>
               <p className="mt-4 text-muted-foreground">
-                <strong className="text-foreground">{t('response_label')}</strong>{' '}
+                <strong className="text-foreground">{t('response_label')}</strong>
+                {' '}
                 {t('beta_p2')}
               </p>
             </div>
