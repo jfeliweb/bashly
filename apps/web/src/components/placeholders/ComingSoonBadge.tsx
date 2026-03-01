@@ -15,7 +15,7 @@ export function ComingSoonBadge({ className = '' }: ComingSoonBadgeProps) {
     <span
       className={cn(
         'inline-flex items-center rounded-full bg-fern-500 px-2 py-0.5 text-xs font-semibold text-cerulean-950',
-        className
+        className,
       )}
     >
       {t('coming_soon')}

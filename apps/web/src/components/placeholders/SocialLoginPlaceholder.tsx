@@ -80,8 +80,8 @@ export function SocialLoginPlaceholder({
         )}
       >
         {isLoading
-          ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-          : <Icon className="h-5 w-5" aria-hidden />}
+          ? <Loader2 className="size-5 animate-spin" aria-hidden />
+          : <Icon className="size-5" aria-hidden />}
         <span>{label}</span>
       </button>
       {disabled && (
