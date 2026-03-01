@@ -56,10 +56,10 @@ export function OnboardingTooltip({
         className="absolute right-2 top-2 rounded text-white/80 hover:text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-white"
         aria-label="Dismiss"
       >
-        <X className="h-4 w-4" aria-hidden />
+        <X className="size-4" aria-hidden />
       </button>
       <div className="flex gap-3">
-        <Info className="mt-0.5 h-5 w-5 flex-shrink-0" aria-hidden />
+        <Info className="mt-0.5 size-5 shrink-0" aria-hidden />
         <div>
           <h4 className="font-semibold">{title}</h4>
           <p className="mt-1 text-sm text-white/90">{description}</p>

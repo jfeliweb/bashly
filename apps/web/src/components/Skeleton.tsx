@@ -22,7 +22,7 @@ export function StatsCardSkeleton() {
           <Skeleton className="mt-2 h-8 w-16" />
           <Skeleton className="mt-1 h-3 w-32" />
         </div>
-        <Skeleton className="h-12 w-12 rounded-lg" />
+        <Skeleton className="size-12 rounded-lg" />
       </div>
     </div>
   );
@@ -40,4 +40,3 @@ export function EventCardSkeleton() {
     </div>
   );
 }
-

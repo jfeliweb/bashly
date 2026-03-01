@@ -43,4 +43,3 @@ export function EventStatusBadge({
     </span>
   );
 }
-
