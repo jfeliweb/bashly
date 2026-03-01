@@ -1,8 +1,8 @@
 'use client';
 
 import { Calendar, Music, Sparkles, Users } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -30,7 +30,9 @@ export function WelcomeScreen({ userName }: WelcomeScreenProps) {
     router.push('/dashboard');
   }
 
-  if (dismissed) return null;
+  if (dismissed) {
+    return null;
+  }
 
   return (
     <div
@@ -42,7 +44,7 @@ export function WelcomeScreen({ userName }: WelcomeScreenProps) {
       <div className="mx-4 w-full max-w-2xl rounded-xl bg-white p-8 shadow-2xl dark:bg-cerulean-950">
         <div className="mb-6 flex items-center justify-center">
           <div className="rounded-full bg-fern-500 p-3">
-            <Sparkles className="h-8 w-8 text-cerulean-950" aria-hidden />
+            <Sparkles className="size-8 text-cerulean-950" aria-hidden />
           </div>
         </div>
 
@@ -59,7 +61,7 @@ export function WelcomeScreen({ userName }: WelcomeScreenProps) {
             return (
               <div key={feature.titleKey} className="text-center">
                 <div className="mx-auto mb-3 inline-flex items-center justify-center rounded-lg bg-cerulean-100 p-3 dark:bg-cerulean-900">
-                  <Icon className="h-6 w-6 text-cerulean-600 dark:text-cerulean-400" aria-hidden />
+                  <Icon className="size-6 text-cerulean-600 dark:text-cerulean-400" aria-hidden />
                 </div>
                 <h3 className="font-semibold text-foreground">{t(feature.titleKey)}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">

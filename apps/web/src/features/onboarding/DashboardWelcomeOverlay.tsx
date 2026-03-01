@@ -8,6 +8,8 @@ type DashboardWelcomeOverlayProps = {
 };
 
 export function DashboardWelcomeOverlay({ show, userName }: DashboardWelcomeOverlayProps) {
-  if (!show) return null;
+  if (!show) {
+    return null;
+  }
   return <WelcomeScreen userName={userName || 'there'} />;
 }

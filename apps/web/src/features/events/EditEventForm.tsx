@@ -699,29 +699,27 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
                 )}
               />
               {form.watch('contact_enabled') && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="contact_form_visible"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="edit-contact-form-visible">{t('contact_form_visibility')}</FormLabel>
-                        <Select value={field.value ?? 'always'} onValueChange={field.onChange}>
-                          <FormControl>
-                            <SelectTrigger id="edit-contact-form-visible">
-                              <SelectValue />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="always">{t('visibility_always')}</SelectItem>
-                            <SelectItem value="after_rsvp">{t('visibility_after_rsvp')}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
+                <FormField
+                  control={form.control}
+                  name="contact_form_visible"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="edit-contact-form-visible">{t('contact_form_visibility')}</FormLabel>
+                      <Select value={field.value ?? 'always'} onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger id="edit-contact-form-visible">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="always">{t('visibility_always')}</SelectItem>
+                          <SelectItem value="after_rsvp">{t('visibility_after_rsvp')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
               <FormField
                 control={form.control}
