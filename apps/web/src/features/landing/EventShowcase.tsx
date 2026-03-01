@@ -14,7 +14,7 @@ export async function EventShowcase() {
 
   return (
     <section
-      className="bg-white dark:bg-background py-24 sm:py-32"
+      className="bg-white py-24 dark:bg-background sm:py-32"
       aria-labelledby="event-showcase-heading"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,12 +1,12 @@
-import { getTranslations } from 'next-intl/server';
 import {
-  Users,
+  Calendar,
   Music,
   QrCode,
-  Sparkles,
-  Calendar,
   Share2,
+  Sparkles,
+  Users,
 } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 const featureKeys = [
   { key: 'guest', icon: Users },
@@ -23,7 +23,7 @@ export async function Features() {
   return (
     <section
       id="features"
-      className="bg-white dark:bg-background py-24 sm:py-32"
+      className="bg-white py-24 dark:bg-background sm:py-32"
       aria-labelledby="features-heading"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,11 +43,11 @@ export async function Features() {
           {featureKeys.map(({ key, icon: Icon }) => (
             <div
               key={key}
-              className="relative rounded-xl border border-cerulean-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow dark:bg-cerulean-950 dark:border-cerulean-800"
+              className="relative rounded-xl border border-cerulean-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-cerulean-800 dark:bg-cerulean-950"
             >
               <div className="mb-4 inline-flex items-center justify-center rounded-lg bg-cerulean-100 p-3 dark:bg-cerulean-900">
                 <Icon
-                  className="h-6 w-6 text-cerulean-600 dark:text-cerulean-400"
+                  className="size-6 text-cerulean-600 dark:text-cerulean-400"
                   aria-hidden
                 />
               </div>

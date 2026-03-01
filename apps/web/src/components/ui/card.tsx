@@ -59,4 +59,3 @@ export function CardFooter({ className, ...props }: CardFooterProps) {
     />
   );
 }
-

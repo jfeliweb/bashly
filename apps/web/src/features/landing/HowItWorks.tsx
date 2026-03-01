@@ -7,7 +7,7 @@ export async function HowItWorks() {
 
   return (
     <section
-      className="bg-cerulean-50 dark:bg-cerulean-950/50 py-24 sm:py-32"
+      className="bg-cerulean-50 py-24 dark:bg-cerulean-950/50 sm:py-32"
       aria-labelledby="how-it-works-heading"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,11 +25,11 @@ export async function HowItWorks() {
 
         <div className="mx-auto mt-16 max-w-4xl">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {stepKeys.map((step) => (
+            {stepKeys.map(step => (
               <div key={step} className="relative">
                 <div className="flex flex-col items-center text-center">
                   <div
-                    className="flex h-12 w-12 items-center justify-center rounded-full bg-fern-500 font-heading text-xl font-bold text-cerulean-950"
+                    className="flex size-12 items-center justify-center rounded-full bg-fern-500 font-heading text-xl font-bold text-cerulean-950"
                     aria-hidden
                   >
                     {step}
