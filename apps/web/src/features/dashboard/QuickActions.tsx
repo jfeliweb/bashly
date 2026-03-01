@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Plus, Upload, Share2, Download } from 'lucide-react';
+import { Download, Plus, Share2, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -72,7 +72,7 @@ export function QuickActions() {
             className="relative flex items-start gap-3 rounded-lg border border-cerulean-200 p-4 text-left transition-colors hover:bg-cerulean-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-cerulean-800 dark:hover:bg-cerulean-950/50"
           >
             <div className="mt-1 rounded-lg bg-cerulean-100 p-2 dark:bg-cerulean-900">
-              <action.icon className="h-5 w-5 text-cerulean-600 dark:text-cerulean-400" />
+              <action.icon className="size-5 text-cerulean-600 dark:text-cerulean-400" />
             </div>
             <div className="flex-1">
               <p className="font-semibold text-foreground">{action.label}</p>
@@ -91,4 +91,3 @@ export function QuickActions() {
     </Card>
   );
 }
-

@@ -1,4 +1,4 @@
-import { Users, Music, Calendar, TrendingUp } from 'lucide-react';
+import { Calendar, Music, TrendingUp, Users } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -72,7 +72,7 @@ export async function StatsCards({ stats }: StatsCardsProps) {
                 </p>
               </div>
               <div className={`rounded-lg ${card.bgColor} p-3`}>
-                <card.icon className={`h-6 w-6 ${card.color}`} />
+                <card.icon className={`size-6 ${card.color}`} />
               </div>
             </div>
           </CardContent>
@@ -81,4 +81,3 @@ export async function StatsCards({ stats }: StatsCardsProps) {
     </div>
   );
 }
-
