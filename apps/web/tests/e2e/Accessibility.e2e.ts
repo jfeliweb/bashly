@@ -148,6 +148,7 @@ test.describe('a11y — public pages', () => {
 
     if (!slug) {
       test.skip(true, 'TEST_EVENT_SLUG not set — skipping guest event page a11y test');
+
       return;
     }
 
@@ -187,14 +188,14 @@ test.describe('a11y — authenticated dashboard pages', () => {
     await page.goto(url('/dashboard/events/new'));
     await page.waitForLoadState('load');
     // Audit step 1 of the multi-step form
-    await auditPage(page, url('/dashboard/events/new') + ' (step 1)');
+    await auditPage(page, `${url('/dashboard/events/new')} (step 1)`);
 
     // Advance to step 2 if the "Next" button is present
     const nextButton = page.getByRole('button', { name: /next/i });
     if (await nextButton.isVisible()) {
       await nextButton.click();
       await page.waitForTimeout(300);
-      await auditPage(page, url('/dashboard/events/new') + ' (step 2)');
+      await auditPage(page, `${url('/dashboard/events/new')} (step 2)`);
     }
   });
 });
@@ -209,6 +210,7 @@ test.describe('a11y — interactive states', () => {
 
     if (!slug) {
       test.skip(true, 'TEST_EVENT_SLUG not set — skipping RSVP modal a11y test');
+
       return;
     }
 
@@ -217,7 +219,9 @@ test.describe('a11y — interactive states', () => {
 
     // Open the RSVP modal
     const rsvpButton = page.getByRole('button', { name: /rsvp/i });
+
     await expect(rsvpButton).toBeVisible();
+
     await rsvpButton.click();
 
     // Wait for the modal to fully open
@@ -235,6 +239,6 @@ test.describe('a11y — interactive states', () => {
     await page.waitForTimeout(300);
 
     // Audit with error messages visible
-    await auditPage(page, url('/sign-in') + ' (validation errors visible)');
+    await auditPage(page, `${url('/sign-in')} (validation errors visible)`);
   });
 });
