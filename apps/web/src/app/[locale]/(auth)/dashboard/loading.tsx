@@ -1,4 +1,4 @@
-import { StatsCardSkeleton, EventCardSkeleton } from '@/components/Skeleton';
+import { EventCardSkeleton, StatsCardSkeleton } from '@/components/Skeleton';
 
 export default function DashboardLoading() {
   return (
@@ -24,7 +24,7 @@ export default function DashboardLoading() {
             className="rounded-lg border border-cerulean-200 p-4 dark:border-cerulean-800"
           >
             <div className="flex items-start gap-3">
-              <div className="h-8 w-8 animate-pulse rounded-lg bg-muted" />
+              <div className="size-8 animate-pulse rounded-lg bg-muted" />
               <div className="flex-1 space-y-2">
                 <div className="h-4 w-32 animate-pulse rounded-md bg-muted" />
                 <div className="h-3 w-40 animate-pulse rounded-md bg-muted" />
@@ -42,4 +42,3 @@ export default function DashboardLoading() {
     </div>
   );
 }
-
