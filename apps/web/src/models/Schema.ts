@@ -83,6 +83,8 @@ export const eventTable = pgTable(
     songRequestsPerGuest: integer('song_requests_per_guest').default(5),
     songVotingEnabled: boolean('song_voting_enabled').default(false),
     registryEnabled: boolean('registry_enabled').default(true),
+    paymentStatus: text('payment_status').notNull().default('free'), // 'free' | 'paid'
+    stripePaymentIntentId: text('stripe_payment_intent_id'),
     status: text('status').default('draft'),
     privateNotes: text('private_notes'),
     createdAt: timestamp('created_at', ts).defaultNow().notNull(),

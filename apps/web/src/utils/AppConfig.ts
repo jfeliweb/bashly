@@ -29,6 +29,9 @@ type PlanConfigEntry = {
   name: string;
   description: string;
   billing?: 'per-event' | 'monthly';
+  visible?: boolean;
+  prodPriceId?: string;
+  devPriceId?: string;
   features: {
     activeEvents: number;
     guestsPerEvent: number;
@@ -47,6 +50,7 @@ export const PlanConfig: Record<PlanId, PlanConfigEntry> = {
     price: 0,
     name: 'Free',
     description: 'Perfect for trying Bashly',
+    visible: true,
     features: {
       activeEvents: 1,
       guestsPerEvent: 50,
@@ -56,10 +60,13 @@ export const PlanConfig: Record<PlanId, PlanConfigEntry> = {
     },
   },
   [PLAN_ID.CELEBRATION]: {
-    price: 12,
+    price: 29,
     name: 'Celebration',
     description: 'For a single unforgettable event',
     billing: 'per-event',
+    visible: true,
+    prodPriceId: 'price_CELEBRATION_PROD',
+    devPriceId: 'price_CELEBRATION_DEV',
     features: {
       activeEvents: 1,
       guestsPerEvent: 500,
@@ -73,6 +80,7 @@ export const PlanConfig: Record<PlanId, PlanConfigEntry> = {
     name: 'Premium',
     description: 'For recurring event hosts',
     billing: 'monthly',
+    visible: false,
     features: {
       activeEvents: 999,
       guestsPerEvent: 1000,
@@ -86,6 +94,7 @@ export const PlanConfig: Record<PlanId, PlanConfigEntry> = {
     name: 'Planner',
     description: 'For professional event planners',
     billing: 'monthly',
+    visible: false,
     features: {
       activeEvents: 999,
       guestsPerEvent: 999999,
