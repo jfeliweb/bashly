@@ -209,7 +209,7 @@
     "meta_description": "Elige el plan perfecto para tus eventos. Empieza gratis y mejora cuando quieras.",
     "hero_title": "Precios simples y transparentes",
     "hero_subtitle": "Empieza gratis y mejora cuando estés listo. Sin tarifas ocultas.",
-    "hero_disclaimer": "Durante la beta, todas las funciones son gratuitas. Los planes de pago llegarán pronto.",
+    "hero_disclaimer": "Empieza gratis. Desbloquea todas las funciones por evento por $29 cuando estés listo.",
     "billing": {
       "forever_free": "para siempre",
       "per_event": "evento",
@@ -237,6 +237,7 @@
       "most_popular": "Más popular"
     },
     "cta_free": "Empezar gratis",
+    "cta_get_started_29": "Empezar — $29",
     "cta_coming_soon": "Próximamente",
     "features": {
       "active_events_label": "evento(s) activo(s)",
@@ -258,7 +259,7 @@
     "faq": {
       "heading": "Preguntas frecuentes",
       "q1_title": "¿Cuándo estarán disponibles los planes de pago?",
-      "q1_body": "Los planes de pago llegarán pronto. Durante la beta, todas las funciones son gratuitas. Te avisaremos con antelación antes de cualquier cobro y nunca se te cobrará sin tu consentimiento explícito.",
+      "q1_body": "Los planes de pago ya están disponibles. Desbloquea todas las funciones para cualquier evento con un pago único de $29. Crea un evento y luego mejóralo desde tu panel para obtener exportación a Spotify, más invitados, más solicitudes de canciones y más enlaces de lista de regalos.",
       "q2_title": "¿Puedo mejorar o bajar de plan en cualquier momento?",
       "q2_body": "Sí. Puedes cambiar de plan en cualquier momento. Las mejoras se aplican de inmediato y las reducciones al final de tu ciclo de facturación.",
       "q3_title": "¿Qué métodos de pago aceptan?",
@@ -542,7 +543,12 @@
     "title_bar_description": "Manage your billing and subscription",
     "current_section_title": "Current Plan",
     "current_section_description": "Adjust your payment plan to best suit your requirements",
-    "manage_subscription_button": "Manage Subscription"
+    "manage_subscription_button": "Manage Subscription",
+    "unlock_event_button": "Desbloquear este evento — $29",
+    "no_event_to_unlock": "Crea un evento primero para desbloquearlo.",
+    "select_event_label": "Seleccionar evento para desbloquear",
+    "select_event_placeholder": "Elige un evento",
+    "unlock_loading": "Redirigiendo..."
   },
   "BillingOptions": {
     "current_plan": "Current Plan",

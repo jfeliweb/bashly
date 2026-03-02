@@ -126,7 +126,7 @@
     "meta_description": "Choisissez le plan parfait pour vos événements. Commencez gratuitement, évoluez quand vous êtes prêt.",
     "hero_title": "Tarifs simples et transparents",
     "hero_subtitle": "Commencez gratuitement, évoluez quand vous êtes prêt. Sans frais cachés.",
-    "hero_disclaimer": "En bêta, toutes les fonctionnalités sont gratuites. Les plans payants arrivent bientôt.",
+    "hero_disclaimer": "Commencez gratuitement. Débloquez toutes les fonctionnalités par événement pour 29 $ quand vous êtes prêt.",
     "billing": {
       "forever_free": "toujours",
       "per_event": "événement",
@@ -154,6 +154,7 @@
       "most_popular": "Le plus populaire"
     },
     "cta_free": "Commencer",
+    "cta_get_started_29": "Commencer — 29 $",
     "cta_coming_soon": "Bientôt disponible",
     "features": {
       "active_events_label": "événement(s) actif(s)",
@@ -175,7 +176,7 @@
     "faq": {
       "heading": "Questions fréquentes",
       "q1_title": "Quand les plans payants seront-ils disponibles ?",
-      "q1_body": "Les plans payants arrivent bientôt ! En bêta, toutes les fonctionnalités sont gratuites. Nous vous préviendrons bien à l'avance avant toute facturation, et vous ne serez jamais facturé sans votre consentement explicite.",
+      "q1_body": "Les plans payants sont disponibles dès maintenant ! Débloquez toutes les fonctionnalités pour n'importe quel événement avec un paiement unique de 29 $. Créez un événement, puis améliorez-le depuis votre tableau de bord pour obtenir l'export Spotify, plus d'invités, plus de demandes de chansons et plus de liens de registre.",
       "q2_title": "Puis-je changer de plan à tout moment ?",
       "q2_body": "Oui. Vous pouvez changer de plan à tout moment. Les mises à niveau prennent effet immédiatement, les rétrogradations à la fin de votre cycle de facturation.",
       "q3_title": "Quels modes de paiement acceptez-vous ?",
@@ -309,7 +310,12 @@
     "title_bar_description": "Gérer votre facturation et votre abonnement",
     "current_section_title": "Plan actuel",
     "current_section_description": "Ajuster votre plan de paiement pour le mieux répondre à vos besoins",
-    "manage_subscription_button": "Gérer l'abonnement"
+    "manage_subscription_button": "Gérer l'abonnement",
+    "unlock_event_button": "Débloquer cet événement — 29 $",
+    "no_event_to_unlock": "Créez d'abord un événement pour le débloquer.",
+    "select_event_label": "Sélectionner l'événement à débloquer",
+    "select_event_placeholder": "Choisir un événement",
+    "unlock_loading": "Redirection..."
   },
   "BillingOptions": {
     "current_plan": "Plan actuel",

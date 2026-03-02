@@ -209,7 +209,7 @@
     "meta_description": "Choose the perfect plan for your events. Start free, upgrade anytime.",
     "hero_title": "Simple, Transparent Pricing",
     "hero_subtitle": "Start free, upgrade when you're ready. No hidden fees.",
-    "hero_disclaimer": "During beta, all features are free. Paid plans are coming soon.",
+    "hero_disclaimer": "Start free. Unlock full features per event for $29 when you're ready.",
     "billing": {
       "forever_free": "forever",
       "per_event": "event",
@@ -237,6 +237,7 @@
       "most_popular": "Most Popular"
     },
     "cta_free": "Get Started",
+    "cta_get_started_29": "Get Started — $29",
     "cta_coming_soon": "Coming Soon",
     "features": {
       "active_events_label": "active event(s)",
@@ -258,7 +259,7 @@
     "faq": {
       "heading": "Frequently Asked Questions",
       "q1_title": "When will paid plans be available?",
-      "q1_body": "Paid plans are coming soon! During beta, all features are free. We'll notify you well in advance before any charges, and you'll never be charged without your explicit consent.",
+      "q1_body": "Paid plans are available now! Unlock full features for any event with a one-time $29 payment. Create an event, then upgrade it from your dashboard to get Spotify export, more guests, more song requests, and more registry links.",
       "q2_title": "Can I upgrade or downgrade anytime?",
       "q2_body": "Yes. You can change your plan at any time. Upgrades take effect immediately, and downgrades take effect at the end of your billing cycle.",
       "q3_title": "What payment methods do you accept?",
@@ -529,7 +530,12 @@
     "title_bar_description": "Manage your billing and subscription",
     "current_section_title": "Current Plan",
     "current_section_description": "Adjust your payment plan to best suit your requirements",
-    "manage_subscription_button": "Manage Subscription"
+    "manage_subscription_button": "Manage Subscription",
+    "unlock_event_button": "Unlock This Event — $29",
+    "no_event_to_unlock": "Create an event first to unlock it.",
+    "select_event_label": "Select event to unlock",
+    "select_event_placeholder": "Choose an event",
+    "unlock_loading": "Redirecting..."
   },
   "BillingOptions": {
     "current_plan": "Current Plan",
