@@ -7,6 +7,7 @@ import { RsvpConfirmationEmail } from '@/emails/RsvpConfirmationEmail';
 import { db } from '@/libs/DB';
 import { sendEmail } from '@/libs/resend';
 import { eventTable, rsvpTable } from '@/models/Schema';
+import { getPlanLimitsForEvent } from '@/utils/eventAccess';
 import { getBaseUrl } from '@/utils/Helpers';
 
 type RouteContext = {
@@ -46,6 +47,25 @@ export async function POST(req: NextRequest, context: RouteContext) {
     return NextResponse.json(
       { error: 'Event not found' },
       { status: 404 },
+    );
+  }
+
+  // 2b. Check plan guest limit (free: 50, paid: 500)
+  const limits = getPlanLimitsForEvent(event);
+  const [attendingCount] = await db
+    .select({ value: count() })
+    .from(rsvpTable)
+    .where(
+      and(
+        eq(rsvpTable.eventId, event.id),
+        eq(rsvpTable.status, 'attending'),
+      ),
+    );
+  const currentAttending = attendingCount?.value ?? 0;
+  if (currentAttending >= limits.guestsPerEvent) {
+    return NextResponse.json(
+      { error: 'Event is at full capacity' },
+      { status: 422 },
     );
   }
 

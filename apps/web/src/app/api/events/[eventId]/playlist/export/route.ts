@@ -18,6 +18,7 @@ import {
   songSuggestionTable,
   streamingConnectionTable,
 } from '@/models/Schema';
+import { isEventPaid } from '@/utils/eventAccess';
 
 type RouteParams = { params: Promise<{ eventId: string }> };
 
@@ -46,11 +47,21 @@ export async function POST(_req: NextRequest, { params }: RouteParams) {
 
   const event = await db.query.eventTable.findFirst({
     where: eq(eventTable.id, eventId),
-    columns: { title: true },
+    columns: { title: true, paymentStatus: true },
   });
 
   if (!event) {
     return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+  }
+
+  if (!isEventPaid(event)) {
+    return NextResponse.json(
+      {
+        error: 'Unlock this event to export to Spotify',
+        code: 'UPGRADE_REQUIRED',
+      },
+      { status: 403 },
+    );
   }
 
   // Check Spotify connection

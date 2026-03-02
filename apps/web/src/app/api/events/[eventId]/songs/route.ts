@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable, songSuggestionTable } from '@/models/Schema';
+import { getPlanLimitsForEvent } from '@/utils/eventAccess';
 
 const UUID_REGEX
   = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -116,11 +117,28 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       status: true,
       songRequestsEnabled: true,
       songRequestsPerGuest: true,
+      paymentStatus: true,
     },
   });
 
   if (!event) {
     return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+  }
+
+  const limits = getPlanLimitsForEvent(event);
+  const [totalSongs] = await db
+    .select({ value: count() })
+    .from(songSuggestionTable)
+    .where(eq(songSuggestionTable.eventId, event.id));
+
+  if ((totalSongs?.value ?? 0) >= limits.songRequests) {
+    return NextResponse.json(
+      {
+        error: `This event has reached its song request limit (${limits.songRequests}). The host can unlock the event for more.`,
+        code: 'LIMIT_REACHED',
+      },
+      { status: 422 },
+    );
   }
   // Allow published and draft (draft so preview guest page can test the widget)
   if (event.status !== 'published' && event.status !== 'draft') {

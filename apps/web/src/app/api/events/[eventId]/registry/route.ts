@@ -6,7 +6,8 @@ import { NextResponse } from 'next/server';
 
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
-import { eventRoleTable, registryLinkTable } from '@/models/Schema';
+import { eventRoleTable, eventTable, registryLinkTable } from '@/models/Schema';
+import { getPlanLimitsForEvent } from '@/utils/eventAccess';
 
 type RouteParams = { params: Promise<{ eventId: string }> };
 
@@ -72,14 +73,26 @@ export async function POST(
     );
   }
 
+  const event = await db.query.eventTable.findFirst({
+    where: eq(eventTable.id, eventId),
+    columns: { paymentStatus: true },
+  });
+  if (!event) {
+    return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+  }
+
+  const limits = getPlanLimitsForEvent(event);
   const [existing] = await db
     .select({ value: count() })
     .from(registryLinkTable)
     .where(eq(registryLinkTable.eventId, eventId));
 
-  if ((existing?.value ?? 0) >= 10) {
+  if ((existing?.value ?? 0) >= limits.registryLinks) {
     return NextResponse.json(
-      { error: 'Maximum 10 registry links per event' },
+      {
+        error: `Maximum ${limits.registryLinks} registry link${limits.registryLinks !== 1 ? 's' : ''} per event. Unlock this event for more.`,
+        code: 'LIMIT_REACHED',
+      },
       { status: 422 },
     );
   }

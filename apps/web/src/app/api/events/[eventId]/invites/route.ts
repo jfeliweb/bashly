@@ -11,6 +11,7 @@ import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { sendEmail } from '@/libs/resend';
 import { eventRoleTable, eventTable, inviteTable } from '@/models/Schema';
+import { isEventPaid } from '@/utils/eventAccess';
 
 type RouteParams = { params: Promise<{ eventId: string }> };
 
@@ -78,6 +79,28 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json(
       { error: 'Validation failed', code: 'VALIDATION_ERROR' },
       { status: 400 },
+    );
+  }
+
+  const event = await db.query.eventTable.findFirst({
+    where: eq(eventTable.id, eventId),
+    columns: { paymentStatus: true },
+  });
+  if (!event) {
+    return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+  }
+
+  const teamRoles = ['co_host', 'coordinator', 'dj', 'vendor'] as const;
+  if (
+    !isEventPaid(event)
+    && teamRoles.includes(parsed.data.role as (typeof teamRoles)[number])
+  ) {
+    return NextResponse.json(
+      {
+        error: 'Unlock this event to add team roles (co-host, DJ, vendor)',
+        code: 'UPGRADE_REQUIRED',
+      },
+      { status: 403 },
     );
   }
 
