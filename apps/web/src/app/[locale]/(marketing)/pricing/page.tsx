@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 
-import { ComingSoonBadge } from '@/components/placeholders/ComingSoonBadge';
 import { BaseTemplate } from '@/templates/BaseTemplate';
 
 type PlanId = 'free' | 'celebration' | 'premium' | 'planner';
@@ -56,7 +55,7 @@ type FeatureConfig = {
   unlimitedThreshold?: number;
 };
 
-const plans: Plan[] = [
+const allPlans: Plan[] = [
   {
     id: 'free',
     price: 0,
@@ -79,9 +78,9 @@ const plans: Plan[] = [
   },
   {
     id: 'celebration',
-    price: 12,
+    price: 29,
     billing: 'per_event',
-    available: false,
+    available: true,
     popular: true,
     features: {
       activeEvents: 1,
@@ -139,6 +138,9 @@ const plans: Plan[] = [
     },
   },
 ];
+
+// Only Free and Celebration are visible on the public pricing page
+const plans = allPlans.filter(p => p.id === 'free' || p.id === 'celebration');
 
 const allFeatures: FeatureConfig[] = [
   {
@@ -283,21 +285,14 @@ export default async function PricingPage(props: { params: { locale: string } })
                         ? (
                             <Link
                               href="/sign-up"
-                              className="hover:bg-fern-400 focus:outline-3 focus:outline-offset-3 block w-full rounded-full bg-fern-500 py-2.5 text-center text-sm font-semibold text-cerulean-950 focus:outline focus:outline-[var(--focus-ring)]"
+                              className="hover:bg-fern-400 focus:outline-3 focus:outline-offset-3 block min-h-[44px] w-full rounded-full bg-fern-500 py-2.5 text-center text-sm font-semibold text-cerulean-950 focus:outline focus:outline-[var(--focus-ring)]"
                             >
-                              {t('cta_free')}
+                              {plan.id === 'celebration'
+                                ? t('cta_get_started_29')
+                                : t('cta_free')}
                             </Link>
                           )
-                        : (
-                            <button
-                              type="button"
-                              disabled
-                              className="relative w-full rounded-full border border-cerulean-300 bg-cerulean-50 py-2.5 text-center text-sm font-semibold text-cerulean-700 opacity-60 dark:bg-cerulean-900/30 dark:text-cerulean-400"
-                            >
-                              {t('cta_coming_soon')}
-                              <ComingSoonBadge className="absolute -right-2 -top-2" />
-                            </button>
-                          )}
+                        : null}
                     </div>
 
                     <ul className="mt-6 space-y-3 text-sm">
