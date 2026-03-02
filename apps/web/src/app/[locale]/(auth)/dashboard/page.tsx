@@ -1,4 +1,4 @@
-import { and, count, desc, eq, ne } from 'drizzle-orm';
+import { and, count, desc, eq, isNull, ne, or } from 'drizzle-orm';
 import { Calendar } from 'lucide-react';
 import { headers } from 'next/headers';
 import Link from 'next/link';
@@ -93,7 +93,12 @@ export default async function DashboardEventsPage(props: PageProps) {
         })
         .from(eventTable)
         .leftJoin(rsvpTable, eq(rsvpTable.eventId, eventTable.id))
-        .where(eq(eventTable.ownerId, session.user.id))
+        .where(
+          and(
+            eq(eventTable.ownerId, session.user.id),
+            or(isNull(eventTable.status), ne(eventTable.status, 'archived')),
+          ),
+        )
         .groupBy(
           eventTable.id,
           eventTable.title,
@@ -130,6 +135,7 @@ export default async function DashboardEventsPage(props: PageProps) {
             eq(eventRoleTable.userId, session.user.id),
             eq(eventRoleTable.role, 'dj'),
             ne(eventTable.ownerId, session.user.id),
+            or(isNull(eventTable.status), ne(eventTable.status, 'archived')),
           ),
         )
         .groupBy(
@@ -158,6 +164,7 @@ export default async function DashboardEventsPage(props: PageProps) {
           and(
             eq(eventRoleTable.userId, session.user.id),
             eq(eventRoleTable.role, 'co_host'),
+            or(isNull(eventTable.status), ne(eventTable.status, 'archived')),
           ),
         )
         .groupBy(
@@ -184,6 +191,7 @@ export default async function DashboardEventsPage(props: PageProps) {
           and(
             eq(eventRoleTable.userId, session.user.id),
             eq(eventRoleTable.role, 'vendor'),
+            or(isNull(eventTable.status), ne(eventTable.status, 'archived')),
           ),
         )
         .orderBy(desc(eventTable.eventDate)),
@@ -371,7 +379,7 @@ export default async function DashboardEventsPage(props: PageProps) {
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                       <div className="flex flex-wrap items-center gap-2">
                         <EventStatusBadge
-                          status={status as 'draft' | 'published' | 'completed' | 'cancelled'}
+                          status={status as 'draft' | 'published' | 'completed' | 'cancelled' | 'archived'}
                           label={t(`status_${status}` as 'status_draft')}
                           showPulse={status === 'published'}
                         />

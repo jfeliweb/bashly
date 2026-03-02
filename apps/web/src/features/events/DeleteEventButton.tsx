@@ -15,12 +15,10 @@ export function DeleteEventButton({ eventId }: DeleteEventButtonProps) {
   const t = useTranslations('EventDetail');
   const [confirming, setConfirming] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleDelete() {
-    if (!confirming) {
-      setConfirming(true);
-      return;
-    }
+    setError(null);
     setLoading(true);
     try {
       const res = await fetch(`/api/events/${eventId}`, { method: 'DELETE' });
@@ -30,7 +28,9 @@ export function DeleteEventButton({ eventId }: DeleteEventButtonProps) {
       }
       router.push('/dashboard');
       router.refresh();
-    } catch {
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t('delete_event_error');
+      setError(message);
       setLoading(false);
     }
   }
@@ -42,6 +42,9 @@ export function DeleteEventButton({ eventId }: DeleteEventButtonProps) {
             <>
               <span className="text-sm text-muted-foreground">
                 {t('delete_event_confirm_title')}
+              </span>
+              <span className="basis-full text-sm text-muted-foreground">
+                {t('delete_event_confirm_description')}
               </span>
               <Button
                 type="button"
@@ -58,7 +61,10 @@ export function DeleteEventButton({ eventId }: DeleteEventButtonProps) {
                 variant="ghost"
                 size="sm"
                 className="min-h-[44px] font-semibold focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
-                onClick={() => setConfirming(false)}
+                onClick={() => {
+                  setConfirming(false);
+                  setError(null);
+                }}
                 disabled={loading}
               >
                 {t('delete_event_cancel')}
@@ -70,12 +76,20 @@ export function DeleteEventButton({ eventId }: DeleteEventButtonProps) {
               type="button"
               variant="destructive"
               className="min-h-[44px] font-semibold focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
-              onClick={() => setConfirming(true)}
+              onClick={() => {
+                setConfirming(true);
+                setError(null);
+              }}
               aria-label={t('delete_event_aria')}
             >
               {t('delete_event')}
             </Button>
           )}
+      {error && (
+        <span role="status" className="text-sm text-destructive">
+          {error}
+        </span>
+      )}
     </span>
   );
 }

@@ -41,7 +41,7 @@ export const createEventSchema = z.object({
 
 export const updateEventSchema = createEventSchema
   .partial()
-  .extend({ status: z.enum(['draft', 'published', 'completed', 'cancelled']).optional() });
+  .extend({ status: z.enum(['draft', 'published', 'completed', 'cancelled', 'archived']).optional() });
 
 export const scheduleItemSchema = z.object({
   start_time: z.string().min(1).max(20),

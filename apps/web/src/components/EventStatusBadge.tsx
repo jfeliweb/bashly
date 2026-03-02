@@ -1,6 +1,6 @@
 import { cn } from '@/utils/Helpers';
 
-export type EventStatus = 'draft' | 'published' | 'completed' | 'cancelled' | 'past';
+export type EventStatus = 'draft' | 'published' | 'completed' | 'cancelled' | 'archived' | 'past';
 
 type EventStatusBadgeProps = {
   status: EventStatus;
@@ -17,6 +17,8 @@ const STATUS_CLASSNAMES: Record<EventStatus, string> = {
     'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-400/10 dark:text-blue-300',
   cancelled:
     'border-destructive/50 bg-destructive/10 text-destructive',
+  archived:
+    'border-border bg-muted text-muted-foreground',
   past:
     'bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400',
 };
