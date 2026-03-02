@@ -28,6 +28,7 @@ export function EventMap({ lat, lng, venueName, venueAddress }: EventMapProps) {
     : `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
 
   const hasCoords = lat !== null && lng !== null;
+  const showFallbackAddressCard = !hasCoords && Boolean(venueAddress);
 
   return (
     <div>
@@ -59,7 +60,7 @@ export function EventMap({ lat, lng, venueName, venueAddress }: EventMapProps) {
             </div>
           )
         : (
-            venueAddress && (
+            showFallbackAddressCard && (
               <div
                 className="rounded-xl p-4"
                 style={{
@@ -79,7 +80,7 @@ export function EventMap({ lat, lng, venueName, venueAddress }: EventMapProps) {
           {venueName && (
             <p className="font-nunito text-sm font-bold text-[var(--theme-text)]">{venueName}</p>
           )}
-          {venueAddress && (
+          {venueAddress && hasCoords && (
             <p className="mt-0.5 font-nunito text-xs text-[var(--theme-text-muted)]">{venueAddress}</p>
           )}
           <a

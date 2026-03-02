@@ -72,38 +72,6 @@ export type EditEventFormDefaults = EditEventFormValues & {
   event_date_iso?: string;
 };
 
-function parseStructuredAddress(address: string | undefined): {
-  unit: string;
-  city: string;
-  state: string;
-  postalCode: string;
-} {
-  if (!address) {
-    return { unit: '', city: '', state: '', postalCode: '' };
-  }
-
-  const parts = address
-    .split(',')
-    .map(part => part.trim())
-    .filter(Boolean);
-
-  if (parts.length < 2) {
-    return { unit: '', city: '', state: '', postalCode: '' };
-  }
-
-  const postalCode = parts.at(-1) ?? '';
-  const state = parts.at(-2) ?? '';
-  const city = parts.at(-3) ?? '';
-  const maybeUnit = parts.length > 4 ? parts.slice(1, -3).join(', ') : '';
-
-  return {
-    unit: maybeUnit,
-    city,
-    state,
-    postalCode,
-  };
-}
-
 function composeVenueAddress(values: EditEventFormValues): string | undefined {
   const line1 = values.venue_address?.trim();
   const line2 = values.venue_unit?.trim();
@@ -162,16 +130,15 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
   const formDefaults = useMemo<EditEventFormValues>(() => {
     const { event_date_iso: _eventDateIso, ...restDefaults } = defaultValues;
     const localDateTimeDefaults = splitDateTimeToLocalInputs(defaultValues.event_date_iso);
-    const parsedAddress = parseStructuredAddress(defaultValues.venue_address);
 
     return {
       ...restDefaults,
       event_date_str: restDefaults.event_date_str ?? localDateTimeDefaults.dateStr,
       event_time_str: restDefaults.event_time_str ?? localDateTimeDefaults.timeStr,
-      venue_unit: restDefaults.venue_unit ?? parsedAddress.unit,
-      venue_city: restDefaults.venue_city ?? parsedAddress.city,
-      venue_state: restDefaults.venue_state ?? parsedAddress.state,
-      venue_postal_code: restDefaults.venue_postal_code ?? parsedAddress.postalCode,
+      venue_unit: restDefaults.venue_unit ?? '',
+      venue_city: restDefaults.venue_city ?? '',
+      venue_state: restDefaults.venue_state ?? '',
+      venue_postal_code: restDefaults.venue_postal_code ?? '',
     };
   }, [defaultValues]);
 

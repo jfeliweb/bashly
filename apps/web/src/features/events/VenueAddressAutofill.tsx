@@ -1,7 +1,7 @@
 'use client';
 
 import { AddressAutofill } from '@mapbox/search-js-react';
-import { type ComponentPropsWithoutRef, forwardRef, useRef } from 'react';
+import { type ComponentPropsWithoutRef, forwardRef, useEffect, useRef } from 'react';
 
 import { Input } from '@/components/ui/input';
 
@@ -82,6 +82,7 @@ function getPrimaryInputValue(parts: VenueAddressParts): string | undefined {
 export const VenueAddressAutofill = forwardRef<HTMLInputElement, VenueAddressAutofillProps>(
   ({ autoComplete = 'street-address', onAddressRetrieve, ...props }, ref) => {
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const setRefs = (node: HTMLInputElement | null) => {
@@ -95,35 +96,68 @@ export const VenueAddressAutofill = forwardRef<HTMLInputElement, VenueAddressAut
       }
     };
 
+    useEffect(() => {
+      const handlePointerDown = (event: PointerEvent) => {
+        const input = inputRef.current;
+        const wrapper = wrapperRef.current;
+        const target = event.target;
+
+        if (!input || !wrapper || !(target instanceof Node)) {
+          return;
+        }
+
+        if (document.activeElement !== input) {
+          return;
+        }
+
+        if (wrapper.contains(target)) {
+          return;
+        }
+
+        input.blur();
+      };
+
+      document.addEventListener('pointerdown', handlePointerDown, true);
+      return () => {
+        document.removeEventListener('pointerdown', handlePointerDown, true);
+      };
+    }, []);
+
     if (!mapboxToken) {
-      return <Input ref={setRefs} autoComplete={autoComplete} {...props} />;
+      return (
+        <div ref={wrapperRef}>
+          <Input ref={setRefs} autoComplete={autoComplete} {...props} />
+        </div>
+      );
     }
 
     return (
-      <AddressAutofill
-        accessToken={mapboxToken}
-        onRetrieve={(result) => {
-          const parts = resolveRetrievedParts(result);
-          const fullAddress = resolveRetrievedAddress(result);
-          const node = inputRef.current;
+      <div ref={wrapperRef}>
+        <AddressAutofill
+          accessToken={mapboxToken}
+          onRetrieve={(result) => {
+            const parts = resolveRetrievedParts(result);
+            const fullAddress = resolveRetrievedAddress(result);
+            const node = inputRef.current;
 
-          onAddressRetrieve?.({
-            ...parts,
-            fullAddress,
-          });
+            onAddressRetrieve?.({
+              ...parts,
+              fullAddress,
+            });
 
-          const inputValue = getPrimaryInputValue(parts);
-          if (!inputValue || !node) {
-            return;
-          }
+            const inputValue = getPrimaryInputValue(parts);
+            if (!inputValue || !node) {
+              return;
+            }
 
-          node.value = inputValue;
-          node.dispatchEvent(new Event('input', { bubbles: true }));
-          node.dispatchEvent(new Event('change', { bubbles: true }));
-        }}
-      >
-        <Input ref={setRefs} autoComplete={autoComplete} {...props} />
-      </AddressAutofill>
+            node.value = inputValue;
+            node.dispatchEvent(new Event('input', { bubbles: true }));
+            node.dispatchEvent(new Event('change', { bubbles: true }));
+          }}
+        >
+          <Input ref={setRefs} autoComplete={autoComplete} {...props} />
+        </AddressAutofill>
+      </div>
     );
   },
 );
