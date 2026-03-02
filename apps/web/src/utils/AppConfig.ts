@@ -2,12 +2,13 @@ const localePrefix = 'as-needed' as const;
 
 export const AppConfig = {
   name: 'Bashly',
-  locales: ['en', 'es'] as const,
+  locales: ['en', 'es', 'fr'] as const,
   defaultLocale: 'en' as const,
   localePrefix,
   localeNames: {
     en: 'English',
     es: 'Español',
+    fr: 'Français',
   } as const,
 };
 
@@ -65,8 +66,8 @@ export const PlanConfig: Record<PlanId, PlanConfigEntry> = {
     description: 'For a single unforgettable event',
     billing: 'per-event',
     visible: true,
-    prodPriceId: 'price_CELEBRATION_PROD',
-    devPriceId: 'price_CELEBRATION_DEV',
+    prodPriceId: 'price_1T6ICgS5BkzbpLQxyS3yhaxG',
+    devPriceId: 'price_1T6K8N2nuxZ3GqLrGR8BRdTv',
     features: {
       activeEvents: 1,
       guestsPerEvent: 500,
