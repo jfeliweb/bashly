@@ -369,6 +369,7 @@
     "status_published": "Publié",
     "status_completed": "Terminé",
     "status_cancelled": "Annulé",
+    "status_archived": "Archivé",
     "manage_link": "Gérer →",
     "dj_queue_link": "File DJ →",
     "rsvp_count": "{count} RSVP",
@@ -600,6 +601,7 @@
     "status_published": "Publié",
     "status_completed": "Terminé",
     "status_cancelled": "Annulé",
+    "status_archived": "Archivé",
     "view_guest_page": "Voir la page invités ↗",
     "publish_event": "Publier l'événement",
     "publish_event_aria": "Publier l'événement pour que les invités puissent RSVP",
@@ -640,10 +642,11 @@
     "delete_event": "Supprimer l'événement",
     "delete_event_aria": "Supprimer l'événement",
     "delete_event_confirm_title": "Supprimer cet événement ?",
-    "delete_event_confirm_description": "Cette action est irréversible. L'événement et toutes ses données (RSVPs, file de chansons, liste de cadeaux) seront définitivement supprimés.",
+    "delete_event_confirm_description": "Cette action retirera l'événement de votre compte et de l'accès invité, tout en conservant les données archivées.",
     "delete_event_cancel": "Annuler",
     "delete_event_confirm": "Supprimer l'événement",
-    "delete_event_deleting": "Suppression…"
+    "delete_event_deleting": "Suppression…",
+    "delete_event_error": "Nous n'avons pas pu supprimer cet événement. Veuillez réessayer."
   },
   "RsvpModal": {
     "heading": "RSVP pour {title}",
