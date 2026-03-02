@@ -46,6 +46,9 @@ export async function GET(
   if (!event) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
+  if (event.status === 'archived') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
 
   return NextResponse.json(event);
 }
@@ -65,6 +68,15 @@ export async function PATCH(
       { error: 'Forbidden', code: 'INSUFFICIENT_ROLE' },
       { status: 403 },
     );
+  }
+
+  const currentEvent = await db.query.eventTable.findFirst({
+    where: eq(eventTable.id, eventId),
+    columns: { status: true },
+  });
+
+  if (!currentEvent || currentEvent.status === 'archived') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   const body = await req.json();
@@ -169,20 +181,24 @@ export async function DELETE(
 
   const event = await db.query.eventTable.findFirst({
     where: eq(eventTable.id, eventId),
-    columns: { status: true },
+    columns: { status: true, slug: true },
   });
 
   if (!event) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
-  if (event.status === 'draft') {
-    await db.delete(eventTable).where(eq(eventTable.id, eventId));
-  } else {
+  if (event.status !== 'archived') {
     await db
       .update(eventTable)
-      .set({ status: 'cancelled' })
+      .set({ status: 'archived' })
       .where(eq(eventTable.id, eventId));
+  }
+
+  for (const locale of AllLocales) {
+    revalidatePath(`/${locale}/dashboard`);
+    revalidatePath(`/${locale}/dashboard/events/${eventId}`);
+    revalidatePath(`/${locale}/e/${event.slug}`);
   }
 
   return new NextResponse(null, { status: 204 });

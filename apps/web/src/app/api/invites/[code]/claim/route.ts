@@ -65,10 +65,10 @@ export async function POST(_req: NextRequest, { params }: RouteParams) {
 
   const event = await db.query.eventTable.findFirst({
     where: eq(eventTable.id, invite.eventId),
-    columns: { slug: true },
+    columns: { slug: true, status: true },
   });
 
-  if (!event) {
+  if (!event || event.status === 'archived') {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 

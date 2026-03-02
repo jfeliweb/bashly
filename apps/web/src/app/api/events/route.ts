@@ -1,5 +1,5 @@
 import { createEventSchema } from '@saas/validators';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq, isNull, ne, or } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
@@ -17,7 +17,10 @@ export async function GET() {
   const userId = session.user.id;
 
   const events = await db.query.eventTable.findMany({
-    where: eq(eventTable.ownerId, userId),
+    where: and(
+      eq(eventTable.ownerId, userId),
+      or(isNull(eventTable.status), ne(eventTable.status, 'archived')),
+    ),
     orderBy: [desc(eventTable.eventDate)],
   });
 

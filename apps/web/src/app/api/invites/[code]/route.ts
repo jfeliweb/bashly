@@ -38,10 +38,10 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 
   const event = await db.query.eventTable.findFirst({
     where: eq(eventTable.id, invite.eventId),
-    columns: { slug: true, title: true },
+    columns: { slug: true, title: true, status: true },
   });
 
-  if (!event) {
+  if (!event || event.status === 'archived') {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
