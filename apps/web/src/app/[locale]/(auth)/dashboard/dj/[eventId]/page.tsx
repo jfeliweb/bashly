@@ -49,10 +49,14 @@ export default async function DjDashboardPage({ params }: PageProps) {
       venueName: true,
       songRequestsEnabled: true,
       songVotingEnabled: true,
+      status: true,
     },
   });
 
   if (!event) {
+    notFound();
+  }
+  if (event.status === 'archived') {
     notFound();
   }
 

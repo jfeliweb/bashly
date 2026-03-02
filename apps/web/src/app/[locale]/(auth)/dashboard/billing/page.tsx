@@ -1,4 +1,4 @@
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq, isNull, ne, or } from 'drizzle-orm';
 import { CreditCard, Sparkles, Zap } from 'lucide-react';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -40,7 +40,12 @@ export default async function BillingPage() {
   const ownedEvents = await db
     .select({ id: eventTable.id, title: eventTable.title })
     .from(eventTable)
-    .where(eq(eventTable.ownerId, session.user.id))
+    .where(
+      and(
+        eq(eventTable.ownerId, session.user.id),
+        or(isNull(eventTable.status), ne(eventTable.status, 'archived')),
+      ),
+    )
     .orderBy(desc(eventTable.eventDate));
 
   const visiblePlans = (Object.entries(PlanConfig) as [string, (typeof PlanConfig)[keyof typeof PlanConfig]][])

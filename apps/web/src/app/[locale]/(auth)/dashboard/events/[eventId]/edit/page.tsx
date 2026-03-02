@@ -111,6 +111,9 @@ export default async function EditEventPage({ params }: PageProps) {
   if (!event) {
     notFound();
   }
+  if (event.status === 'archived') {
+    notFound();
+  }
 
   const t = await getTranslations('EventDetail');
   const defaultValues = eventToFormDefaults(event);

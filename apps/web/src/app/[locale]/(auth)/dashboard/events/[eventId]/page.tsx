@@ -98,6 +98,9 @@ export default async function EventDetailPage({ params }: PageProps) {
   if (!event) {
     notFound();
   }
+  if (event.status === 'archived') {
+    notFound();
+  }
 
   const [rsvpResult] = await db
     .select({ value: count() })

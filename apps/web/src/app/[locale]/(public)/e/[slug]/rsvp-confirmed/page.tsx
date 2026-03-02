@@ -44,10 +44,14 @@ export default async function RsvpConfirmedPage({
       eventDate: true,
       themeId: true,
       slug: true,
+      status: true,
     },
   });
 
   if (!event) {
+    notFound();
+  }
+  if (event.status === 'archived') {
     notFound();
   }
 

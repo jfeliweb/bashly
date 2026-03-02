@@ -51,10 +51,14 @@ export default async function VendorPortalPage({ params }: PageProps) {
       venueAddress: true,
       venueNotes: true,
       privateNotes: true,
+      status: true,
     },
   });
 
   if (!event) {
+    notFound();
+  }
+  if (event.status === 'archived') {
     notFound();
   }
 

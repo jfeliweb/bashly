@@ -63,6 +63,9 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
   if (!event) {
     notFound();
   }
+  if (event.status === 'archived') {
+    notFound();
+  }
 
   if (event.status === 'draft') {
     if (!isPreview) {
