@@ -58,8 +58,8 @@ export async function POST(req: NextRequest) {
           break;
         }
 
-        const paymentIntentId =
-          typeof session.payment_intent === 'string'
+        const paymentIntentId
+          = typeof session.payment_intent === 'string'
             ? session.payment_intent
             : null;
 
@@ -169,12 +169,26 @@ export async function POST(req: NextRequest) {
         break;
       }
 
+      // REPLACE — handles both old and new Stripe API shapes
       case 'promotion_code.created': {
-        const promoCode = event.data.object as Stripe.PromotionCode;
-        const couponRef = promoCode.coupon;
-        const stripeCouponId =
-          typeof couponRef === 'string' ? couponRef : couponRef.id;
-        const couponName = typeof couponRef === 'string' ? null : couponRef.name;
+        const promoCode = event.data.object as Stripe.PromotionCode & {
+          promotion?: { coupon: string; type: string };
+        };
+
+        // Stripe API 2026-02-25.clover moved coupon under promoCode.promotion.coupon (string ID).
+        // Older API versions returned promoCode.coupon as a string or expanded Coupon object.
+        // Support both shapes so this handler works regardless of API version.
+        const stripeCouponId: string | null
+    = typeof promoCode.promotion?.coupon === 'string'
+      ? promoCode.promotion.coupon // new shape
+      : typeof (promoCode as any).coupon === 'string'
+        ? (promoCode as any).coupon // old shape, unexpanded
+        : (promoCode as any).coupon?.id ?? null; // old shape, expanded object
+
+        if (!stripeCouponId) {
+          console.error('[stripe] promotion_code.created — could not resolve coupon ID', promoCode.id);
+          break;
+        }
 
         await db
           .insert(promoCodeTable)
@@ -182,7 +196,7 @@ export async function POST(req: NextRequest) {
             code: promoCode.code.toUpperCase(),
             stripeCouponId,
             stripePromotionCodeId: promoCode.id,
-            description: couponName ?? null,
+            description: null, // coupon name not available in new API shape without a separate fetch
             upgradeScope: 'event',
             maxRedemptions: promoCode.max_redemptions ?? null,
             expiresAt: promoCode.expires_at
@@ -200,10 +214,7 @@ export async function POST(req: NextRequest) {
             },
           });
 
-        console.log(
-          '[stripe] promotion_code.created - synced to DB:',
-          promoCode.code.toUpperCase(),
-        );
+        console.log('[stripe] promotion_code.created — synced to DB:', promoCode.code.toUpperCase());
         break;
       }
 
