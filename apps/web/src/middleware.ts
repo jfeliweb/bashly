@@ -119,14 +119,19 @@ export default async function middleware(request: NextRequest) {
     return isDev ? ensureRedirectUses127(redirect, appOrigin) : redirect;
   }
 
-  // Next.js 14 re-runs middleware on paths produced by internal rewrites.
-  // With localePrefix 'as-needed', intlMiddleware rewrites "/" → "/en", then
-  // middleware fires again for "/en" and intlMiddleware redirects back to "/"
-  // → infinite loop. Break the loop: when the path already carries the default
-  // locale prefix (e.g. "/en" or "/en/..."), serve it directly.
+  // With localePrefix "as-needed", default-locale-prefixed URLs should normalize
+  // to unprefixed URLs ("/en/dashboard" -> "/dashboard"). Redirecting early keeps
+  // us out of rewrite loops while still allowing next-intl to resolve locale
+  // context on the canonical, unprefixed path.
   const defaultPrefix = `/${AppConfig.defaultLocale}`;
   if (pathname === defaultPrefix || pathname.startsWith(`${defaultPrefix}/`)) {
-    return NextResponse.next();
+    const normalizedPath = pathname.slice(defaultPrefix.length) || '/';
+    const normalizedUrl = new URL(
+      `${normalizedPath}${request.nextUrl.search}`,
+      appOrigin,
+    );
+    const redirect = NextResponse.redirect(normalizedUrl, 307);
+    return isDev ? ensureRedirectUses127(redirect, appOrigin) : redirect;
   }
 
   const response = await intlMiddleware(request);
