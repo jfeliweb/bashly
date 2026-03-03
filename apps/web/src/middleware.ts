@@ -72,6 +72,9 @@ export default async function middleware(request: NextRequest) {
     if (pathname.startsWith('/api/auth')) {
       return NextResponse.next();
     }
+    if (pathname.startsWith('/api/stripe-webhook')) {
+      return NextResponse.next();
+    }
     if (pathname.startsWith('/api/events/') && pathname.endsWith('/songs')) {
       return NextResponse.next();
     }
