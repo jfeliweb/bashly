@@ -532,10 +532,20 @@
     "current_section_description": "Adjust your payment plan to best suit your requirements",
     "manage_subscription_button": "Manage Subscription",
     "unlock_event_button": "Unlock This Event — $29",
+    "unlock_event_button_with_promo": "Unlock This Event",
     "no_event_to_unlock": "Create an event first to unlock it.",
     "select_event_label": "Select event to unlock",
     "select_event_placeholder": "Choose an event",
-    "unlock_loading": "Redirecting..."
+    "unlock_loading": "Redirecting...",
+    "promo_have_code": "Have a promo code?",
+    "promo_placeholder": "Enter code",
+    "promo_aria_label": "Promo code",
+    "promo_apply": "Apply",
+    "promo_checking": "Checking...",
+    "promo_remove": "Remove",
+    "promo_remove_aria_label": "Remove promo code",
+    "promo_success_prefix": "Promo applied!",
+    "promo_invalid_request": "Unable to validate promo code right now."
   },
   "BillingOptions": {
     "current_plan": "Current Plan",

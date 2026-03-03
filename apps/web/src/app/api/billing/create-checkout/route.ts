@@ -3,14 +3,28 @@ import { headers } from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { z } from 'zod';
 
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { Env } from '@/libs/Env';
-import { eventRoleTable, eventTable } from '@/models/Schema';
+import {
+  eventRoleTable,
+  eventTable,
+  promoCodeRedemptionTable,
+  promoCodeTable,
+} from '@/models/Schema';
 import { PLAN_ID, PlanConfig } from '@/utils/AppConfig';
 
-const createCheckoutSchema = { eventId: (v: unknown) => typeof v === 'string' && v.length > 0 };
+const createCheckoutSchema = z.object({
+  eventId: z.string().uuid(),
+  promoCode: z
+    .string()
+    .min(1)
+    .max(64)
+    .transform(value => value.toUpperCase().trim())
+    .optional(),
+});
 
 export async function POST(req: NextRequest) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -18,21 +32,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  let body: { eventId?: unknown };
+  let body: unknown;
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const rawEventId = body.eventId;
-  if (!createCheckoutSchema.eventId(rawEventId)) {
-    return NextResponse.json(
-      { error: 'eventId is required' },
-      { status: 400 },
-    );
+  const parsed = createCheckoutSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
-  const eventId = rawEventId as string;
+  const { eventId, promoCode } = parsed.data;
 
   // Verify user is event owner
   const role = await db.query.eventRoleTable.findFirst({
@@ -83,6 +94,47 @@ export async function POST(req: NextRequest) {
 
   const baseUrl = Env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
+  let stripeCouponId: string | undefined;
+  let promoCodeId: string | undefined;
+
+  if (promoCode) {
+    const promo = await db.query.promoCodeTable.findFirst({
+      where: eq(promoCodeTable.code, promoCode),
+    });
+
+    const isValid = Boolean(
+      promo
+      && promo.active
+      && promo.upgradeScope === 'event'
+      && (!promo.expiresAt || promo.expiresAt > new Date())
+      && (promo.maxRedemptions === null || promo.redemptionCount < promo.maxRedemptions),
+    );
+
+    if (!isValid || !promo) {
+      return NextResponse.json(
+        { error: 'Promo code is no longer valid' },
+        { status: 400 },
+      );
+    }
+
+    const alreadyRedeemed = await db.query.promoCodeRedemptionTable.findFirst({
+      where: and(
+        eq(promoCodeRedemptionTable.userId, session.user.id),
+        eq(promoCodeRedemptionTable.eventId, eventId),
+      ),
+    });
+
+    if (alreadyRedeemed) {
+      return NextResponse.json(
+        { error: 'Promo code already used for this event' },
+        { status: 400 },
+      );
+    }
+
+    stripeCouponId = promo.stripeCouponId;
+    promoCodeId = promo.id;
+  }
+
   const checkoutParams: Stripe.Checkout.SessionCreateParams = {
     mode: 'payment',
     customer_email: session.user.email ?? undefined,
@@ -90,9 +142,11 @@ export async function POST(req: NextRequest) {
     metadata: {
       eventId,
       userId: session.user.id,
+      ...(promoCodeId ? { promoCodeId } : {}),
     },
     success_url: `${baseUrl}/en/dashboard/billing/checkout-confirmation?eventId=${eventId}`,
     cancel_url: `${baseUrl}/en/dashboard/events/${eventId}`,
+    ...(stripeCouponId ? { discounts: [{ coupon: stripeCouponId }] } : {}),
   };
 
   const checkoutSession = await stripe.checkout.sessions.create(checkoutParams);

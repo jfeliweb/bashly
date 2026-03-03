@@ -1,5 +1,6 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
@@ -11,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { PromoCodeInput } from '@/features/billing/PromoCodeInput';
 
 type UnlockEventButtonProps = {
   events: { id: string; title: string }[];
@@ -18,11 +20,14 @@ type UnlockEventButtonProps = {
 
 export function UnlockEventButton({ events }: UnlockEventButtonProps) {
   const t = useTranslations('Billing');
+  const searchParams = useSearchParams();
+  const prefillCode = searchParams.get('promo') ?? undefined;
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedEventId, setSelectedEventId] = useState<string>(
     events[0]?.id ?? '',
   );
+  const [activePromoCode, setActivePromoCode] = useState<string | undefined>();
 
   if (events.length === 0) {
     return (
@@ -45,7 +50,10 @@ export function UnlockEventButton({ events }: UnlockEventButtonProps) {
       const res = await fetch('/api/billing/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventId: selectedEventId }),
+        body: JSON.stringify({
+          eventId: selectedEventId,
+          ...(activePromoCode ? { promoCode: activePromoCode } : {}),
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -71,7 +79,10 @@ export function UnlockEventButton({ events }: UnlockEventButtonProps) {
       )}
       <Select
         value={selectedEventId}
-        onValueChange={setSelectedEventId}
+        onValueChange={(eventId) => {
+          setSelectedEventId(eventId);
+          setActivePromoCode(undefined);
+        }}
         disabled={isLoading}
       >
         <SelectTrigger
@@ -88,14 +99,29 @@ export function UnlockEventButton({ events }: UnlockEventButtonProps) {
           ))}
         </SelectContent>
       </Select>
+      <PromoCodeInput
+        key={selectedEventId}
+        eventId={selectedEventId}
+        prefillCode={prefillCode}
+        onValidated={setActivePromoCode}
+        onCleared={() => setActivePromoCode(undefined)}
+      />
       <Button
         type="button"
         onClick={handleUnlock}
         disabled={isLoading}
-        aria-label={t('unlock_event_button')}
+        aria-label={
+          activePromoCode
+            ? t('unlock_event_button_with_promo')
+            : t('unlock_event_button')
+        }
         className="min-h-[44px] w-full rounded-[100px] bg-[rgb(81,255,0)] font-bold text-[rgb(9,21,27)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--focus-ring)]"
       >
-        {isLoading ? t('unlock_loading') : t('unlock_event_button')}
+        {isLoading
+          ? t('unlock_loading')
+          : activePromoCode
+            ? t('unlock_event_button_with_promo')
+            : t('unlock_event_button')}
       </Button>
     </div>
   );

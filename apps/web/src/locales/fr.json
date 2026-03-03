@@ -312,10 +312,20 @@
     "current_section_description": "Ajuster votre plan de paiement pour le mieux répondre à vos besoins",
     "manage_subscription_button": "Gérer l'abonnement",
     "unlock_event_button": "Débloquer cet événement — 29 $",
+    "unlock_event_button_with_promo": "Débloquer cet événement",
     "no_event_to_unlock": "Créez d'abord un événement pour le débloquer.",
     "select_event_label": "Sélectionner l'événement à débloquer",
     "select_event_placeholder": "Choisir un événement",
-    "unlock_loading": "Redirection..."
+    "unlock_loading": "Redirection...",
+    "promo_have_code": "Vous avez un code promo ?",
+    "promo_placeholder": "Entrer le code",
+    "promo_aria_label": "Code promo",
+    "promo_apply": "Appliquer",
+    "promo_checking": "Vérification...",
+    "promo_remove": "Retirer",
+    "promo_remove_aria_label": "Retirer le code promo",
+    "promo_success_prefix": "Promo appliquée !",
+    "promo_invalid_request": "Impossible de valider le code pour le moment."
   },
   "BillingOptions": {
     "current_plan": "Plan actuel",

@@ -251,3 +251,48 @@ export const playlistTable = pgTable('playlist', {
   trackCount: integer('track_count').notNull().default(0),
   createdAt: timestamp('created_at', ts).defaultNow().notNull(),
 });
+
+export const promoCodeTable = pgTable(
+  'promo_code',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    code: text('code').notNull(),
+    stripeCouponId: text('stripe_coupon_id').notNull(),
+    stripePromotionCodeId: text('stripe_promotion_code_id'),
+    description: text('description'),
+    upgradeScope: text('upgrade_scope').notNull(),
+    maxRedemptions: integer('max_redemptions'),
+    redemptionCount: integer('redemption_count').notNull().default(0),
+    expiresAt: timestamp('expires_at', ts),
+    active: boolean('active').notNull().default(true),
+    createdAt: timestamp('created_at', ts).defaultNow().notNull(),
+    createdBy: text('created_by').references(() => userTable.id),
+  },
+  table => ({
+    codeIdx: uniqueIndex('promo_code_code_idx').on(table.code),
+  }),
+);
+
+export const promoCodeRedemptionTable = pgTable(
+  'promo_code_redemption',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    promoCodeId: uuid('promo_code_id')
+      .notNull()
+      .references(() => promoCodeTable.id),
+    userId: text('user_id')
+      .notNull()
+      .references(() => userTable.id),
+    eventId: uuid('event_id')
+      .notNull()
+      .references(() => eventTable.id, { onDelete: 'cascade' }),
+    stripeSessionId: text('stripe_session_id'),
+    redeemedAt: timestamp('redeemed_at', ts).defaultNow().notNull(),
+  },
+  table => ({
+    userEventUnique: unique('promo_redemption_user_event_unique').on(
+      table.userId,
+      table.eventId,
+    ),
+  }),
+);

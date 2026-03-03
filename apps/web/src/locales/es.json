@@ -545,10 +545,20 @@
     "current_section_description": "Adjust your payment plan to best suit your requirements",
     "manage_subscription_button": "Manage Subscription",
     "unlock_event_button": "Desbloquear este evento — $29",
+    "unlock_event_button_with_promo": "Desbloquear este evento",
     "no_event_to_unlock": "Crea un evento primero para desbloquearlo.",
     "select_event_label": "Seleccionar evento para desbloquear",
     "select_event_placeholder": "Elige un evento",
-    "unlock_loading": "Redirigiendo..."
+    "unlock_loading": "Redirigiendo...",
+    "promo_have_code": "¿Tienes un código promocional?",
+    "promo_placeholder": "Ingresa el código",
+    "promo_aria_label": "Código promocional",
+    "promo_apply": "Aplicar",
+    "promo_checking": "Verificando...",
+    "promo_remove": "Quitar",
+    "promo_remove_aria_label": "Quitar código promocional",
+    "promo_success_prefix": "¡Promoción aplicada!",
+    "promo_invalid_request": "No se puede validar el código en este momento."
   },
   "BillingOptions": {
     "current_plan": "Current Plan",

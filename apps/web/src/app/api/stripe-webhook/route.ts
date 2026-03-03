@@ -1,10 +1,14 @@
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { type NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 import { db } from '@/libs/DB';
 import { Env } from '@/libs/Env';
-import { eventTable } from '@/models/Schema';
+import {
+  eventTable,
+  promoCodeRedemptionTable,
+  promoCodeTable,
+} from '@/models/Schema';
 
 export async function POST(req: NextRequest) {
   if (!Env.STRIPE_WEBHOOK_SECRET) {
@@ -40,22 +44,62 @@ export async function POST(req: NextRequest) {
   }
 
   if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session;
+    const checkoutSession = event.data.object as Stripe.Checkout.Session;
 
-    // One-time payment: update event payment status
-    if (session.mode === 'payment' && session.metadata?.eventId) {
-      const eventId = session.metadata.eventId as string;
-      const paymentIntent = typeof session.payment_intent === 'string'
-        ? session.payment_intent
-        : session.payment_intent?.id ?? null;
+    if (checkoutSession.mode === 'payment' && checkoutSession.metadata?.eventId) {
+      const paymentStatus = checkoutSession.payment_status as string;
+      const isSuccessful = paymentStatus === 'paid'
+        || paymentStatus === 'no_payment_required'
+        || paymentStatus === 'no_payment_needed';
+      if (!isSuccessful) {
+        return NextResponse.json({ received: true });
+      }
 
-      await db
-        .update(eventTable)
-        .set({
-          paymentStatus: 'paid',
-          stripePaymentIntentId: paymentIntent ?? undefined,
-        })
-        .where(eq(eventTable.id, eventId));
+      const eventId = checkoutSession.metadata.eventId;
+      const userId = checkoutSession.metadata.userId;
+      const promoCodeId = checkoutSession.metadata.promoCodeId;
+      const paymentIntentId = typeof checkoutSession.payment_intent === 'string'
+        ? checkoutSession.payment_intent
+        : checkoutSession.payment_intent?.id ?? null;
+
+      if (!eventId || !userId) {
+        return NextResponse.json({ received: true });
+      }
+
+      await db.transaction(async (tx) => {
+        await tx
+          .update(eventTable)
+          .set({
+            paymentStatus: 'paid',
+            stripePaymentIntentId: paymentIntentId ?? undefined,
+          })
+          .where(eq(eventTable.id, eventId));
+
+        if (promoCodeId) {
+          const insertedRedemption = await tx
+            .insert(promoCodeRedemptionTable)
+            .values({
+              promoCodeId,
+              userId,
+              eventId,
+              stripeSessionId: checkoutSession.id,
+            })
+            .onConflictDoNothing({
+              target: [
+                promoCodeRedemptionTable.userId,
+                promoCodeRedemptionTable.eventId,
+              ],
+            })
+            .returning({ id: promoCodeRedemptionTable.id });
+
+          if (insertedRedemption.length > 0) {
+            await tx
+              .update(promoCodeTable)
+              .set({ redemptionCount: sql`${promoCodeTable.redemptionCount} + 1` })
+              .where(eq(promoCodeTable.id, promoCodeId));
+          }
+        }
+      });
     }
 
     // Subscription handling can be added here for backwards compatibility
