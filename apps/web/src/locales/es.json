@@ -568,7 +568,8 @@
     "title_bar": "Payment Confirmation",
     "message_state_title": "Payment successful",
     "message_state_description": "Your payment has been successfully processed. Thank you for your purchase!",
-    "message_state_button": "Go back to Billing"
+    "message_state_button_event": "Ir al evento",
+    "message_state_button_billing": "Volver a facturación"
   },
   "DataTable": {
     "no_results": "No results."

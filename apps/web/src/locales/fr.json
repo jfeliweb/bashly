@@ -335,7 +335,8 @@
     "title_bar": "Confirmation du paiement",
     "message_state_title": "Paiement accepté",
     "message_state_description": "Votre paiement a été traité avec succès. Merci pour votre achat !",
-    "message_state_button": "Revenir à la facturation"
+    "message_state_button_event": "Aller à l'événement",
+    "message_state_button_billing": "Revenir à la facturation"
   },
   "DataTable": {
     "no_results": "Aucun résultat."

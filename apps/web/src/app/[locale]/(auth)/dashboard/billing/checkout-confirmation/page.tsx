@@ -46,7 +46,7 @@ export default async function CheckoutConfirmationPage({ searchParams }: PagePro
             href={backHref}
             className="min-h-[44px] rounded-[100px] bg-[rgb(81,255,0)] px-6 font-bold text-[rgb(9,21,27)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--focus-ring)]"
           >
-            {t('message_state_button')}
+            {eventId ? t('message_state_button_event') : t('message_state_button_billing')}
           </Link>
         </Button>
       </div>
