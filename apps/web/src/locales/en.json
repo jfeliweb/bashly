@@ -545,7 +545,11 @@
     "promo_remove": "Remove",
     "promo_remove_aria_label": "Remove promo code",
     "promo_success_prefix": "Promo applied!",
-    "promo_invalid_request": "Unable to validate promo code right now."
+    "promo_invalid_request": "Unable to validate promo code right now.",
+    "unlocked_events_count": "{count, plural, one {# event unlocked} other {# events unlocked}}",
+    "all_events_unlocked": "All events unlocked",
+    "celebration_active_badge": "Active",
+    "no_locked_events": "All your events are already unlocked."
   },
   "BillingOptions": {
     "current_plan": "Current Plan",

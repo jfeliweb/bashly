@@ -558,7 +558,11 @@
     "promo_remove": "Quitar",
     "promo_remove_aria_label": "Quitar código promocional",
     "promo_success_prefix": "¡Promoción aplicada!",
-    "promo_invalid_request": "No se puede validar el código en este momento."
+    "promo_invalid_request": "No se puede validar el código en este momento.",
+    "unlocked_events_count": "{count, plural, one {# evento desbloqueado} other {# eventos desbloqueados}}",
+    "all_events_unlocked": "Todos los eventos están desbloqueados",
+    "celebration_active_badge": "Activo",
+    "no_locked_events": "Todos tus eventos ya están desbloqueados."
   },
   "BillingOptions": {
     "current_plan": "Current Plan",

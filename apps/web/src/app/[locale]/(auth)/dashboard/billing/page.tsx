@@ -38,7 +38,11 @@ export default async function BillingPage() {
   const t = await getTranslations('Billing');
 
   const ownedEvents = await db
-    .select({ id: eventTable.id, title: eventTable.title })
+    .select({
+      id: eventTable.id,
+      title: eventTable.title,
+      paymentStatus: eventTable.paymentStatus,
+    })
     .from(eventTable)
     .where(
       and(
@@ -48,10 +52,17 @@ export default async function BillingPage() {
     )
     .orderBy(desc(eventTable.eventDate));
 
+  const unlockedEvents = ownedEvents.filter(event => event.paymentStatus === 'paid');
+  const lockedEvents = ownedEvents.filter(event => event.paymentStatus !== 'paid');
+  const hasUnlockedEvents = unlockedEvents.length > 0;
+  const hasLockedEvents = lockedEvents.length > 0;
+  const showCelebrationAsCurrent = hasUnlockedEvents && !hasLockedEvents;
+
   const visiblePlans = (Object.entries(PlanConfig) as [string, (typeof PlanConfig)[keyof typeof PlanConfig]][])
     .filter(([, plan]) => plan.visible !== false);
 
-  const currentPlan = PlanConfig[PLAN_ID.FREE];
+  const currentPlanId = showCelebrationAsCurrent ? PLAN_ID.CELEBRATION : PLAN_ID.FREE;
+  const currentPlan = PlanConfig[currentPlanId];
 
   return (
     <>
@@ -76,15 +87,23 @@ export default async function BillingPage() {
           <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
               <div className="flex size-12 items-center justify-center rounded-full bg-muted text-foreground">
-                {PLAN_ICONS[PLAN_ID.FREE]}
+                {PLAN_ICONS[currentPlanId]}
               </div>
               <div>
                 <p className="text-lg font-bold text-foreground">
                   {currentPlan.name}
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  {currentPlan.description}
-                </p>
+                {hasUnlockedEvents
+                  ? (
+                      <p className="text-sm text-muted-foreground">
+                        {t('unlocked_events_count', { count: unlockedEvents.length })}
+                      </p>
+                    )
+                  : (
+                      <p className="text-sm text-muted-foreground">
+                        {currentPlan.description}
+                      </p>
+                    )}
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -98,7 +117,9 @@ export default async function BillingPage() {
                 aria-label={t('manage_subscription_button')}
                 className="inline-flex min-h-[44px] cursor-not-allowed items-center rounded-[100px] border border-border bg-muted px-5 font-bold text-muted-foreground opacity-60"
               >
-                {t('manage_subscription_button')}
+                {showCelebrationAsCurrent
+                  ? t('celebration_active_badge')
+                  : t('manage_subscription_button')}
               </button>
             </div>
           </div>
@@ -118,7 +139,7 @@ export default async function BillingPage() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {visiblePlans.map(([planId, plan]) => {
-              const isCurrentPlan = planId === PLAN_ID.FREE;
+              const isCurrentPlan = planId === currentPlanId;
               const isCelebration = planId === PLAN_ID.CELEBRATION;
               return (
                 <div
@@ -138,7 +159,9 @@ export default async function BillingPage() {
                     </span>
                     {isCurrentPlan && (
                       <span className="ml-auto inline-flex items-center rounded-full bg-[rgb(81,255,0)]/20 px-2 py-0.5 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-[rgb(48,153,0)] dark:text-[rgb(116,255,51)]">
-                        Current
+                        {showCelebrationAsCurrent && isCelebration
+                          ? t('celebration_active_badge')
+                          : 'Current'}
                       </span>
                     )}
                   </div>
@@ -244,7 +267,21 @@ export default async function BillingPage() {
                         )
                       : isCelebration
                         ? (
-                            <UnlockEventButton events={ownedEvents} />
+                            hasLockedEvents || ownedEvents.length === 0
+                              ? (
+                                  <UnlockEventButton events={lockedEvents} />
+                                )
+                              : hasUnlockedEvents
+                                ? (
+                                    <p
+                                      className="flex min-h-[44px] items-center justify-center rounded-[100px] bg-[rgb(81,255,0)]/10 px-4 text-center text-sm font-bold text-[rgb(48,153,0)] dark:text-[rgb(116,255,51)]"
+                                      role="status"
+                                      aria-label={t('no_locked_events')}
+                                    >
+                                      {`✓ ${t('all_events_unlocked')}`}
+                                    </p>
+                                  )
+                                : null
                           )
                         : null}
                   </div>

@@ -325,7 +325,11 @@
     "promo_remove": "Retirer",
     "promo_remove_aria_label": "Retirer le code promo",
     "promo_success_prefix": "Promo appliquée !",
-    "promo_invalid_request": "Impossible de valider le code pour le moment."
+    "promo_invalid_request": "Impossible de valider le code pour le moment.",
+    "unlocked_events_count": "{count, plural, one {# événement débloqué} other {# événements débloqués}}",
+    "all_events_unlocked": "Tous les événements sont débloqués",
+    "celebration_active_badge": "Actif",
+    "no_locked_events": "Tous vos événements sont déjà débloqués."
   },
   "BillingOptions": {
     "current_plan": "Plan actuel",

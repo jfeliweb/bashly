@@ -15,7 +15,7 @@ import {
 import { PromoCodeInput } from '@/features/billing/PromoCodeInput';
 
 type UnlockEventButtonProps = {
-  events: { id: string; title: string }[];
+  events: { id: string; title: string; paymentStatus?: string | null }[];
 };
 
 export function UnlockEventButton({ events }: UnlockEventButtonProps) {
