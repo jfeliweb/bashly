@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { type NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -9,6 +9,8 @@ import {
   promoCodeRedemptionTable,
   promoCodeTable,
 } from '@/models/Schema';
+
+const stripe = new Stripe(Env.STRIPE_SECRET_KEY ?? '');
 
 export async function POST(req: NextRequest) {
   if (!Env.STRIPE_WEBHOOK_SECRET) {
@@ -29,81 +31,229 @@ export async function POST(req: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    const stripe = new Stripe(Env.STRIPE_SECRET_KEY ?? '');
     event = stripe.webhooks.constructEvent(
       body,
       signature,
       Env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    return NextResponse.json(
-      { error: `Webhook signature verification failed: ${message}` },
-      { status: 400 },
-    );
+    console.error('[stripe] Signature verification failed', err);
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
-  if (event.type === 'checkout.session.completed') {
-    const checkoutSession = event.data.object as Stripe.Checkout.Session;
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const paymentStatus = session.payment_status as string;
+        const isSuccessful = ['paid', 'no_payment_needed'].includes(
+          paymentStatus,
+        );
+        if (!isSuccessful) {
+          break;
+        }
 
-    if (checkoutSession.mode === 'payment' && checkoutSession.metadata?.eventId) {
-      const paymentStatus = checkoutSession.payment_status as string;
-      const isSuccessful = paymentStatus === 'paid'
-        || paymentStatus === 'no_payment_required'
-        || paymentStatus === 'no_payment_needed';
-      if (!isSuccessful) {
-        return NextResponse.json({ received: true });
+        const { eventId, userId, promoCodeId } = session.metadata ?? {};
+        if (!eventId || !userId) {
+          break;
+        }
+
+        const paymentIntentId =
+          typeof session.payment_intent === 'string'
+            ? session.payment_intent
+            : null;
+
+        await db.transaction(async (tx) => {
+          await tx
+            .update(eventTable)
+            .set({ paymentStatus: 'paid', stripePaymentIntentId: paymentIntentId })
+            .where(eq(eventTable.id, eventId));
+
+          if (promoCodeId) {
+            const insertedRedemptions = await tx
+              .insert(promoCodeRedemptionTable)
+              .values({
+                promoCodeId,
+                userId,
+                eventId,
+                stripeSessionId: session.id,
+              })
+              .onConflictDoNothing({
+                target: [
+                  promoCodeRedemptionTable.userId,
+                  promoCodeRedemptionTable.eventId,
+                ],
+              })
+              .returning({ id: promoCodeRedemptionTable.id });
+
+            if (insertedRedemptions.length > 0) {
+              await tx
+                .update(promoCodeTable)
+                .set({ redemptionCount: sql`${promoCodeTable.redemptionCount} + 1` })
+                .where(eq(promoCodeTable.id, promoCodeId));
+            }
+          }
+        });
+        break;
       }
 
-      const eventId = checkoutSession.metadata.eventId;
-      const userId = checkoutSession.metadata.userId;
-      const promoCodeId = checkoutSession.metadata.promoCodeId;
-      const paymentIntentId = typeof checkoutSession.payment_intent === 'string'
-        ? checkoutSession.payment_intent
-        : checkoutSession.payment_intent?.id ?? null;
+      case 'payment_intent.succeeded': {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        const eventId = paymentIntent.metadata?.eventId;
+        if (!eventId) {
+          break;
+        }
 
-      if (!eventId || !userId) {
-        return NextResponse.json({ received: true });
-      }
-
-      await db.transaction(async (tx) => {
-        await tx
+        await db
           .update(eventTable)
           .set({
             paymentStatus: 'paid',
-            stripePaymentIntentId: paymentIntentId ?? undefined,
+            stripePaymentIntentId: paymentIntent.id,
           })
-          .where(eq(eventTable.id, eventId));
+          .where(
+            and(
+              eq(eventTable.id, eventId),
+              eq(eventTable.paymentStatus, 'free'),
+            ),
+          );
+        break;
+      }
 
-        if (promoCodeId) {
-          const insertedRedemption = await tx
-            .insert(promoCodeRedemptionTable)
-            .values({
-              promoCodeId,
-              userId,
-              eventId,
-              stripeSessionId: checkoutSession.id,
-            })
-            .onConflictDoNothing({
-              target: [
-                promoCodeRedemptionTable.userId,
-                promoCodeRedemptionTable.eventId,
-              ],
-            })
-            .returning({ id: promoCodeRedemptionTable.id });
+      case 'payment_intent.payment_failed': {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        console.error('[stripe] payment_intent.payment_failed', {
+          paymentIntentId: paymentIntent.id,
+          eventId: paymentIntent.metadata?.eventId ?? 'no eventId in metadata',
+          failureCode: paymentIntent.last_payment_error?.code ?? 'unknown',
+          failureMessage:
+            paymentIntent.last_payment_error?.message ?? 'Unknown error',
+        });
+        break;
+      }
 
-          if (insertedRedemption.length > 0) {
-            await tx
-              .update(promoCodeTable)
-              .set({ redemptionCount: sql`${promoCodeTable.redemptionCount} + 1` })
-              .where(eq(promoCodeTable.id, promoCodeId));
-          }
+      case 'coupon.created': {
+        const coupon = event.data.object as Stripe.Coupon;
+        console.log('[stripe] coupon.created', {
+          couponId: coupon.id,
+          name: coupon.name,
+          percentOff: coupon.percent_off,
+          amountOff: coupon.amount_off,
+          duration: coupon.duration,
+          maxRedemptions: coupon.max_redemptions,
+        });
+        break;
+      }
+
+      case 'coupon.updated': {
+        const coupon = event.data.object as Stripe.Coupon;
+        if (coupon.name) {
+          await db
+            .update(promoCodeTable)
+            .set({ description: coupon.name })
+            .where(eq(promoCodeTable.stripeCouponId, coupon.id));
         }
-      });
-    }
+        break;
+      }
 
-    // Subscription handling can be added here for backwards compatibility
-    // when subscription billing is re-enabled.
+      case 'coupon.deleted': {
+        const coupon = event.data.object as Stripe.Coupon;
+        await db
+          .update(promoCodeTable)
+          .set({ active: false })
+          .where(eq(promoCodeTable.stripeCouponId, coupon.id));
+
+        console.log(
+          '[stripe] coupon.deleted - deactivated linked promo codes for coupon',
+          coupon.id,
+        );
+        break;
+      }
+
+      case 'promotion_code.created': {
+        const promoCode = event.data.object as Stripe.PromotionCode;
+        const couponRef = promoCode.coupon;
+        const stripeCouponId =
+          typeof couponRef === 'string' ? couponRef : couponRef.id;
+        const couponName = typeof couponRef === 'string' ? null : couponRef.name;
+
+        await db
+          .insert(promoCodeTable)
+          .values({
+            code: promoCode.code.toUpperCase(),
+            stripeCouponId,
+            stripePromotionCodeId: promoCode.id,
+            description: couponName ?? null,
+            upgradeScope: 'event',
+            maxRedemptions: promoCode.max_redemptions ?? null,
+            expiresAt: promoCode.expires_at
+              ? new Date(promoCode.expires_at * 1000)
+              : null,
+            active: promoCode.active,
+          })
+          .onConflictDoNothing();
+
+        console.log(
+          '[stripe] promotion_code.created - synced to DB:',
+          promoCode.code.toUpperCase(),
+        );
+        break;
+      }
+
+      case 'promotion_code.updated': {
+        const promoCode = event.data.object as Stripe.PromotionCode;
+        await db
+          .update(promoCodeTable)
+          .set({
+            active: promoCode.active,
+            expiresAt: promoCode.expires_at
+              ? new Date(promoCode.expires_at * 1000)
+              : null,
+          })
+          .where(eq(promoCodeTable.stripePromotionCodeId, promoCode.id));
+
+        console.log(
+          '[stripe] promotion_code.updated',
+          promoCode.code,
+          '-> active:',
+          promoCode.active,
+        );
+        break;
+      }
+
+      case 'customer.discount.created': {
+        const discount = event.data.object as Stripe.Discount;
+        console.log('[stripe] customer.discount.created', {
+          customerId: discount.customer,
+          couponId: discount.coupon.id,
+          promotionCodeId: discount.promotion_code ?? null,
+        });
+        break;
+      }
+
+      case 'customer.discount.updated': {
+        const discount = event.data.object as Stripe.Discount;
+        console.log('[stripe] customer.discount.updated', {
+          customerId: discount.customer,
+          couponId: discount.coupon.id,
+        });
+        break;
+      }
+
+      case 'customer.discount.deleted': {
+        const discount = event.data.object as Stripe.Discount;
+        console.log('[stripe] customer.discount.deleted', {
+          customerId: discount.customer,
+          couponId: discount.coupon.id,
+        });
+        break;
+      }
+
+      default:
+        console.log('[stripe] Unhandled event type:', event.type);
+    }
+  } catch (err) {
+    console.error('[stripe] Handler error for event', event.type, err);
+    return NextResponse.json({ error: 'Handler error' }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });
