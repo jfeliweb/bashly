@@ -17,6 +17,8 @@ function isUuid(s: string): boolean {
 }
 
 type RouteParams = { params: Promise<{ eventId: string }> };
+const ALLOWED_STATUS_FILTERS = ['pending', 'approved', 'rejected', 'all'] as const;
+type SongStatusFilter = (typeof ALLOWED_STATUS_FILTERS)[number];
 
 async function hasAnyRole(eventId: string, userId: string): Promise<boolean> {
   const row = await db.query.eventRoleTable.findFirst({
@@ -40,10 +42,18 @@ async function resolveEventId(segment: string): Promise<string | null> {
   return event?.id ?? null;
 }
 
+function isSongStatusFilter(value: string): value is SongStatusFilter {
+  return ALLOWED_STATUS_FILTERS.includes(value as SongStatusFilter);
+}
+
 export async function GET(req: NextRequest, { params }: RouteParams) {
   const { eventId: segment } = await params;
   const { searchParams } = new URL(req.url);
-  const statusFilter = searchParams.get('status'); // pending | approved | rejected | all
+  const rawStatusFilter = searchParams.get('status');
+  if (rawStatusFilter && !isSongStatusFilter(rawStatusFilter)) {
+    return NextResponse.json({ error: 'Invalid status filter' }, { status: 400 });
+  }
+  const statusFilter = rawStatusFilter as SongStatusFilter | null; // pending | approved | rejected | all
 
   const session = await auth.api.getSession({ headers: await headers() });
 
@@ -86,20 +96,22 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  let query = db
+  const whereClause
+    = statusFilter && statusFilter !== 'all'
+      ? and(
+          eq(songSuggestionTable.eventId, eventId),
+          eq(songSuggestionTable.status, statusFilter),
+        )
+      : eq(songSuggestionTable.eventId, eventId);
+
+  const songs = await db
     .select()
     .from(songSuggestionTable)
-    .where(eq(songSuggestionTable.eventId, eventId))
-    .$dynamic();
-
-  if (statusFilter && statusFilter !== 'all') {
-    query = query.where(eq(songSuggestionTable.status, statusFilter));
-  }
-
-  const songs = await query.orderBy(
-    desc(songSuggestionTable.voteCount),
-    desc(songSuggestionTable.createdAt),
-  );
+    .where(whereClause)
+    .orderBy(
+      desc(songSuggestionTable.voteCount),
+      desc(songSuggestionTable.createdAt),
+    );
 
   return NextResponse.json({ songs });
 }

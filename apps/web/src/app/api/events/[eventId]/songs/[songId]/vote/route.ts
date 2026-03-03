@@ -102,6 +102,17 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Event not found' }, { status: 404 });
   }
 
+  const song = await db.query.songSuggestionTable.findFirst({
+    where: and(
+      eq(songSuggestionTable.id, songId),
+      eq(songSuggestionTable.eventId, event.id),
+    ),
+  });
+
+  if (!song) {
+    return NextResponse.json({ error: 'Song not found' }, { status: 404 });
+  }
+
   const body = await req.json();
   const parsed = voteSongSchema.safeParse(body);
   if (!parsed.success) {
@@ -131,10 +142,18 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     .set({
       voteCount: sql`GREATEST(${songSuggestionTable.voteCount} - 1, 0)`,
     })
-    .where(eq(songSuggestionTable.id, songId));
+    .where(
+      and(
+        eq(songSuggestionTable.id, songId),
+        eq(songSuggestionTable.eventId, event.id),
+      ),
+    );
 
   const updated = await db.query.songSuggestionTable.findFirst({
-    where: eq(songSuggestionTable.id, songId),
+    where: and(
+      eq(songSuggestionTable.id, songId),
+      eq(songSuggestionTable.eventId, event.id),
+    ),
     columns: { voteCount: true },
   });
 
