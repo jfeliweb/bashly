@@ -36,8 +36,7 @@ export async function POST(req: NextRequest) {
       signature,
       Env.STRIPE_WEBHOOK_SECRET,
     );
-  } catch (err) {
-    console.error('[stripe] Signature verification failed', err);
+  } catch {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
@@ -120,27 +119,10 @@ export async function POST(req: NextRequest) {
       }
 
       case 'payment_intent.payment_failed': {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.error('[stripe] payment_intent.payment_failed', {
-          paymentIntentId: paymentIntent.id,
-          eventId: paymentIntent.metadata?.eventId ?? 'no eventId in metadata',
-          failureCode: paymentIntent.last_payment_error?.code ?? 'unknown',
-          failureMessage:
-            paymentIntent.last_payment_error?.message ?? 'Unknown error',
-        });
         break;
       }
 
       case 'coupon.created': {
-        const coupon = event.data.object as Stripe.Coupon;
-        console.log('[stripe] coupon.created', {
-          couponId: coupon.id,
-          name: coupon.name,
-          percentOff: coupon.percent_off,
-          amountOff: coupon.amount_off,
-          duration: coupon.duration,
-          maxRedemptions: coupon.max_redemptions,
-        });
         break;
       }
 
@@ -161,11 +143,6 @@ export async function POST(req: NextRequest) {
           .update(promoCodeTable)
           .set({ active: false })
           .where(eq(promoCodeTable.stripeCouponId, coupon.id));
-
-        console.log(
-          '[stripe] coupon.deleted - deactivated linked promo codes for coupon',
-          coupon.id,
-        );
         break;
       }
 
@@ -179,14 +156,13 @@ export async function POST(req: NextRequest) {
         // Older API versions returned promoCode.coupon as a string or expanded Coupon object.
         // Support both shapes so this handler works regardless of API version.
         const stripeCouponId: string | null
-    = typeof promoCode.promotion?.coupon === 'string'
-      ? promoCode.promotion.coupon // new shape
-      : typeof (promoCode as any).coupon === 'string'
-        ? (promoCode as any).coupon // old shape, unexpanded
-        : (promoCode as any).coupon?.id ?? null; // old shape, expanded object
+          = typeof promoCode.promotion?.coupon === 'string'
+            ? promoCode.promotion.coupon // new shape
+            : typeof (promoCode as any).coupon === 'string'
+              ? (promoCode as any).coupon // old shape, unexpanded
+              : (promoCode as any).coupon?.id ?? null; // old shape, expanded object
 
         if (!stripeCouponId) {
-          console.error('[stripe] promotion_code.created — could not resolve coupon ID', promoCode.id);
           break;
         }
 
@@ -213,8 +189,6 @@ export async function POST(req: NextRequest) {
                 : null,
             },
           });
-
-        console.log('[stripe] promotion_code.created — synced to DB:', promoCode.code.toUpperCase());
         break;
       }
 
@@ -229,49 +203,24 @@ export async function POST(req: NextRequest) {
               : null,
           })
           .where(eq(promoCodeTable.stripePromotionCodeId, promoCode.id));
-
-        console.log(
-          '[stripe] promotion_code.updated',
-          promoCode.code,
-          '-> active:',
-          promoCode.active,
-        );
         break;
       }
 
       case 'customer.discount.created': {
-        const discount = event.data.object as Stripe.Discount;
-        console.log('[stripe] customer.discount.created', {
-          customerId: discount.customer,
-          couponId: discount.coupon.id,
-          promotionCodeId: discount.promotion_code ?? null,
-        });
         break;
       }
 
       case 'customer.discount.updated': {
-        const discount = event.data.object as Stripe.Discount;
-        console.log('[stripe] customer.discount.updated', {
-          customerId: discount.customer,
-          couponId: discount.coupon.id,
-        });
         break;
       }
 
       case 'customer.discount.deleted': {
-        const discount = event.data.object as Stripe.Discount;
-        console.log('[stripe] customer.discount.deleted', {
-          customerId: discount.customer,
-          couponId: discount.coupon.id,
-        });
         break;
       }
 
       default:
-        console.log('[stripe] Unhandled event type:', event.type);
     }
-  } catch (err) {
-    console.error('[stripe] Handler error for event', event.type, err);
+  } catch {
     return NextResponse.json({ error: 'Handler error' }, { status: 500 });
   }
 
