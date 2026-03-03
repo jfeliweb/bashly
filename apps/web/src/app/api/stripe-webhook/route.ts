@@ -190,7 +190,15 @@ export async function POST(req: NextRequest) {
               : null,
             active: promoCode.active,
           })
-          .onConflictDoNothing();
+          .onConflictDoUpdate({
+            target: promoCodeTable.code,
+            set: {
+              active: promoCode.active,
+              expiresAt: promoCode.expires_at
+                ? new Date(promoCode.expires_at * 1000)
+                : null,
+            },
+          });
 
         console.log(
           '[stripe] promotion_code.created - synced to DB:',
