@@ -93,6 +93,8 @@ export async function POST(req: NextRequest) {
   const stripe = new Stripe(Env.STRIPE_SECRET_KEY);
 
   const baseUrl = (Env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+  const reqHeaders = await headers();
+  const locale = reqHeaders.get('x-next-intl-locale') ?? 'en';
 
   let stripeCouponId: string | undefined;
   let promoCodeId: string | undefined;
@@ -144,8 +146,10 @@ export async function POST(req: NextRequest) {
       userId: session.user.id,
       ...(promoCodeId ? { promoCodeId } : {}),
     },
-    success_url: `${baseUrl}/dashboard/billing/checkout-confirmation?eventId=${eventId}`,
-    cancel_url: `${baseUrl}/dashboard/events/${eventId}`,
+    // success_url: `${baseUrl}/dashboard/billing/checkout-confirmation?eventId=${eventId}`,
+    // cancel_url: `${baseUrl}/dashboard/events/${eventId}`,
+    success_url: `${baseUrl}/${locale}/dashboard/billing/checkout-confirmation?eventId=${eventId}`,
+    cancel_url: `${baseUrl}/${locale}/dashboard/events/${eventId}`,
     ...(stripeCouponId ? { discounts: [{ coupon: stripeCouponId }] } : {}),
   };
 

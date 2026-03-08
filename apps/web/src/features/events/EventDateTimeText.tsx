@@ -27,5 +27,5 @@ export function EventDateTimeText({
       ? formatLocalTime(value, locale)
       : formatLocalDateTime(value, locale);
 
-  return <>{text || fallback}</>;
+  return <span suppressHydrationWarning>{text || fallback}</span>;
 }

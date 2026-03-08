@@ -42,11 +42,10 @@ type InviteLinksPanelProps = {
   eventSlug: string;
 };
 
+const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_URL ?? '';
+
 function getInviteUrl(code: string): string {
-  if (typeof window !== 'undefined') {
-    return `${window.location.origin}/invite/${code}`;
-  }
-  return `/invite/${code}`;
+  return `${APP_ORIGIN}/invite/${code}`;
 }
 
 function truncateUrl(url: string, maxLen: number): string {
@@ -192,10 +191,7 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
     [eventId, eventSlug],
   );
 
-  const guestPageUrl
-    = typeof window !== 'undefined'
-      ? `${window.location.origin}/e/${eventSlug}`
-      : `/e/${eventSlug}`;
+  const guestPageUrl = `${APP_ORIGIN}/e/${eventSlug}`;
 
   const roleBadgeClass: Record<string, string> = {
     co_host: 'border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400',

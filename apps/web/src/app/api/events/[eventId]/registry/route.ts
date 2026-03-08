@@ -26,89 +26,105 @@ export async function GET(
   _req: NextRequest,
   { params }: RouteParams,
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { eventId } = await params;
+    const canView = await isOwnerOrCoHost(eventId, session.user.id);
+    if (!canView) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const links = await db
+      .select()
+      .from(registryLinkTable)
+      .where(eq(registryLinkTable.eventId, eventId))
+      .orderBy(asc(registryLinkTable.sortOrder));
+
+    return NextResponse.json(links);
+  } catch (error) {
+    console.error('[GET /api/events/[eventId]/registry]', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 },
+    );
   }
-
-  const { eventId } = await params;
-  const canView = await isOwnerOrCoHost(eventId, session.user.id);
-  if (!canView) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-
-  const links = await db
-    .select()
-    .from(registryLinkTable)
-    .where(eq(registryLinkTable.eventId, eventId))
-    .orderBy(asc(registryLinkTable.sortOrder));
-
-  return NextResponse.json(links);
 }
 
 export async function POST(
   req: NextRequest,
   { params }: RouteParams,
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-  const { eventId } = await params;
-  const canManage = await isOwnerOrCoHost(eventId, session.user.id);
-  if (!canManage) {
+    const { eventId } = await params;
+    const canManage = await isOwnerOrCoHost(eventId, session.user.id);
+    if (!canManage) {
+      return NextResponse.json(
+        { error: 'Forbidden', code: 'INSUFFICIENT_ROLE' },
+        { status: 403 },
+      );
+    }
+
+    const body = await req.json();
+    const parsed = registryLinkSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', code: 'VALIDATION_ERROR' },
+        { status: 400 },
+      );
+    }
+
+    const event = await db.query.eventTable.findFirst({
+      where: eq(eventTable.id, eventId),
+      columns: { paymentStatus: true },
+    });
+    if (!event) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+    }
+
+    const limits = getPlanLimitsForEvent(event);
+    const [existing] = await db
+      .select({ value: count() })
+      .from(registryLinkTable)
+      .where(eq(registryLinkTable.eventId, eventId));
+
+    if ((existing?.value ?? 0) >= limits.registryLinks) {
+      return NextResponse.json(
+        {
+          error: `Maximum ${limits.registryLinks} registry link${limits.registryLinks !== 1 ? 's' : ''} per event. Unlock this event for more.`,
+          code: 'LIMIT_REACHED',
+        },
+        { status: 422 },
+      );
+    }
+
+    const domain = new URL(parsed.data.url).hostname.replace(/^www\./, '');
+
+    const [link] = await db
+      .insert(registryLinkTable)
+      .values({
+        eventId,
+        displayName: parsed.data.display_name,
+        url: parsed.data.url,
+        domain,
+        sortOrder: parsed.data.sort_order,
+      })
+      .returning();
+
+    return NextResponse.json(link, { status: 201 });
+  } catch (error) {
+    console.error('[POST /api/events/[eventId]/registry]', error);
     return NextResponse.json(
-      { error: 'Forbidden', code: 'INSUFFICIENT_ROLE' },
-      { status: 403 },
+      { error: 'Internal server error' },
+      { status: 500 },
     );
   }
-
-  const body = await req.json();
-  const parsed = registryLinkSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Validation failed', code: 'VALIDATION_ERROR' },
-      { status: 400 },
-    );
-  }
-
-  const event = await db.query.eventTable.findFirst({
-    where: eq(eventTable.id, eventId),
-    columns: { paymentStatus: true },
-  });
-  if (!event) {
-    return NextResponse.json({ error: 'Event not found' }, { status: 404 });
-  }
-
-  const limits = getPlanLimitsForEvent(event);
-  const [existing] = await db
-    .select({ value: count() })
-    .from(registryLinkTable)
-    .where(eq(registryLinkTable.eventId, eventId));
-
-  if ((existing?.value ?? 0) >= limits.registryLinks) {
-    return NextResponse.json(
-      {
-        error: `Maximum ${limits.registryLinks} registry link${limits.registryLinks !== 1 ? 's' : ''} per event. Unlock this event for more.`,
-        code: 'LIMIT_REACHED',
-      },
-      { status: 422 },
-    );
-  }
-
-  const domain = new URL(parsed.data.url).hostname.replace(/^www\./, '');
-
-  const [link] = await db
-    .insert(registryLinkTable)
-    .values({
-      eventId,
-      displayName: parsed.data.display_name,
-      url: parsed.data.url,
-      domain,
-      sortOrder: parsed.data.sort_order,
-    })
-    .returning();
-
-  return NextResponse.json(link, { status: 201 });
 }

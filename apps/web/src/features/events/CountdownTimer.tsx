@@ -69,11 +69,11 @@ export function CountdownTimer({
   const fallbackText = formatLocalDateTime(eventDate, locale);
 
   if (!eventDate) {
-    return <p className={`font-nunito ${muteClass}`}>{fallbackText}</p>;
+    return <p className={`font-nunito ${muteClass}`} suppressHydrationWarning>{fallbackText}</p>;
   }
 
   if (eventEnded === null || (eventEnded === false && units === null)) {
-    return <p className={`font-nunito ${muteClass}`}>{fallbackText}</p>;
+    return <p className={`font-nunito ${muteClass}`} suppressHydrationWarning>{fallbackText}</p>;
   }
 
   if (eventEnded === true) {
@@ -85,7 +85,7 @@ export function CountdownTimer({
   }
 
   if (!units) {
-    return <p className={`font-nunito ${muteClass}`}>{fallbackText}</p>;
+    return <p className={`font-nunito ${muteClass}`} suppressHydrationWarning>{fallbackText}</p>;
   }
 
   return (
