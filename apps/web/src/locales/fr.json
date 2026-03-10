@@ -679,6 +679,7 @@
     "submit_button": "Confirmer le RSVP",
     "submitting": "Envoi du RSVP",
     "submit_error": "Une erreur s'est produite. Veuillez réessayer.",
+    "network_error": "Échec de la connexion. Vérifiez votre réseau et réessayez.",
     "success_heading": "Vous êtes sur la liste !",
     "success_subtext": "À bientôt !",
     "dismiss": "Terminé"

@@ -848,6 +848,7 @@
     "submit_button": "Confirm RSVP",
     "submitting": "Submitting RSVP",
     "submit_error": "Something went wrong. Please try again.",
+    "network_error": "Connection failed. Please check your network and try again.",
     "success_heading": "You're on the list!",
     "success_subtext": "We'll see you there!",
     "dismiss": "Done"
