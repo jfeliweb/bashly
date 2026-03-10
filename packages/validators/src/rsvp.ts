@@ -11,6 +11,7 @@ export const rsvpSchema = z.object({
   dietary_restrictions: z.string().max(300).optional(),
   status: z.enum(['attending', 'declined', 'maybe']).default('attending'),
   fingerprint: z.string().optional(),
+  invite_code: z.string().max(50).optional(),
 });
 
 export type RsvpInput = z.infer<typeof rsvpSchema>;

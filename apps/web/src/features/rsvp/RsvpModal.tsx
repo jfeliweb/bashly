@@ -14,6 +14,8 @@ type RsvpModalProps = {
   eventTitle: string;
   isOpen: boolean;
   onClose: () => void;
+  inviteCode?: string;
+  inviteRole?: string;
 };
 
 type RsvpStatus = 'attending' | 'maybe' | 'declined';
@@ -37,6 +39,8 @@ export function RsvpModal({
   eventTitle,
   isOpen,
   onClose,
+  inviteCode,
+  inviteRole,
 }: RsvpModalProps) {
   const t = useTranslations('RsvpModal');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -134,6 +138,7 @@ export function RsvpModal({
           body: JSON.stringify({
             ...formData,
             fingerprint,
+            ...(inviteCode && { invite_code: inviteCode }),
           }),
         });
 
@@ -155,7 +160,7 @@ export function RsvpModal({
         setIsSubmitting(false);
       }
     },
-    [eventSlug, t],
+    [eventSlug, t, inviteCode],
   );
 
   if (!isOpen) {
@@ -236,7 +241,7 @@ export function RsvpModal({
                     className="mb-5 pr-8 font-bricolage text-xl font-extrabold"
                     style={{ color: 'var(--theme-text, #09151b)' }}
                   >
-                    {t('heading', { title: eventTitle })}
+                    {inviteRole === 'vip_guest' ? t('heading_vip', { title: eventTitle }) : t('heading', { title: eventTitle })}
                   </h2>
 
                   {/* Status selector — 3 pill buttons */}

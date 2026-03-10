@@ -54,6 +54,16 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
   const { slug } = await params;
   const resolvedSearchParams = await searchParams;
   const isPreview = resolvedSearchParams.preview === '1';
+  const inviteCode = typeof resolvedSearchParams.invite === 'string'
+    ? resolvedSearchParams.invite
+    : Array.isArray(resolvedSearchParams.invite)
+      ? resolvedSearchParams.invite[0]
+      : undefined;
+  const inviteRole = typeof resolvedSearchParams.invite_role === 'string'
+    ? resolvedSearchParams.invite_role
+    : Array.isArray(resolvedSearchParams.invite_role)
+      ? resolvedSearchParams.invite_role[0]
+      : undefined;
   const t = await getTranslations('GuestEvent');
 
   const event = await db.query.eventTable.findFirst({
@@ -367,7 +377,12 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
                 <EventDateTimeText value={eventDateIso} />
               </p>
             </div>
-            <RsvpButton eventSlug={event.slug} eventTitle={event.title} />
+            <RsvpButton
+              eventSlug={event.slug}
+              eventTitle={event.title}
+              inviteCode={inviteCode}
+              inviteRole={inviteRole}
+            />
           </div>
         </section>
       </main>

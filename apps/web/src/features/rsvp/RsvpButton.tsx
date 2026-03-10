@@ -10,9 +10,11 @@ import { RsvpModal } from './RsvpModal';
 type RsvpButtonProps = {
   eventSlug: string;
   eventTitle: string;
+  inviteCode?: string;
+  inviteRole?: string;
 };
 
-export function RsvpButton({ eventSlug, eventTitle }: RsvpButtonProps) {
+export function RsvpButton({ eventSlug, eventTitle, inviteCode, inviteRole }: RsvpButtonProps) {
   const t = useTranslations('GuestEvent');
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -41,6 +43,8 @@ export function RsvpButton({ eventSlug, eventTitle }: RsvpButtonProps) {
         }}
         eventSlug={eventSlug}
         eventTitle={eventTitle}
+        inviteCode={inviteCode}
+        inviteRole={inviteRole}
       />
     </>
   );

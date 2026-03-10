@@ -6,7 +6,7 @@ import { createElement } from 'react';
 import { RsvpConfirmationEmail } from '@/emails/RsvpConfirmationEmail';
 import { db } from '@/libs/DB';
 import { sendEmail } from '@/libs/resend';
-import { eventTable, rsvpTable } from '@/models/Schema';
+import { eventTable, inviteTable, rsvpTable } from '@/models/Schema';
 import { getPlanLimitsForEvent } from '@/utils/eventAccess';
 import { getBaseUrl } from '@/utils/Helpers';
 
@@ -97,6 +97,36 @@ export async function POST(req: NextRequest, context: RouteContext) {
     }
   }
 
+  // 4b. Validate invite_code if provided
+  const inviteCode = data.invite_code?.trim();
+  if (inviteCode) {
+    const invite = await db.query.inviteTable.findFirst({
+      where: and(
+        eq(inviteTable.code, inviteCode),
+        eq(inviteTable.eventId, event.id),
+      ),
+      columns: { expiresAt: true, useCount: true, maxUses: true },
+    });
+    if (!invite) {
+      return NextResponse.json(
+        { error: 'Invalid or expired invite code' },
+        { status: 400 },
+      );
+    }
+    if (invite.expiresAt && invite.expiresAt < new Date()) {
+      return NextResponse.json(
+        { error: 'Invalid or expired invite code' },
+        { status: 400 },
+      );
+    }
+    if (invite.maxUses != null && invite.useCount >= invite.maxUses) {
+      return NextResponse.json(
+        { error: 'Invalid or expired invite code' },
+        { status: 400 },
+      );
+    }
+  }
+
   // 5. Upsert — match by event_id + email (email is required)
   const fingerprint = data.fingerprint ?? '';
   const email = data.email.trim();
@@ -118,6 +148,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
         status: data.status,
         plusOnes: data.plus_ones,
         dietaryRestrictions: data.dietary_restrictions ?? null,
+        inviteCode: inviteCode || null,
       })
       .where(eq(rsvpTable.id, existing.id));
 
@@ -159,6 +190,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
       plusOnes: data.plus_ones,
       dietaryRestrictions: data.dietary_restrictions ?? null,
       fingerprint,
+      inviteCode: inviteCode || null,
     })
     .returning();
 

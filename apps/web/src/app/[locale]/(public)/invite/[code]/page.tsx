@@ -119,7 +119,7 @@ export default async function InviteClaimPage({ params }: PageProps) {
                   asChild
                   className="min-h-[44px] rounded-[100px] bg-[rgb(81,255,0)] font-bold text-[rgb(9,21,27)] hover:bg-[rgb(65,204,0)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
                 >
-                  <Link href={`/sign-in?redirect=/invite/${code}`}>
+                  <Link href={`/sign-in?invite=${code}&invite_role=${data.role}&redirect=${encodeURIComponent(`/invite/${code}`)}`}>
                     {t('sign_in_to_accept')}
                   </Link>
                 </Button>
@@ -129,7 +129,7 @@ export default async function InviteClaimPage({ params }: PageProps) {
                   asChild
                   className="min-h-[44px] rounded-[100px] bg-[rgb(81,255,0)] font-bold text-[rgb(9,21,27)] hover:bg-[rgb(65,204,0)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
                 >
-                  <Link href={`/e/${data.event_slug}`}>{t('view_event')}</Link>
+                  <Link href={`/e/${data.event_slug}?invite=${code}&invite_role=${data.role}`}>{t('view_event')}</Link>
                 </Button>
               )}
         </div>

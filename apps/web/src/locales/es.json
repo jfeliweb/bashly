@@ -847,6 +847,7 @@
   },
   "RsvpModal": {
     "heading": "RSVP for {title}",
+    "heading_vip": "RSVP como invitado VIP para {title}",
     "close_aria": "Close RSVP form",
     "status_label": "Your RSVP",
     "status_attending": "✓ I'll be there",
