@@ -155,6 +155,10 @@ export const rsvpTable = pgTable('rsvp', {
   status: text('status').notNull().default('attending'),
   fingerprint: text('fingerprint'),
   createdAt: timestamp('created_at', ts).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', ts)
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
 
 export const registryLinkTable = pgTable('registry_link', {
