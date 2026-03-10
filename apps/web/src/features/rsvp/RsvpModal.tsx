@@ -19,14 +19,17 @@ type RsvpModalProps = {
 type RsvpStatus = 'attending' | 'maybe' | 'declined';
 
 function generateFingerprint(): string {
-  return btoa(
-    [
+  try {
+    const str = [
       navigator.userAgent,
       navigator.language,
       screen.colorDepth,
       new Date().getTimezoneOffset(),
-    ].join('|'),
-  ).slice(0, 32);
+    ].join('|');
+    return btoa(str).slice(0, 32);
+  } catch {
+    return `fp-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  }
 }
 
 export function RsvpModal({
@@ -123,8 +126,9 @@ export function RsvpModal({
 
       try {
         const fingerprint = generateFingerprint();
+        const url = `${window.location.origin}/api/rsvp/${eventSlug}`;
 
-        const res = await fetch(`/api/rsvp/${eventSlug}`, {
+        const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -142,8 +146,11 @@ export function RsvpModal({
         }
 
         setIsSuccess(true);
-      } catch {
-        setErrorMessage(t('submit_error'));
+      } catch (err) {
+        const isNetworkError = err instanceof TypeError && (err.message === 'Failed to fetch' || err.message.includes('network'));
+        setErrorMessage(
+          isNetworkError ? t('network_error') : t('submit_error'),
+        );
       } finally {
         setIsSubmitting(false);
       }
@@ -307,6 +314,8 @@ export function RsvpModal({
                         style={{ color: 'var(--theme-text, #09151b)' }}
                       >
                         {t('email_label')}
+                        {' '}
+                        <span aria-hidden="true" className="text-red-500">*</span>
                       </label>
                       <input
                         id="rsvp-email"
@@ -323,13 +332,14 @@ export function RsvpModal({
                           color: 'var(--theme-text, #09151b)',
                         }}
                         aria-invalid={errors.email ? 'true' : undefined}
-                        aria-describedby="rsvp-email-help"
+                        aria-required="true"
+                        aria-describedby={errors.email ? 'rsvp-email-error' : 'rsvp-email-help'}
                       />
                       <p id="rsvp-email-help" className="mt-1 font-nunito text-xs" style={{ color: 'var(--theme-text-muted, #6b7280)' }}>
                         {t('email_help')}
                       </p>
                       {errors.email && (
-                        <p className="mt-1 font-nunito text-xs text-red-500" role="alert">
+                        <p id="rsvp-email-error" className="mt-1 font-nunito text-xs text-red-500" role="alert">
                           {errors.email.message}
                         </p>
                       )}
