@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:create-event": "dotenv -e .env.local -- playwright test tests/e2e/CreateEvent.e2e.ts",
+    "test:e2e:guest-rsvp": "dotenv -e .env.local -- playwright test tests/e2e/guest-rsvp.e2e.ts",
     "test:a11y": "playwright test tests/e2e/Accessibility.e2e.ts",
     "test:a11y:public": "playwright test tests/e2e/Accessibility.e2e.ts --grep \"public pages\"",
     "test:a11y:dashboard": "playwright test tests/e2e/Accessibility.e2e.ts --grep \"authenticated\"",

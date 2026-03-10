@@ -9,7 +9,7 @@ import { expect, test } from '@playwright/test';
  *
  * Requires: E2E_TEST_USER_EMAIL, E2E_TEST_USER_PASSWORD
  *
- * Run: cd apps/web && dotenv -e .env.local -- playwright test tests/e2e/guest-rsvp.e2e.ts
+ * Run: cd apps/web && npm run test:e2e:guest-rsvp
  */
 test.describe('Guest RSVP', () => {
   test('RSVP form submits successfully and multiple guests create separate rows', async ({
