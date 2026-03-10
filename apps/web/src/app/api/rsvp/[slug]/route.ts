@@ -97,13 +97,14 @@ export async function POST(req: NextRequest, context: RouteContext) {
     }
   }
 
-  // 5. Upsert — check fingerprint match first
+  // 5. Upsert — match by event_id + email (email is required)
   const fingerprint = data.fingerprint ?? '';
+  const email = data.email.trim();
 
   const existing = await db.query.rsvpTable.findFirst({
     where: and(
       eq(rsvpTable.eventId, event.id),
-      eq(rsvpTable.fingerprint, fingerprint),
+      eq(rsvpTable.email, email),
     ),
   });
 
@@ -112,7 +113,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
       .update(rsvpTable)
       .set({
         name: data.name,
-        email: data.email ?? null,
+        email,
         phone: data.phone ?? null,
         status: data.status,
         plusOnes: data.plus_ones,
@@ -121,10 +122,10 @@ export async function POST(req: NextRequest, context: RouteContext) {
       .where(eq(rsvpTable.id, existing.id));
 
     // Send confirmation email on update if attending (fire-and-forget)
-    if (data.email && data.status === 'attending') {
+    if (data.status === 'attending') {
       void sendConfirmationEmail({
         guestName: data.name,
-        email: data.email,
+        email,
         event,
         plusOnes: data.plus_ones,
       });
@@ -152,7 +153,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
     .values({
       eventId: event.id,
       name: data.name,
-      email: data.email ?? null,
+      email,
       phone: data.phone ?? null,
       status: data.status,
       plusOnes: data.plus_ones,
@@ -161,11 +162,11 @@ export async function POST(req: NextRequest, context: RouteContext) {
     })
     .returning();
 
-  // 6. Send confirmation email if attending and email is provided (fire-and-forget)
-  if (data.email && data.status === 'attending' && rsvp) {
+  // 6. Send confirmation email if attending (fire-and-forget)
+  if (data.status === 'attending' && rsvp) {
     void sendConfirmationEmail({
       guestName: data.name,
-      email: data.email,
+      email,
       event,
       plusOnes: rsvp.plusOnes,
     });
