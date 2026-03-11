@@ -85,7 +85,99 @@
     "hero_description": "Des RSVP aux playlists, Bashly gère les détails pour que vous puissiez vous concentrer sur la célébration.",
     "cta_title": "Prêt à commencer ?",
     "cta_description": "Créez votre premier événement gratuitement. Aucune carte bancaire requise.",
-    "cta_button": "Commencer gratuitement"
+    "cta_button": "Commencer gratuitement",
+    "features": {
+      "guest_management": {
+        "title": "Gestion des invités",
+        "description": "Suivez les RSVP, régimes alimentaires et accompagnants en un seul endroit. Exportez les listes en CSV.",
+        "detail_0": "Capacité d'invités illimitée",
+        "detail_1": "Suivi des régimes alimentaires",
+        "detail_2": "Gestion des accompagnants",
+        "detail_3": "Export CSV pour plans de table",
+        "detail_4": "Confirmations par e-mail"
+      },
+      "song_requests": {
+        "title": "Demandes de chansons",
+        "description": "Laissez les invités demander des chansons en scannant un QR code. Aucune application à télécharger.",
+        "detail_0": "Génération de QR code",
+        "detail_1": "Intégration recherche iTunes",
+        "detail_2": "Workflow d'approbation des chansons",
+        "detail_3": "Réorganiser la playlist",
+        "detail_4": "Notes de message des invités"
+      },
+      "spotify_export": {
+        "title": "Export Spotify",
+        "description": "Exportez les chansons approuvées directement vers Spotify. Création de playlist en un clic.",
+        "detail_0": "Intégration directe Spotify",
+        "detail_1": "Correspondance automatique des pistes",
+        "detail_2": "Création automatique de playlist",
+        "detail_3": "Re-synchronisation après modifications",
+        "detail_4": "Partage de playlist avec le DJ"
+      },
+      "invite_links": {
+        "title": "Liens d'invitation et QR codes",
+        "description": "Partagez des liens d'invitation personnalisés ou téléchargez des QR codes pour vos supports imprimés.",
+        "detail_0": "Liens uniques partageables",
+        "detail_1": "QR codes téléchargeables (PNG/SVG)",
+        "detail_2": "Codes d'invitation par rôle",
+        "detail_3": "Suivi des ouvertures d'invitation",
+        "detail_4": "Thèmes personnalisés de page d'événement"
+      },
+      "event_schedule": {
+        "title": "Programme de l'événement",
+        "description": "Créez un planning pour votre événement. Partagez avec les prestataires, DJ et co-organisateurs.",
+        "detail_0": "Timeline glisser-déposer",
+        "detail_1": "Partage avec les rôles d'équipe",
+        "detail_2": "Vue programme pour prestataires uniquement",
+        "detail_3": "Prise en charge des fuseaux horaires",
+        "detail_4": "Export vers applications de calendrier"
+      },
+      "gift_registry": {
+        "title": "Liste de cadeaux",
+        "description": "Liez vos listes de cadeaux. Les invités voient tout sur votre page d'événement.",
+        "detail_0": "Lien vers n'importe quelle liste",
+        "detail_1": "Prise en charge de plusieurs listes",
+        "detail_2": "Affichage avec icônes",
+        "detail_3": "Tri par priorité des listes",
+        "detail_4": "Accès mobile facile"
+      },
+      "team_roles": {
+        "title": "Rôles d'équipe",
+        "description": "Ajoutez des co-organisateurs, DJ et prestataires. Chacun a l'accès dont il a besoin.",
+        "detail_0": "Accès complet co-organisateur",
+        "detail_1": "Gestion de la file DJ",
+        "detail_2": "Vue logistique prestataire",
+        "detail_3": "Rôle coordinateur",
+        "detail_4": "Badges invité VIP"
+      },
+      "email_notifications": {
+        "title": "Notifications par e-mail",
+        "description": "E-mails automatiques pour invitations, confirmations RSVP et approbations de chansons.",
+        "detail_0": "E-mails d'invitation avec lien",
+        "detail_1": "Confirmation RSVP",
+        "detail_2": "Notification d'approbation de chanson",
+        "detail_3": "Domaine d'expéditeur personnalisé",
+        "detail_4": "Modèles personnalisés"
+      },
+      "privacy_security": {
+        "title": "Confidentialité et sécurité",
+        "description": "Vos événements sont privés par défaut. Partagez uniquement avec les invités.",
+        "detail_0": "URLs d'événement privées",
+        "detail_1": "Pas de découverte publique",
+        "detail_2": "Authentification sécurisée",
+        "detail_3": "Conforme RGPD",
+        "detail_4": "Export des données sur demande"
+      },
+      "fast_reliable": {
+        "title": "Rapide et fiable",
+        "description": "Chargement ultra-rapide. 99,9 % de disponibilité. Vos événements sont toujours accessibles.",
+        "detail_0": "CDN mondial",
+        "detail_1": "Chargement en moins d'une seconde",
+        "detail_2": "Sauvegardes automatiques",
+        "detail_3": "Mises à jour en temps réel",
+        "detail_4": "Optimisé pour mobile"
+      }
+    }
   },
   "HowItWorks": {
     "section_title": "Comment fonctionne Bashly",
@@ -235,6 +327,7 @@
   "CTA": {
     "title": "Prêt à organiser votre fête ?",
     "description": "Créez votre premier événement gratuitement. Aucune carte bancaire requise.",
+    "section_description": "Rejoignez des milliers d'organisateurs qui font confiance à Bashly pour leurs célébrations. Commencez gratuitement — aucune carte bancaire requise.",
     "button_text": "Commencer gratuitement"
   },
   "Footer": {

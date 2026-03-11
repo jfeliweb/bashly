@@ -1,7 +1,7 @@
 import '@/styles/event-themes.css';
 import '@/styles/global.css';
 
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Bricolage_Grotesque, JetBrains_Mono, Nunito } from 'next/font/google';
 import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
@@ -57,6 +57,9 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/manifest.json',
+};
+
+export const viewport: Viewport = {
   themeColor: '#ffffff',
 };
 
