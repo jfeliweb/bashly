@@ -63,3 +63,6 @@ local
 *.mobileprovision
 *.orig.*
 web-build/
+
+# Local Netlify folder
+.netlify
