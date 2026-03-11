@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -13,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { PromoCodeInput } from '@/features/billing/PromoCodeInput';
+import { logError } from '@/libs/sentryLogger';
 
 type UnlockEventButtonProps = {
   events: { id: string; title: string; paymentStatus?: string | null }[];
@@ -79,6 +81,11 @@ export function UnlockEventButton({ events }: UnlockEventButtonProps) {
         throw new Error('No checkout URL returned');
       }
     } catch (err) {
+      Sentry.captureException(err);
+      logError('billing', 'Billing: unlock checkout failed', {
+        eventId: validSelectedId,
+        error: err instanceof Error ? err.message : 'Unknown',
+      });
       setIsLoading(false);
       setError(err instanceof Error ? err.message : 'Something went wrong');
     }

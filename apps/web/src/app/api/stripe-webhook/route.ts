@@ -1,9 +1,11 @@
+import * as Sentry from '@sentry/nextjs';
 import { and, eq, sql } from 'drizzle-orm';
 import { type NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 import { db } from '@/libs/DB';
 import { Env } from '@/libs/Env';
+import { logError } from '@/libs/sentryLogger';
 import {
   eventTable,
   promoCodeRedemptionTable,
@@ -220,7 +222,12 @@ export async function POST(req: NextRequest) {
 
       default:
     }
-  } catch {
+  } catch (err) {
+    Sentry.captureException(err);
+    logError('billing', 'Billing: Stripe webhook handler error', {
+      eventType: event.type,
+      error: err instanceof Error ? err.message : 'Unknown',
+    });
     return NextResponse.json({ error: 'Handler error' }, { status: 500 });
   }
 
