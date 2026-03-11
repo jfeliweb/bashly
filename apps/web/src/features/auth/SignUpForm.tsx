@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import * as Sentry from '@sentry/nextjs';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signUp } from '@/libs/auth-client';
+import { logError, logWarn } from '@/libs/sentryLogger';
 
 const signUpSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -45,11 +47,21 @@ export function SignUpForm() {
       });
 
       if (result.error) {
-        setError(result.error.message || 'Failed to create account');
+        const msg = result.error.message || 'Failed to create account';
+        logWarn('auth', 'Auth: sign-up failed', {
+          emailHash: `${values.email.slice(0, 3)}***`,
+          error: msg,
+        });
+        setError(msg);
       } else {
         setEmailSent(true);
       }
-    } catch {
+    } catch (err) {
+      Sentry.captureException(err);
+      logError('auth', 'Auth: sign-up error', {
+        emailHash: `${values.email.slice(0, 3)}***`,
+        error: err instanceof Error ? err.message : 'Unknown',
+      });
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);

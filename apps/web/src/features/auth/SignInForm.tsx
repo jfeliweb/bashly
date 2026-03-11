@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import * as Sentry from '@sentry/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -11,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signIn } from '@/libs/auth-client';
+import { logError, logWarn } from '@/libs/sentryLogger';
 
 const signInSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -43,12 +45,22 @@ export function SignInForm() {
       });
 
       if (result.error) {
-        setError(result.error.message || 'Failed to sign in');
+        const msg = result.error.message || 'Failed to sign in';
+        logWarn('auth', 'Auth: sign-in failed', {
+          emailHash: `${values.email.slice(0, 3)}***`,
+          error: msg,
+        });
+        setError(msg);
       } else {
         router.push('/dashboard');
         router.refresh();
       }
-    } catch {
+    } catch (err) {
+      Sentry.captureException(err);
+      logError('auth', 'Auth: sign-in error', {
+        emailHash: `${values.email.slice(0, 3)}***`,
+        error: err instanceof Error ? err.message : 'Unknown',
+      });
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
