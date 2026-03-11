@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { Music, Search, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -7,6 +8,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { logError, logWarn } from '@/libs/sentryLogger';
 
 type iTunesTrack = {
   itunes_track_id: string;
@@ -55,7 +57,12 @@ export function SongRequestWidget({
       const data = await res.json();
       setResults(data.results ?? []);
     } catch (err) {
-      console.error('Search failed:', err);
+      Sentry.captureException(err);
+      logError('music', 'Music: song search failed', {
+        eventSlug,
+        searchTerm: searchTerm.slice(0, 30),
+        error: err instanceof Error ? err.message : 'Unknown',
+      });
     } finally {
       setIsSearching(false);
     }
@@ -102,9 +109,20 @@ export function SongRequestWidget({
         setTimeout(() => setShowSuccess(false), 5000);
       } else {
         const error = await res.json();
-        setSubmitError(error.error ?? t('submit_error'));
+        const msg = error.error ?? t('submit_error');
+        logWarn('music', 'Music: song submit failed', {
+          eventSlug,
+          status: res.status,
+          error: msg,
+        });
+        setSubmitError(msg);
       }
-    } catch {
+    } catch (err) {
+      Sentry.captureException(err);
+      logError('music', 'Music: song submit request failed', {
+        eventSlug,
+        error: err instanceof Error ? err.message : 'Unknown',
+      });
       setSubmitError(t('submit_error_network'));
     } finally {
       setIsSubmitting(false);

@@ -1,5 +1,8 @@
+import * as Sentry from '@sentry/nextjs';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+
+import { logError } from '@/libs/sentryLogger';
 
 type iTunesTrack = {
   trackId: number;
@@ -81,7 +84,11 @@ export async function GET(req: NextRequest) {
       count: tracks.length,
     });
   } catch (error) {
-    console.error('[iTunes Search Error]', error);
+    Sentry.captureException(error);
+    logError('music', 'Music: iTunes search failed', {
+      term: term?.slice(0, 20) + (term && term.length > 20 ? '...' : ''),
+      error: error instanceof Error ? error.message : 'Unknown',
+    });
     return NextResponse.json(
       { error: 'Failed to search iTunes', code: 'SEARCH_FAILED' },
       { status: 500 },

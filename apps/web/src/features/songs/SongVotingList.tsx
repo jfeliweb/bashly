@@ -1,10 +1,12 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { Music, ThumbsUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { logError } from '@/libs/sentryLogger';
 import { cn } from '@/utils/Helpers';
 
 type Song = {
@@ -67,7 +69,11 @@ export function SongVotingList({
         setSongs(data.songs ?? []);
       }
     } catch (err) {
-      console.error('Failed to load songs:', err);
+      Sentry.captureException(err);
+      logError('music', 'Music: failed to load songs', {
+        eventSlug,
+        error: err instanceof Error ? err.message : 'Unknown',
+      });
     } finally {
       setIsLoading(false);
     }

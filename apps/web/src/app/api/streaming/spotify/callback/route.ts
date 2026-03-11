@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { headers } from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -5,6 +6,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { Env } from '@/libs/Env';
+import { logError } from '@/libs/sentryLogger';
 import { streamingConnectionTable } from '@/models/Schema';
 
 type SpotifyTokenResponse = {
@@ -74,7 +76,10 @@ export async function GET(req: NextRequest) {
 
     if (!tokenRes.ok) {
       const errBody = await tokenRes.text();
-      console.error('[Spotify Token Exchange Error]', tokenRes.status, errBody);
+      logError('music', 'Music: Spotify token exchange failed', {
+        status: tokenRes.status,
+        errorBody: errBody.slice(0, 200),
+      });
       throw new Error('Token exchange failed');
     }
 
@@ -127,7 +132,10 @@ export async function GET(req: NextRequest) {
     response.cookies.delete('spotify_code_verifier');
     return response;
   } catch (err) {
-    console.error('[Spotify OAuth Error]', err);
+    Sentry.captureException(err);
+    logError('music', 'Music: Spotify OAuth error', {
+      error: err instanceof Error ? err.message : 'Unknown',
+    });
     return NextResponse.redirect(
       new URL('/dashboard?error=token_exchange_failed', req.url),
     );
