@@ -1,7 +1,10 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
+import { logError, logWarn } from '@/libs/sentryLogger';
 
 type Props = { code: string };
 
@@ -19,13 +22,24 @@ export function InviteClaimButton({ code }: Props) {
 
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
-        setError(data.error ?? 'Failed to claim invite. Please try again.');
+        const msg = data.error ?? 'Failed to claim invite. Please try again.';
+        logWarn('invites', 'Invites: claim failed', {
+          code: `${code.slice(0, 4)}***`,
+          status: res.status,
+          error: msg,
+        });
+        setError(msg);
         return;
       }
 
       const data = (await res.json()) as { redirect: string };
       router.push(data.redirect);
-    } catch {
+    } catch (err) {
+      Sentry.captureException(err);
+      logError('invites', 'Invites: claim request failed', {
+        code: `${code.slice(0, 4)}***`,
+        error: err instanceof Error ? err.message : 'Unknown',
+      });
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);

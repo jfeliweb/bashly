@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { and, eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import type { NextRequest } from 'next/server';
@@ -5,6 +6,7 @@ import { NextResponse } from 'next/server';
 
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
+import { logError } from '@/libs/sentryLogger';
 import { eventRoleTable, inviteTable } from '@/models/Schema';
 
 type RouteParams = { params: Promise<{ eventId: string; inviteId: string }> };
@@ -44,14 +46,27 @@ export async function DELETE(_req: NextRequest, { params }: RouteParams) {
     );
   }
 
-  await db
-    .delete(inviteTable)
-    .where(
-      and(
-        eq(inviteTable.id, inviteId),
-        eq(inviteTable.eventId, eventId),
-      ),
-    );
+  try {
+    await db
+      .delete(inviteTable)
+      .where(
+        and(
+          eq(inviteTable.id, inviteId),
+          eq(inviteTable.eventId, eventId),
+        ),
+      );
 
-  return new NextResponse(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
+  } catch (err) {
+    Sentry.captureException(err);
+    logError('invites', 'Invites: DELETE failed', {
+      eventId,
+      inviteId,
+      error: err instanceof Error ? err.message : 'Unknown',
+    });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 },
+    );
+  }
 }

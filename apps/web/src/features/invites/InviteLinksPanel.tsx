@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
@@ -14,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { logError, logWarn } from '@/libs/sentryLogger';
 import { cn } from '@/utils/Helpers';
 
 type InviteRow = {
@@ -140,7 +142,20 @@ export function InviteLinksPanel({
         if (res.ok) {
           setInvites(prev => prev.filter(i => i.id !== inviteId));
           setConfirmDeleteId(null);
+        } else {
+          logWarn('invites', 'Invites: delete failed', {
+            eventId,
+            inviteId,
+            status: res.status,
+          });
         }
+      } catch (err) {
+        Sentry.captureException(err);
+        logError('invites', 'Invites: delete request failed', {
+          eventId,
+          inviteId,
+          error: err instanceof Error ? err.message : 'Unknown',
+        });
       } finally {
         setDeletingId(null);
       }
@@ -200,11 +215,23 @@ export function InviteLinksPanel({
         } | null;
         const code = errBody?.code ?? null;
         const message = errBody?.error ?? t('error_forbidden');
+        logWarn('invites', 'Invites: create failed', {
+          eventId,
+          code,
+          status: res.status,
+        });
         setCreateErrorCode(code);
         setCreateError(
           code === 'UPGRADE_REQUIRED' ? t('error_upgrade_required') : message,
         );
       }
+    } catch (err) {
+      Sentry.captureException(err);
+      logError('invites', 'Invites: create request failed', {
+        eventId,
+        error: err instanceof Error ? err.message : 'Unknown',
+      });
+      setCreateError(t('error_forbidden'));
     } finally {
       setSubmitting(false);
     }

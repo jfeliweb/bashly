@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto';
 
 import { createInviteSchema } from '@saas/validators';
+import * as Sentry from '@sentry/nextjs';
 import { and, desc, eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import type { NextRequest } from 'next/server';
@@ -10,6 +11,7 @@ import { InviteEmail } from '@/emails/InviteEmail';
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { sendEmail } from '@/libs/resend';
+import { logError } from '@/libs/sentryLogger';
 import { eventRoleTable, eventTable, inviteTable } from '@/models/Schema';
 import { isEventPaid } from '@/utils/eventAccess';
 
@@ -67,7 +69,9 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(invites);
   } catch (error) {
-    console.error('[GET /api/events/[eventId]/invites]', error);
+    Sentry.captureException(error);
+    const { eventId } = await params;
+    logError('invites', 'Invites: GET failed', { eventId, method: 'GET' });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
@@ -192,7 +196,9 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       { status: 201 },
     );
   } catch (error) {
-    console.error('[POST /api/events/[eventId]/invites]', error);
+    Sentry.captureException(error);
+    const { eventId } = await params;
+    logError('invites', 'Invites: POST failed', { eventId, method: 'POST' });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
