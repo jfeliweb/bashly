@@ -2,11 +2,13 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type RsvpInput, rsvpSchema } from '@saas/validators';
+import * as Sentry from '@sentry/nextjs';
 import FocusTrap from 'focus-trap-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { logError } from '@/libs/sentryLogger';
 import { cn } from '@/utils/Helpers';
 
 type RsvpModalProps = {
@@ -144,14 +146,24 @@ export function RsvpModal({
 
         if (!res.ok) {
           const errorBody = await res.json().catch(() => null) as { error?: string } | null;
-          setErrorMessage(
-            errorBody?.error ?? t('submit_error'),
-          );
+          const msg = errorBody?.error ?? t('submit_error');
+          Sentry.captureException(new Error(`RSVP submit failed: ${msg}`));
+          logError('rsvp', 'RSVP: submit failed', {
+            eventSlug,
+            status: res.status,
+            error: msg,
+          });
+          setErrorMessage(msg);
           return;
         }
 
         setIsSuccess(true);
       } catch (err) {
+        Sentry.captureException(err);
+        logError('rsvp', 'RSVP: submit error', {
+          eventSlug,
+          error: err instanceof Error ? err.message : 'Unknown',
+        });
         const isNetworkError = err instanceof TypeError && (err.message === 'Failed to fetch' || err.message.includes('network'));
         setErrorMessage(
           isNetworkError ? t('network_error') : t('submit_error'),

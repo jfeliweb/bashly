@@ -1,4 +1,5 @@
 import { rsvpSchema } from '@saas/validators';
+import * as Sentry from '@sentry/nextjs';
 import { and, count, eq } from 'drizzle-orm';
 import { type NextRequest, NextResponse } from 'next/server';
 import { createElement } from 'react';
@@ -6,6 +7,7 @@ import { createElement } from 'react';
 import { RsvpConfirmationEmail } from '@/emails/RsvpConfirmationEmail';
 import { db } from '@/libs/DB';
 import { sendEmail } from '@/libs/resend';
+import { logError } from '@/libs/sentryLogger';
 import { eventTable, inviteTable, rsvpTable } from '@/models/Schema';
 import { getPlanLimitsForEvent } from '@/utils/eventAccess';
 import { getBaseUrl } from '@/utils/Helpers';
@@ -225,6 +227,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
 /* ------------------------------------------------------------------ */
 
 type EventForEmail = {
+  id: string;
   title: string;
   slug: string;
   eventDate: Date | null;
@@ -280,6 +283,11 @@ async function sendConfirmationEmail({
     });
   } catch (err) {
     // Log but don't fail the RSVP if email fails
-    console.error('Failed to send RSVP confirmation email:', err);
+    Sentry.captureException(err);
+    logError('rsvp', 'RSVP: failed to send confirmation email', {
+      eventId: event.id,
+      slug: event.slug,
+      guestEmailHash: `${email.slice(0, 3)}***`,
+    });
   }
 }
