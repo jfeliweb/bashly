@@ -1,9 +1,11 @@
 import { and, desc, eq, isNull, ne, or } from 'drizzle-orm';
 import { CreditCard, Sparkles, Zap } from 'lucide-react';
 import { headers } from 'next/headers';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
+import { EventPaymentBadge } from '@/components/EventPaymentBadge';
 import { UnlockEventButton } from '@/features/billing/UnlockEventButton';
 import { TitleBar } from '@/features/dashboard/TitleBar';
 import { auth } from '@/libs/auth';
@@ -72,6 +74,37 @@ export default async function BillingPage() {
       />
 
       <div className="space-y-8">
+        {/* Your events */}
+        {ownedEvents.length > 0 && (
+          <section aria-labelledby="your-events-heading">
+            <h2
+              id="your-events-heading"
+              className="mb-1 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-[rgb(48,153,0)] dark:text-[rgb(116,255,51)]"
+            >
+              {t('your_events_section_title')}
+            </h2>
+            <ul className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
+              {ownedEvents.map((event) => (
+                <li
+                  key={event.id}
+                  className="flex flex-wrap items-center justify-between gap-2"
+                >
+                  <Link
+                    href={`/dashboard/events/${event.id}`}
+                    className="text-sm font-semibold text-foreground hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--focus-ring)]"
+                  >
+                    {event.title}
+                  </Link>
+                  <EventPaymentBadge
+                    paymentStatus={event.paymentStatus}
+                    label={t('premium_badge')}
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {/* Current Plan */}
         <section aria-labelledby="current-plan-heading">
           <h2
@@ -269,7 +302,7 @@ export default async function BillingPage() {
                         ? (
                             hasLockedEvents || ownedEvents.length === 0
                               ? (
-                                  <UnlockEventButton events={lockedEvents} />
+                                  <UnlockEventButton events={ownedEvents} />
                                 )
                               : hasUnlockedEvents
                                 ? (

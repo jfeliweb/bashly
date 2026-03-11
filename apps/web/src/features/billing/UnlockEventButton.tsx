@@ -22,11 +22,13 @@ export function UnlockEventButton({ events }: UnlockEventButtonProps) {
   const t = useTranslations('Billing');
   const searchParams = useSearchParams();
   const prefillCode = searchParams.get('promo') ?? undefined;
+  const firstLockedEventId = events.find(e => e.paymentStatus !== 'paid')?.id ?? '';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedEventId, setSelectedEventId] = useState<string>(
-    events[0]?.id ?? '',
-  );
+  const [selectedEventId, setSelectedEventId] = useState<string>(firstLockedEventId);
+  const validSelectedId = events.some(e => e.id === selectedEventId && e.paymentStatus !== 'paid')
+    ? selectedEventId
+    : firstLockedEventId;
   const [activePromoCode, setActivePromoCode] = useState<string | undefined>();
 
   if (events.length === 0) {
@@ -40,8 +42,20 @@ export function UnlockEventButton({ events }: UnlockEventButtonProps) {
     );
   }
 
+  if (firstLockedEventId === '') {
+    return (
+      <p
+        className="flex min-h-[44px] items-center justify-center rounded-[100px] bg-[rgb(81,255,0)]/10 px-4 text-center text-sm font-bold text-[rgb(48,153,0)] dark:text-[rgb(116,255,51)]"
+        role="status"
+        aria-label={t('no_locked_events')}
+      >
+        {`✓ ${t('all_events_unlocked')}`}
+      </p>
+    );
+  }
+
   const handleUnlock = async () => {
-    if (!selectedEventId) {
+    if (!validSelectedId) {
       return;
     }
     setError(null);
@@ -51,7 +65,7 @@ export function UnlockEventButton({ events }: UnlockEventButtonProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          eventId: selectedEventId,
+          eventId: validSelectedId,
           ...(activePromoCode ? { promoCode: activePromoCode } : {}),
         }),
       });
@@ -78,7 +92,7 @@ export function UnlockEventButton({ events }: UnlockEventButtonProps) {
         </p>
       )}
       <Select
-        value={selectedEventId}
+        value={validSelectedId}
         onValueChange={(eventId) => {
           setSelectedEventId(eventId);
           setActivePromoCode(undefined);
@@ -93,15 +107,20 @@ export function UnlockEventButton({ events }: UnlockEventButtonProps) {
         </SelectTrigger>
         <SelectContent>
           {events.map(event => (
-            <SelectItem key={event.id} value={event.id}>
+            <SelectItem
+              key={event.id}
+              value={event.id}
+              disabled={event.paymentStatus === 'paid'}
+            >
               {event.title}
+              {event.paymentStatus === 'paid' ? ` — ${t('event_already_unlocked')}` : ''}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
       <PromoCodeInput
-        key={selectedEventId}
-        eventId={selectedEventId}
+        key={validSelectedId}
+        eventId={validSelectedId}
         prefillCode={prefillCode}
         onValidated={setActivePromoCode}
         onCleared={() => setActivePromoCode(undefined)}

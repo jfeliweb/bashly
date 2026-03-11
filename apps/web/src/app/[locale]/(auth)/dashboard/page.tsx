@@ -7,6 +7,7 @@ import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 
 import { EmptyState } from '@/components/EmptyState';
+import { EventPaymentBadge } from '@/components/EventPaymentBadge';
 import { EventStatusBadge } from '@/components/EventStatusBadge';
 import { StatsCardSkeleton } from '@/components/Skeleton';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ import { DashboardWelcomeOverlay } from '@/features/onboarding/DashboardWelcomeO
 import { auth } from '@/libs/auth';
 import { db } from '@/libs/DB';
 import { eventRoleTable, eventTable, rsvpTable } from '@/models/Schema';
+import { cn } from '@/utils/Helpers';
 
 type EventCard = {
   id: string;
@@ -28,6 +30,7 @@ type EventCard = {
   userRole: 'owner' | 'co_host' | 'dj' | 'vendor';
   hasDjRole: boolean;
   hasVendorRole: boolean;
+  paymentStatus?: string | null;
 };
 
 export async function generateMetadata(props: { params: { locale: string } }) {
@@ -89,6 +92,7 @@ export default async function DashboardEventsPage(props: PageProps) {
           eventDate: eventTable.eventDate,
           status: eventTable.status,
           slug: eventTable.slug,
+          paymentStatus: eventTable.paymentStatus,
           rsvp_count: count(rsvpTable.id),
         })
         .from(eventTable)
@@ -106,6 +110,7 @@ export default async function DashboardEventsPage(props: PageProps) {
           eventTable.eventDate,
           eventTable.status,
           eventTable.slug,
+          eventTable.paymentStatus,
         )
         .orderBy(desc(eventTable.eventDate)),
       db
@@ -212,6 +217,7 @@ export default async function DashboardEventsPage(props: PageProps) {
     userRole: 'owner',
     hasDjRole: djEventIds.has(ev.id),
     hasVendorRole: vendorEventIds.has(ev.id),
+    paymentStatus: ev.paymentStatus,
   }));
 
   const coHostEventIds = new Set(
@@ -358,7 +364,12 @@ export default async function DashboardEventsPage(props: PageProps) {
                 return (
                   <article
                     key={ev.id}
-                    className="flex flex-col rounded-xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
+                    className={cn(
+                      'flex flex-col rounded-xl border bg-card p-4 shadow-sm transition-shadow hover:shadow-md',
+                      ev.paymentStatus === 'paid'
+                        ? 'border-[rgb(81,255,0)]/40 ring-1 ring-[rgb(81,255,0)]/30'
+                        : 'border-border',
+                    )}
                   >
                     <h2 className="text-lg font-bold text-foreground">
                       {ev.title}
@@ -383,6 +394,12 @@ export default async function DashboardEventsPage(props: PageProps) {
                           label={t(`status_${status}` as 'status_draft')}
                           showPulse={status === 'published'}
                         />
+                        {ev.userRole === 'owner' && (
+                          <EventPaymentBadge
+                            paymentStatus={ev.paymentStatus}
+                            label={t('premium_badge')}
+                          />
+                        )}
                         {ev.userRole === 'co_host' && (
                           <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
                             {t('co_host_badge')}

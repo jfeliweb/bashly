@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
+import { EventPaymentBadge } from '@/components/EventPaymentBadge';
 import { Button } from '@/components/ui/button';
 import { DeleteEventButton } from '@/features/events/DeleteEventButton';
 import { EventDateTimeText } from '@/features/events/EventDateTimeText';
@@ -128,6 +129,7 @@ export default async function EventDetailPage({ params }: PageProps) {
     : null;
 
   const t = await getTranslations('EventDetail');
+  const tEventsList = await getTranslations('EventsList');
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -159,6 +161,12 @@ export default async function EventDetailPage({ params }: PageProps) {
               )}
               {t(`status_${status}` as 'status_draft')}
             </span>
+            {isOwner && (
+              <EventPaymentBadge
+                paymentStatus={event.paymentStatus}
+                label={tEventsList('premium_badge')}
+              />
+            )}
           </div>
           <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
             {event.title}

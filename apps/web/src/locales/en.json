@@ -549,7 +549,11 @@
     "unlocked_events_count": "{count, plural, one {# event unlocked} other {# events unlocked}}",
     "all_events_unlocked": "All events unlocked",
     "celebration_active_badge": "Active",
-    "no_locked_events": "All your events are already unlocked."
+    "no_locked_events": "All your events are already unlocked.",
+    "event_already_unlocked": "Already unlocked",
+    "select_event_unlocked_hint": "Unlocked",
+    "your_events_section_title": "Your events",
+    "premium_badge": "Premium"
   },
   "BillingOptions": {
     "current_plan": "Current Plan",
@@ -610,7 +614,8 @@
     "rsvp_count": "{count} RSVPs",
     "co_host_badge": "Co-Host",
     "vendor_badge": "Vendor",
-    "vendor_info_link": "Vendor Info →"
+    "vendor_info_link": "Vendor Info →",
+    "premium_badge": "Premium"
   },
   "CreateEvent": {
     "step_indicator": "Step {n} of 3",
