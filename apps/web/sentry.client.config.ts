@@ -28,8 +28,6 @@ Sentry.init({
       maskAllText: true,
       blockAllMedia: true,
     }),
-    // Capture console.warn and console.error as Sentry breadcrumbs
-    Sentry.consoleIntegration(),
   ],
 });
 
