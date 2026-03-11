@@ -1,10 +1,12 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { logError, logWarn } from '@/libs/sentryLogger';
 
 type PromoState =
   | { status: 'idle' }
@@ -62,33 +64,47 @@ export function PromoCodeInput({
 
     setState({ status: 'loading' });
 
-    const res = await fetch('/api/billing/validate-promo', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: normalizedCode, eventId }),
-    });
-    const data: ValidatePromoResponse = await res.json();
+    try {
+      const res = await fetch('/api/billing/validate-promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: normalizedCode, eventId }),
+      });
+      const data: ValidatePromoResponse = await res.json();
 
-    if (!res.ok) {
+      if (!res.ok) {
+        logWarn('billing', 'Billing: validate-promo API error', {
+          eventId,
+          status: res.status,
+        });
+        setState({ status: 'invalid', reason: t('promo_invalid_request') });
+        onCleared();
+        return;
+      }
+
+      if ('valid' in data && data.valid) {
+        setState({ status: 'valid', description: data.description });
+        onValidated(normalizedCode);
+        return;
+      }
+
+      if ('valid' in data && !data.valid) {
+        setState({ status: 'invalid', reason: data.reason });
+        onCleared();
+        return;
+      }
+
       setState({ status: 'invalid', reason: t('promo_invalid_request') });
       onCleared();
-      return;
-    }
-
-    if ('valid' in data && data.valid) {
-      setState({ status: 'valid', description: data.description });
-      onValidated(normalizedCode);
-      return;
-    }
-
-    if ('valid' in data && !data.valid) {
-      setState({ status: 'invalid', reason: data.reason });
+    } catch (err) {
+      Sentry.captureException(err);
+      logError('billing', 'Billing: validate-promo request failed', {
+        eventId,
+        error: err instanceof Error ? err.message : 'Unknown',
+      });
+      setState({ status: 'invalid', reason: t('promo_invalid_request') });
       onCleared();
-      return;
     }
-
-    setState({ status: 'invalid', reason: t('promo_invalid_request') });
-    onCleared();
   }, [eventId, onCleared, onValidated, t]);
 
   function clear() {
