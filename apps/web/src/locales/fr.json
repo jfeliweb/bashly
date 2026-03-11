@@ -642,7 +642,11 @@
     "generate": "Générer",
     "qr_guest_url": "URL de la page invités",
     "download_png": "Télécharger le QR en PNG",
-    "download_svg": "Télécharger le QR en SVG"
+    "download_svg": "Télécharger le QR en SVG",
+    "error_forbidden": "Vous n'avez pas la permission de créer des invitations pour cet événement.",
+    "error_upgrade_required": "Débloquez cet événement pour ajouter des rôles d'équipe (co-organisateur, DJ, prestataire).",
+    "unlock_event_link": "Débloquer l'événement",
+    "team_roles_require_unlock": "Débloquez cet événement pour inviter des co-organisateurs, DJs et prestataires."
   },
   "Onboarding": {
     "welcome_title": "Bienvenue sur Bashly, {name} !",

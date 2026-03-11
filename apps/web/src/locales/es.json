@@ -938,6 +938,10 @@
     "generate": "Generate",
     "qr_guest_url": "Guest page URL",
     "download_png": "Download QR code as PNG",
-    "download_svg": "Download QR code as SVG"
+    "download_svg": "Download QR code as SVG",
+    "error_forbidden": "No tienes permiso para crear invitaciones para este evento.",
+    "error_upgrade_required": "Desbloquea este evento para añadir roles de equipo (co-anfitrión, DJ, proveedor).",
+    "unlock_event_link": "Desbloquear evento",
+    "team_roles_require_unlock": "Desbloquea este evento para invitar co-anfitriones, DJs y proveedores."
   }
 }

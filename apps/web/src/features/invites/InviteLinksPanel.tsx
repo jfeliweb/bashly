@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -35,11 +36,14 @@ const INVITE_ROLES = [
   'vendor',
 ] as const;
 
+const TEAM_ROLES = ['co_host', 'coordinator', 'dj', 'vendor'] as const;
+
 type InviteRole = (typeof INVITE_ROLES)[number];
 
 type InviteLinksPanelProps = {
   eventId: string;
   eventSlug: string;
+  isEventPaid?: boolean;
 };
 
 const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_URL ?? '';
@@ -55,7 +59,11 @@ function truncateUrl(url: string, maxLen: number): string {
   return `${url.slice(0, maxLen - 3)}…`;
 }
 
-export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) {
+export function InviteLinksPanel({
+  eventId,
+  eventSlug,
+  isEventPaid = true,
+}: InviteLinksPanelProps) {
   const t = useTranslations('InviteLinks');
   const [invites, setInvites] = useState<InviteRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,8 +74,14 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
   const [newMaxUses, setNewMaxUses] = useState<string>('');
   const [newExpiresAt, setNewExpiresAt] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [createErrorCode, setCreateErrorCode] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  const availableRoles = isEventPaid
+    ? INVITE_ROLES
+    : (['guest', 'vip_guest'] as const);
 
   const fetchInvites = useCallback(async () => {
     const res = await fetch(`/api/events/${eventId}/invites`);
@@ -81,6 +95,15 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
   useEffect(() => {
     fetchInvites().finally(() => setLoading(false));
   }, [fetchInvites]);
+
+  useEffect(() => {
+    if (
+      !isEventPaid
+      && (TEAM_ROLES as readonly string[]).includes(newRole)
+    ) {
+      setNewRole('guest');
+    }
+  }, [isEventPaid, newRole]);
 
   const roleLabel = (role: string): string => {
     const key = `role_${role}`;
@@ -126,6 +149,8 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
   );
 
   const handleCreate = useCallback(async () => {
+    setCreateError(null);
+    setCreateErrorCode(null);
     setSubmitting(true);
     try {
       const body: {
@@ -168,11 +193,22 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
         setNewExpiresAt('');
         setNewEmail('');
         setNewMessage('');
+      } else {
+        const errBody = (await res.json().catch(() => null)) as {
+          error?: string;
+          code?: string;
+        } | null;
+        const code = errBody?.code ?? null;
+        const message = errBody?.error ?? t('error_forbidden');
+        setCreateErrorCode(code);
+        setCreateError(
+          code === 'UPGRADE_REQUIRED' ? t('error_upgrade_required') : message,
+        );
       }
     } finally {
       setSubmitting(false);
     }
-  }, [eventId, newRole, newMaxUses, newExpiresAt, newEmail, newMessage]);
+  }, [eventId, newRole, newMaxUses, newExpiresAt, newEmail, newMessage, t]);
 
   const downloadQr = useCallback(
     async (format: 'png' | 'svg') => {
@@ -330,20 +366,29 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
               Role
             </label>
             <Select
-              value={newRole}
+              value={
+                (availableRoles as readonly string[]).includes(newRole)
+                  ? newRole
+                  : 'guest'
+              }
               onValueChange={v => setNewRole(v as InviteRole)}
             >
               <SelectTrigger id="invite-role" className="min-h-[44px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {INVITE_ROLES.map(r => (
+                {availableRoles.map(r => (
                   <SelectItem key={r} value={r} className="min-h-[44px]">
                     {roleLabel(r)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {!isEventPaid && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t('team_roles_require_unlock')}
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor="invite-email" className="mb-1 block text-sm font-medium">
@@ -400,6 +445,22 @@ export function InviteLinksPanel({ eventId, eventSlug }: InviteLinksPanelProps) 
               className="min-h-[44px]"
             />
           </div>
+          {createError && (
+            <div
+              className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
+              role="alert"
+            >
+              <p>{createError}</p>
+              {createErrorCode === 'UPGRADE_REQUIRED' && (
+                <Link
+                  href="/dashboard/billing"
+                  className="mt-2 inline-block font-semibold underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(37,90,116)]"
+                >
+                  {t('unlock_event_link')}
+                </Link>
+              )}
+            </div>
+          )}
           <div className="flex gap-2">
             <Button
               type="button"

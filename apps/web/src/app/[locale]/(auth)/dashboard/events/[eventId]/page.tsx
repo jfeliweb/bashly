@@ -27,6 +27,7 @@ import {
   rsvpTable,
   streamingConnectionTable,
 } from '@/models/Schema';
+import { isEventPaid } from '@/utils/eventAccess';
 import { cn } from '@/utils/Helpers';
 
 type PageProps = {
@@ -460,7 +461,11 @@ export default async function EventDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            <InviteLinksPanel eventId={eventId} eventSlug={event.slug} />
+            <InviteLinksPanel
+              eventId={eventId}
+              eventSlug={event.slug}
+              isEventPaid={isEventPaid(event)}
+            />
           </section>
         </div>
 

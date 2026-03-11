@@ -43,7 +43,16 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
     }
 
     const { eventId } = await params;
-    const role = await getRole(eventId, session.user.id);
+    let role = await getRole(eventId, session.user.id);
+    if (!role) {
+      const event = await db.query.eventTable.findFirst({
+        where: eq(eventTable.id, eventId),
+        columns: { ownerId: true },
+      });
+      if (event?.ownerId === session.user.id) {
+        role = 'owner';
+      }
+    }
     if (role !== 'owner' && role !== 'co_host') {
       return NextResponse.json(
         { error: 'Forbidden', code: 'INSUFFICIENT_ROLE' },
@@ -74,7 +83,18 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     }
 
     const { eventId } = await params;
-    const role = await getRole(eventId, session.user.id);
+    const event = await db.query.eventTable.findFirst({
+      where: eq(eventTable.id, eventId),
+      columns: { ownerId: true, paymentStatus: true },
+    });
+    if (!event) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+    }
+
+    let role = await getRole(eventId, session.user.id);
+    if (!role && event.ownerId === session.user.id) {
+      role = 'owner';
+    }
     if (role !== 'owner' && role !== 'co_host') {
       return NextResponse.json(
         { error: 'Forbidden', code: 'INSUFFICIENT_ROLE' },
@@ -90,11 +110,6 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
         { status: 400 },
       );
     }
-
-    const event = await db.query.eventTable.findFirst({
-      where: eq(eventTable.id, eventId),
-      columns: { paymentStatus: true },
-    });
     if (!event) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
     }
