@@ -1,4 +1,10 @@
 # Netlify: Cache headers for Next.js on Netlify
+# Monorepo: base must be set so plugin and deps resolve from apps/web
+[build]
+  base = "apps/web"
+  command = "npm run build"
+  publish = ".next"
+
 [[headers]]
   for = "/*"
   [headers.values]
