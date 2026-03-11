@@ -553,7 +553,9 @@
     "event_already_unlocked": "Already unlocked",
     "select_event_unlocked_hint": "Unlocked",
     "your_events_section_title": "Your events",
-    "premium_badge": "Premium"
+    "your_events_section_description": "Events you own and their unlock status.",
+    "premium_badge": "Premium",
+    "free_badge": "Free"
   },
   "BillingOptions": {
     "current_plan": "Current Plan",
@@ -615,7 +617,8 @@
     "co_host_badge": "Co-Host",
     "vendor_badge": "Vendor",
     "vendor_info_link": "Vendor Info →",
-    "premium_badge": "Premium"
+    "premium_badge": "Premium",
+    "free_badge": "Free"
   },
   "CreateEvent": {
     "step_indicator": "Step {n} of 3",

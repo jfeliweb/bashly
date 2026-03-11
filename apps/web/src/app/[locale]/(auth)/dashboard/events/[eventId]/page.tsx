@@ -166,6 +166,8 @@ export default async function EventDetailPage({ params }: PageProps) {
               <EventPaymentBadge
                 paymentStatus={event.paymentStatus}
                 label={tEventsList('premium_badge')}
+                freeLabel={tEventsList('free_badge')}
+                showFree
               />
             )}
           </div>

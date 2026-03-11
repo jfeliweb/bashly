@@ -106,16 +106,13 @@ export function UnlockEventButton({ events }: UnlockEventButtonProps) {
           <SelectValue placeholder={t('select_event_placeholder')} />
         </SelectTrigger>
         <SelectContent>
-          {events.map(event => (
-            <SelectItem
-              key={event.id}
-              value={event.id}
-              disabled={event.paymentStatus === 'paid'}
-            >
-              {event.title}
-              {event.paymentStatus === 'paid' ? ` — ${t('event_already_unlocked')}` : ''}
-            </SelectItem>
-          ))}
+          {events
+            .filter(event => event.paymentStatus !== 'paid')
+            .map(event => (
+              <SelectItem key={event.id} value={event.id}>
+                {event.title}
+              </SelectItem>
+            ))}
         </SelectContent>
       </Select>
       <PromoCodeInput

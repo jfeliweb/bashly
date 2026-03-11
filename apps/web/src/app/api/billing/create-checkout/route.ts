@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -15,6 +15,8 @@ import {
   promoCodeTable,
 } from '@/models/Schema';
 import { PLAN_ID, PlanConfig } from '@/utils/AppConfig';
+
+const CELEBRATION_PRICE_CENTS = (PlanConfig[PLAN_ID.CELEBRATION].price ?? 29) * 100;
 
 const createCheckoutSchema = z.object({
   eventId: z.string().uuid(),
@@ -135,6 +137,38 @@ export async function POST(req: NextRequest) {
 
     stripeCouponId = promo.stripeCouponId;
     promoCodeId = promo.id;
+
+    // 100% off or full amount discount: skip Stripe, unlock event directly
+    const coupon = await stripe.coupons.retrieve(promo.stripeCouponId);
+    const isFullDiscount = Boolean(
+      (coupon.percent_off != null && coupon.percent_off >= 100)
+      || (coupon.amount_off != null && coupon.amount_off >= CELEBRATION_PRICE_CENTS),
+    );
+
+    if (isFullDiscount) {
+      await db
+        .update(eventTable)
+        .set({
+          paymentStatus: 'paid',
+          stripePaymentIntentId: null,
+        })
+        .where(eq(eventTable.id, eventId));
+
+      await db.insert(promoCodeRedemptionTable).values({
+        promoCodeId,
+        userId: session.user.id,
+        eventId,
+        stripeSessionId: null,
+      });
+
+      await db
+        .update(promoCodeTable)
+        .set({ redemptionCount: sql`${promoCodeTable.redemptionCount} + 1` })
+        .where(eq(promoCodeTable.id, promoCodeId));
+
+      const successUrl = `${baseUrl}/${locale}/dashboard/billing/checkout-confirmation?eventId=${eventId}`;
+      return NextResponse.json({ url: successUrl });
+    }
   }
 
   const checkoutParams: Stripe.Checkout.SessionCreateParams = {

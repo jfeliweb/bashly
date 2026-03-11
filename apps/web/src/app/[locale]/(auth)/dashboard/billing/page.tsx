@@ -83,8 +83,11 @@ export default async function BillingPage() {
             >
               {t('your_events_section_title')}
             </h2>
-            <ul className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
-              {ownedEvents.map((event) => (
+            <p className="mb-3 text-sm text-muted-foreground">
+              {t('your_events_section_description')}
+            </p>
+            <ul className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4 shadow-sm">
+              {ownedEvents.map(event => (
                 <li
                   key={event.id}
                   className="flex flex-wrap items-center justify-between gap-2"
@@ -98,6 +101,8 @@ export default async function BillingPage() {
                   <EventPaymentBadge
                     paymentStatus={event.paymentStatus}
                     label={t('premium_badge')}
+                    freeLabel={t('free_badge')}
+                    showFree
                   />
                 </li>
               ))}

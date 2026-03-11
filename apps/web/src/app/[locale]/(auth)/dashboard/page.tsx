@@ -398,6 +398,8 @@ export default async function DashboardEventsPage(props: PageProps) {
                           <EventPaymentBadge
                             paymentStatus={ev.paymentStatus}
                             label={t('premium_badge')}
+                            freeLabel={t('free_badge')}
+                            showFree
                           />
                         )}
                         {ev.userRole === 'co_host' && (
