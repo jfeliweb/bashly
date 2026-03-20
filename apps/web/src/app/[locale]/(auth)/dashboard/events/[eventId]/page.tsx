@@ -1,4 +1,4 @@
-import { and, count, eq } from 'drizzle-orm';
+import { and, count, desc, eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
@@ -13,6 +13,7 @@ import { CopyGuestUrl } from '@/features/invites/CopyGuestUrl';
 import { InviteLinksPanel } from '@/features/invites/InviteLinksPanel';
 import { QrCodePreview } from '@/features/invites/QrCodePreview';
 import { RegistryLinksPanel } from '@/features/registry/RegistryLinksPanel';
+import { GuestRsvpPanel } from '@/features/rsvp/guest-rsvp-panel';
 import { SongQueuePanel } from '@/features/songs/SongQueuePanel';
 import {
   ExportPlaylistButton,
@@ -108,6 +109,32 @@ export default async function EventDetailPage({ params }: PageProps) {
     .select({ value: count() })
     .from(rsvpTable)
     .where(eq(rsvpTable.eventId, eventId));
+
+  const rsvpRows = await db.query.rsvpTable.findMany({
+    where: eq(rsvpTable.eventId, eventId),
+    columns: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      plusOnes: true,
+      dietaryRestrictions: true,
+      status: true,
+      createdAt: true,
+    },
+    orderBy: [desc(rsvpTable.createdAt)],
+  });
+
+  const rsvpEntries = rsvpRows.map(row => ({
+    id: row.id,
+    name: row.name,
+    email: row.email ?? null,
+    phone: row.phone ?? null,
+    plusOnes: row.plusOnes,
+    dietaryRestrictions: row.dietaryRestrictions ?? null,
+    status: row.status,
+    createdAt: row.createdAt.toISOString(),
+  }));
 
   const rsvpCount = rsvpResult?.value ?? 0;
   const status = event.status ?? 'draft';
@@ -384,8 +411,9 @@ export default async function EventDetailPage({ params }: PageProps) {
           </ul>
         </section>
 
-        {/* Gift Registry + Song Queue / Music */}
+        {/* Guest RSVP + Gift Registry + Song Queue / Music */}
         <div className="space-y-6 lg:col-span-2">
+          <GuestRsvpPanel rsvpEntries={rsvpEntries} />
           <RegistryLinksPanel
             eventId={eventId}
             registryEnabled={event.registryEnabled ?? true}
