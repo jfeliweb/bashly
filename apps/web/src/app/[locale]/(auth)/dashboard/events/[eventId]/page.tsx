@@ -176,7 +176,7 @@ export default async function EventDetailPage({ params }: PageProps) {
           </h1>
           {event.eventDate && (
             <p className="mt-1 font-mono text-sm text-muted-foreground">
-              <EventDateTimeText value={event.eventDate.toISOString()} fallback="—" />
+              <EventDateTimeText value={event.eventDate.toISOString()} fallback="—" timeZone="viewer" />
             </p>
           )}
         </div>
@@ -307,7 +307,7 @@ export default async function EventDetailPage({ params }: PageProps) {
                   {t('rsvp_deadline')}
                 </dt>
                 <dd className="mt-0.5 font-mono text-sm text-foreground">
-                  <EventDateTimeText value={event.rsvpDeadline.toISOString()} fallback="—" />
+                  <EventDateTimeText value={event.rsvpDeadline.toISOString()} fallback="—" timeZone="viewer" />
                 </dd>
               </div>
             )}

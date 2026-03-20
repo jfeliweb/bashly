@@ -193,13 +193,13 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
             {eventDateIso && (
               <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-white/90">
                 <CalendarDays className="size-3.5" aria-hidden />
-                <EventDateTimeText value={eventDateIso} mode="date" />
+                <EventDateTimeText value={eventDateIso} mode="date" timeZone="viewer" />
               </p>
             )}
             {eventDateIso && (
               <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-white/90">
                 <Clock3 className="size-3.5" aria-hidden />
-                <EventDateTimeText value={eventDateIso} mode="time" />
+                <EventDateTimeText value={eventDateIso} mode="time" timeZone="viewer" />
               </p>
             )}
             {event.venueName && (
@@ -219,7 +219,7 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
             fallback={
               (
                 <p className="font-nunito text-white/90">
-                  <EventDateTimeText value={eventDateIso} />
+                  <EventDateTimeText value={eventDateIso} timeZone="viewer" />
                 </p>
               )
             }
@@ -374,7 +374,7 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
                 {t('rsvp_now')}
               </p>
               <p className="font-nunito text-xs text-[var(--theme-text-muted)]">
-                <EventDateTimeText value={eventDateIso} />
+                <EventDateTimeText value={eventDateIso} timeZone="viewer" />
               </p>
             </div>
             <RsvpButton

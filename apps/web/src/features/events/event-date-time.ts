@@ -1,4 +1,7 @@
 type DateTimeInput = Date | string | null | undefined;
+type DateTimeFormatConfig = {
+  timeZone?: string;
+};
 
 type DateTimeParts = {
   dateStr: string;
@@ -74,6 +77,25 @@ export function formatLocalDate(value: DateTimeInput, locale: string): string {
   }).format(date);
 }
 
+export function formatDate(
+  value: DateTimeInput,
+  locale: string,
+  config?: DateTimeFormatConfig,
+): string {
+  const date = asValidDate(value);
+  if (!date) {
+    return '';
+  }
+
+  return new Intl.DateTimeFormat(locale, {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    ...(config?.timeZone ? { timeZone: config.timeZone } : {}),
+  }).format(date);
+}
+
 export function formatLocalTime(value: DateTimeInput, locale: string): string {
   const date = asValidDate(value);
   if (!date) {
@@ -87,9 +109,31 @@ export function formatLocalTime(value: DateTimeInput, locale: string): string {
   }).format(date);
 }
 
-export function formatLocalDateTime(value: DateTimeInput, locale: string): string {
-  const dateLabel = formatLocalDate(value, locale);
-  const timeLabel = formatLocalTime(value, locale);
+export function formatTime(
+  value: DateTimeInput,
+  locale: string,
+  config?: DateTimeFormatConfig,
+): string {
+  const date = asValidDate(value);
+  if (!date) {
+    return '';
+  }
+
+  return new Intl.DateTimeFormat(locale, {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    ...(config?.timeZone ? { timeZone: config.timeZone } : {}),
+  }).format(date);
+}
+
+export function formatDateTime(
+  value: DateTimeInput,
+  locale: string,
+  config?: DateTimeFormatConfig,
+): string {
+  const dateLabel = formatDate(value, locale, config);
+  const timeLabel = formatTime(value, locale, config);
 
   if (!dateLabel && !timeLabel) {
     return '';
@@ -104,4 +148,8 @@ export function formatLocalDateTime(value: DateTimeInput, locale: string): strin
   }
 
   return `${dateLabel} · ${timeLabel}`;
+}
+
+export function formatLocalDateTime(value: DateTimeInput, locale: string): string {
+  return formatDateTime(value, locale);
 }
