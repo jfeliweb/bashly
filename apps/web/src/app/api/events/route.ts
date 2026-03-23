@@ -42,6 +42,16 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
+  if (
+    parsed.data.event_date
+    && parsed.data.event_end
+    && parsed.data.event_end.getTime() < parsed.data.event_date.getTime()
+  ) {
+    return NextResponse.json(
+      { error: 'Event end must be after event start', code: 'INVALID_EVENT_RANGE' },
+      { status: 400 },
+    );
+  }
 
   const slug = generateSlug(parsed.data.title);
 
@@ -69,6 +79,7 @@ export async function POST(req: Request) {
       coverImageUrl: parsed.data.cover_image_url,
       coverImageKey: parsed.data.cover_image_key,
       eventDate: parsed.data.event_date,
+      eventEnd: parsed.data.event_end,
       doorsOpenAt: parsed.data.doors_open_at,
       venueName: parsed.data.venue_name,
       venueAddress: parsed.data.venue_address,

@@ -72,7 +72,7 @@ export async function PATCH(
 
   const currentEvent = await db.query.eventTable.findFirst({
     where: eq(eventTable.id, eventId),
-    columns: { status: true },
+    columns: { status: true, eventDate: true, eventEnd: true },
   });
 
   if (!currentEvent || currentEvent.status === 'archived') {
@@ -89,6 +89,18 @@ export async function PATCH(
   }
 
   const data = parsed.data;
+  const effectiveStart = data.event_date ?? currentEvent.eventDate ?? undefined;
+  const effectiveEnd = data.event_end ?? currentEvent.eventEnd ?? undefined;
+  if (
+    effectiveStart
+    && effectiveEnd
+    && effectiveEnd.getTime() < effectiveStart.getTime()
+  ) {
+    return NextResponse.json(
+      { error: 'Event end must be after event start', code: 'INVALID_EVENT_RANGE' },
+      { status: 400 },
+    );
+  }
 
   // Geocode venue address if it changed (non-blocking on failure)
   let geoFields: { venueLat?: string; venueLng?: string } = {};
@@ -115,6 +127,7 @@ export async function PATCH(
       ...(data.cover_image_url !== undefined && { coverImageUrl: data.cover_image_url }),
       ...(data.cover_image_key !== undefined && { coverImageKey: data.cover_image_key }),
       ...(data.event_date !== undefined && { eventDate: data.event_date }),
+      ...(data.event_end !== undefined && { eventEnd: data.event_end }),
       ...(data.doors_open_at !== undefined && { doorsOpenAt: data.doors_open_at }),
       ...(data.venue_name !== undefined && { venueName: data.venue_name }),
       ...(data.venue_address !== undefined && { venueAddress: data.venue_address }),

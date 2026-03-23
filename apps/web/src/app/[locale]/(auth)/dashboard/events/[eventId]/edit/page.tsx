@@ -56,6 +56,7 @@ function eventToFormDefaults(event: typeof eventTable.$inferSelect): EditEventFo
       : 'sweet16',
     title: event.title ?? '',
     event_date_iso: event.eventDate ? event.eventDate.toISOString() : undefined,
+    event_end_iso: event.eventEnd ? event.eventEnd.toISOString() : undefined,
     venue_name: event.venueName ?? '',
     venue_address: event.venueAddress ?? '',
     dress_code: event.dressCode ?? '',
