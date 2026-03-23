@@ -508,6 +508,8 @@
     "event_name_placeholder": "Sweet 16 de Sofia",
     "date_label": "Date",
     "time_label": "Heure",
+    "end_date_label": "Date de fin",
+    "end_time_label": "Heure de fin",
     "venue_name_label": "Nom du lieu",
     "venue_address_label": "Adresse du lieu",
     "venue_address_help": "Elle sera affichée sur la page invités",
@@ -680,6 +682,7 @@
   },
   "GuestEvent": {
     "event_ended": "Cet événement est terminé",
+    "event_in_progress": "Cet événement est en cours",
     "countdown_aria": "Compte à rebours jusqu'à l'événement",
     "days": "Jours",
     "hours": "Heures",

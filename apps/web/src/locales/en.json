@@ -641,6 +641,8 @@
     "event_name_placeholder": "Sofia's Sweet 16",
     "date_label": "Date",
     "time_label": "Time",
+    "end_date_label": "End Date",
+    "end_time_label": "End Time",
     "venue_name_label": "Venue Name",
     "venue_address_label": "Venue Address",
     "venue_address_help": "We'll show this on your guest page",
@@ -734,6 +736,7 @@
   },
   "GuestEvent": {
     "event_ended": "This event has ended",
+    "event_in_progress": "This event is currently in progress",
     "countdown_aria": "Countdown to event",
     "days": "Days",
     "hours": "Hours",
