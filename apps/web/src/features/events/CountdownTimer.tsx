@@ -7,6 +7,7 @@ import { formatLocalDateTime } from '@/features/events/event-date-time';
 
 type CountdownTimerProps = {
   eventDate: Date | null;
+  eventEnd?: Date | null;
   /** When true, use light text (for dark strip background) */
   inverted?: boolean;
 };
@@ -30,6 +31,7 @@ function twoDigits(value: number): string {
 
 export function CountdownTimer({
   eventDate,
+  eventEnd = null,
   inverted = false,
 }: CountdownTimerProps) {
   const locale = useLocale();
@@ -41,24 +43,39 @@ export function CountdownTimer({
     seconds: number;
   } | null>(null);
   /** Only set in useEffect so initial server and client render match (no Date.now() in render). */
-  const [eventEnded, setEventEnded] = useState<boolean | null>(null);
+  const [phase, setPhase] = useState<'before_start' | 'in_progress' | 'ended' | null>(null);
 
   useEffect(() => {
     if (!eventDate) {
       setUnits(null);
-      setEventEnded(null);
+      setPhase(null);
       return;
     }
-    const isPast = eventDate.getTime() <= Date.now();
-    setEventEnded(isPast);
-    if (isPast) {
-      return;
-    }
-    const tick = () => setUnits(diff(eventDate));
+    const tick = () => {
+      const now = Date.now();
+      const startMs = eventDate.getTime();
+      const endMs = eventEnd?.getTime();
+
+      if (now < startMs) {
+        setPhase('before_start');
+        setUnits(diff(eventDate));
+        return;
+      }
+
+      if (endMs && now < endMs) {
+        setPhase('in_progress');
+        setUnits(null);
+        return;
+      }
+
+      setPhase('ended');
+      setUnits(null);
+    };
+
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [eventDate]);
+  }, [eventDate, eventEnd]);
 
   const muteClass = inverted
     ? 'text-white/80'
@@ -69,14 +86,22 @@ export function CountdownTimer({
   const fallbackText = formatLocalDateTime(eventDate, locale);
 
   if (!eventDate) {
-    return <p className={`font-nunito ${muteClass}`} suppressHydrationWarning>{fallbackText}</p>;
+    return <p className={`font-nunito ${muteClass}`}>{fallbackText}</p>;
   }
 
-  if (eventEnded === null || (eventEnded === false && units === null)) {
-    return <p className={`font-nunito ${muteClass}`} suppressHydrationWarning>{fallbackText}</p>;
+  if (phase === null) {
+    return <p className={`font-nunito ${muteClass}`}>{fallbackText}</p>;
   }
 
-  if (eventEnded === true) {
+  if (phase === 'in_progress') {
+    return (
+      <p className={`font-nunito ${muteClass}`} role="status">
+        {t('event_in_progress')}
+      </p>
+    );
+  }
+
+  if (phase === 'ended') {
     return (
       <p className={`font-nunito ${muteClass}`} role="status">
         {t('event_ended')}
@@ -85,7 +110,7 @@ export function CountdownTimer({
   }
 
   if (!units) {
-    return <p className={`font-nunito ${muteClass}`} suppressHydrationWarning>{fallbackText}</p>;
+    return <p className={`font-nunito ${muteClass}`}>{fallbackText}</p>;
   }
 
   return (

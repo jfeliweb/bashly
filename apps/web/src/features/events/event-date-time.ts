@@ -63,6 +63,27 @@ export function splitDateTimeToLocalInputs(value: DateTimeInput): DateTimeParts 
   };
 }
 
+export function isSameCalendarDay(
+  startValue: DateTimeInput,
+  endValue: DateTimeInput,
+  config?: DateTimeFormatConfig,
+): boolean {
+  const startDate = asValidDate(startValue);
+  const endDate = asValidDate(endValue);
+  if (!startDate || !endDate) {
+    return false;
+  }
+
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    ...(config?.timeZone ? { timeZone: config.timeZone } : {}),
+  });
+
+  return formatter.format(startDate) === formatter.format(endDate);
+}
+
 export function formatLocalDate(value: DateTimeInput, locale: string): string {
   const date = asValidDate(value);
   if (!date) {

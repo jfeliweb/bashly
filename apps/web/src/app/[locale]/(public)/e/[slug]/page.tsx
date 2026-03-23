@@ -11,6 +11,7 @@ import { GuestContactSection } from '@/features/events/components/GuestContactSe
 import { CountdownTimer } from '@/features/events/CountdownTimer';
 import { EventDateTimeText } from '@/features/events/EventDateTimeText';
 import { EventMap } from '@/features/events/EventMap';
+import { EventTimeRangeText } from '@/features/events/EventTimeRangeText';
 import type { ScheduleItem } from '@/features/events/ScheduleList';
 import { ScheduleList } from '@/features/events/ScheduleList';
 import { RegistrySection } from '@/features/registry/RegistrySection';
@@ -127,6 +128,7 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
 
   const themeId = event.themeId ?? 'theme1';
   const eventDateIso = event.eventDate ? event.eventDate.toISOString() : null;
+  const eventEndIso = event.eventEnd ? event.eventEnd.toISOString() : null;
 
   return (
     <div
@@ -199,7 +201,7 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
             {eventDateIso && (
               <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-white/90">
                 <Clock3 className="size-3.5" aria-hidden />
-                <EventDateTimeText value={eventDateIso} mode="time" timeZone="viewer" />
+                <EventTimeRangeText startValue={eventDateIso} endValue={eventEndIso} />
               </p>
             )}
             {event.venueName && (
@@ -226,6 +228,7 @@ export default async function GuestEventPage({ params, searchParams }: PageProps
           >
             <CountdownTimer
               eventDate={event.eventDate}
+              eventEnd={event.eventEnd}
               inverted
             />
           </Suspense>

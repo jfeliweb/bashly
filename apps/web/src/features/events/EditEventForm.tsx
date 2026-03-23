@@ -50,10 +50,12 @@ const THEMES = [
 ] as const;
 
 const editFormSchema = createEventSchema
-  .omit({ event_date: true, doors_open_at: true })
+  .omit({ event_date: true, event_end: true, doors_open_at: true })
   .extend({
     event_date_str: z.string().optional(),
     event_time_str: z.string().optional(),
+    event_end_date_str: z.string().optional(),
+    event_end_time_str: z.string().optional(),
     venue_unit: z.string().optional(),
     venue_city: z.string().optional(),
     venue_state: z.string().optional(),
@@ -70,6 +72,7 @@ const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gi
 
 export type EditEventFormDefaults = EditEventFormValues & {
   event_date_iso?: string;
+  event_end_iso?: string;
 };
 
 function composeVenueAddress(values: EditEventFormValues): string | undefined {
@@ -87,11 +90,13 @@ function composeVenueAddress(values: EditEventFormValues): string | undefined {
 
 function buildPatchPayload(values: EditEventFormValues): Record<string, unknown> {
   const event_date = parseLocalDateTimeInput(values.event_date_str, values.event_time_str);
+  const event_end = parseLocalDateTimeInput(values.event_end_date_str, values.event_end_time_str);
   const venueAddress = composeVenueAddress(values);
   return {
     ...(values.title !== undefined && { title: values.title }),
     ...(values.event_type !== undefined && { event_type: values.event_type }),
     ...(event_date !== undefined && { event_date: event_date.toISOString() }),
+    ...(event_end !== undefined && { event_end: event_end.toISOString() }),
     ...(values.venue_name !== undefined && { venue_name: values.venue_name || undefined }),
     ...(values.venue_address !== undefined && { venue_address: venueAddress }),
     ...(values.dress_code !== undefined && { dress_code: values.dress_code || undefined }),
@@ -128,13 +133,16 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const formDefaults = useMemo<EditEventFormValues>(() => {
-    const { event_date_iso: _eventDateIso, ...restDefaults } = defaultValues;
+    const { event_date_iso: _eventDateIso, event_end_iso: _eventEndIso, ...restDefaults } = defaultValues;
     const localDateTimeDefaults = splitDateTimeToLocalInputs(defaultValues.event_date_iso);
+    const localEndDateTimeDefaults = splitDateTimeToLocalInputs(defaultValues.event_end_iso);
 
     return {
       ...restDefaults,
       event_date_str: restDefaults.event_date_str ?? localDateTimeDefaults.dateStr,
       event_time_str: restDefaults.event_time_str ?? localDateTimeDefaults.timeStr,
+      event_end_date_str: restDefaults.event_end_date_str ?? localEndDateTimeDefaults.dateStr,
+      event_end_time_str: restDefaults.event_end_time_str ?? localEndDateTimeDefaults.timeStr,
       venue_unit: restDefaults.venue_unit ?? '',
       venue_city: restDefaults.venue_city ?? '',
       venue_state: restDefaults.venue_state ?? '',
@@ -359,6 +367,34 @@ export function EditEventForm({ eventId, defaultValues }: EditEventFormProps) {
                     <FormLabel htmlFor="edit-event-time">{t('time_label')}</FormLabel>
                     <FormControl>
                       <Input id="edit-event-time" type="time" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="event_end_date_str"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="edit-event-end-date">{t('end_date_label')}</FormLabel>
+                    <FormControl>
+                      <Input id="edit-event-end-date" type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="event_end_time_str"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="edit-event-end-time">{t('end_time_label')}</FormLabel>
+                    <FormControl>
+                      <Input id="edit-event-end-time" type="time" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
