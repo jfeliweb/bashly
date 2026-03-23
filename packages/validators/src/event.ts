@@ -15,6 +15,7 @@ export const createEventSchema = z.object({
   event_type: eventTypeSchema,
   description: z.string().max(500).optional(),
   event_date: z.coerce.date().optional(),
+  event_end: z.coerce.date().optional(),
   doors_open_at: z.coerce.date().optional(),
   venue_name: z.string().max(200).optional(),
   venue_address: z.string().max(300).optional(),

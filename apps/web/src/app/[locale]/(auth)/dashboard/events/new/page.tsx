@@ -58,10 +58,13 @@ const THEMES = [
 
 const createEventFormSchema = createEventSchema.omit({
   event_date: true,
+  event_end: true,
   doors_open_at: true,
 }).extend({
   event_date_str: z.string().optional(),
   event_time_str: z.string().optional(),
+  event_end_date_str: z.string().optional(),
+  event_end_time_str: z.string().optional(),
   publish_after_create: z.boolean().optional(),
   venue_unit: z.string().optional(),
   venue_city: z.string().optional(),
@@ -78,6 +81,8 @@ const defaultFormValues: CreateEventFormValues = {
   title: '',
   event_date_str: '',
   event_time_str: '',
+  event_end_date_str: '',
+  event_end_time_str: '',
   venue_name: '',
   venue_address: '',
   venue_unit: '',
@@ -110,11 +115,13 @@ function composeVenueAddress(values: CreateEventFormValues): string | undefined 
 
 function buildApiPayload(values: CreateEventFormValues): CreateEventInput {
   const event_date = parseLocalDateTimeInput(values.event_date_str, values.event_time_str);
+  const event_end = parseLocalDateTimeInput(values.event_end_date_str, values.event_end_time_str);
   const venueAddress = composeVenueAddress(values);
   const payload: CreateEventInput = {
     event_type: values.event_type,
     title: values.title,
     event_date,
+    event_end,
     venue_name: values.venue_name || undefined,
     venue_address: venueAddress,
     dress_code: values.dress_code || undefined,
@@ -239,6 +246,8 @@ export default function NewEventPage() {
       'title',
       'event_date_str',
       'event_time_str',
+      'event_end_date_str',
+      'event_end_time_str',
       'venue_name',
       'venue_address',
       'dress_code',
@@ -453,6 +462,34 @@ export default function NewEventPage() {
                         <FormLabel htmlFor="event-time">{t('time_label')}</FormLabel>
                         <FormControl>
                           <Input id="event-time" type="time" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="event_end_date_str"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="event-end-date">{t('end_date_label')}</FormLabel>
+                        <FormControl>
+                          <Input id="event-end-date" type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="event_end_time_str"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="event-end-time">{t('end_time_label')}</FormLabel>
+                        <FormControl>
+                          <Input id="event-end-time" type="time" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
