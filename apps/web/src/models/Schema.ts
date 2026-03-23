@@ -64,6 +64,7 @@ export const eventTable = pgTable(
     coverImageKey: text('cover_image_key'),
     themeId: text('theme_id').default('theme1'),
     eventDate: timestamp('event_date', ts),
+    eventEnd: timestamp('event_end', ts),
     doorsOpenAt: timestamp('doors_open_at', ts),
     venueName: text('venue_name'),
     venueAddress: text('venue_address'),

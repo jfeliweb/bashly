@@ -64,6 +64,13 @@
       "when": 1773180080617,
       "tag": "0008_black_puppet_master",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1774227433607,
+      "tag": "0009_silky_jigsaw",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "event" ADD COLUMN "event_end" timestamp with time zone;
