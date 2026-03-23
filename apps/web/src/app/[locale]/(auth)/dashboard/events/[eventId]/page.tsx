@@ -137,6 +137,9 @@ export default async function EventDetailPage({ params }: PageProps) {
   }));
 
   const rsvpCount = rsvpResult?.value ?? 0;
+  const guestCount = rsvpRows
+    .filter(row => row.status === 'attending' || row.status === 'maybe')
+    .reduce((total, row) => total + 1 + row.plusOnes, 0);
   const status = event.status ?? 'draft';
 
   const streamingConnection = await db.query.streamingConnectionTable.findFirst({
@@ -245,13 +248,21 @@ export default async function EventDetailPage({ params }: PageProps) {
       {/* Quick Stats */}
       <section aria-labelledby="stats-heading" className="mb-6">
         <h2 className="sr-only" id="stats-heading">{t('quick_stats')}</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
             <span className="font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-[rgb(48,153,0)] dark:text-[rgb(116,255,51)]">
               {t('stat_rsvps')}
             </span>
             <p className="mt-1 font-mono text-2xl font-bold text-foreground">
               {rsvpCount}
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+            <span className="font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-[rgb(48,153,0)] dark:text-[rgb(116,255,51)]">
+              {t('stat_guest_count')}
+            </span>
+            <p className="mt-1 font-mono text-2xl font-bold text-foreground">
+              {guestCount}
             </p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4 shadow-sm">

@@ -730,6 +730,7 @@
     "edit_event": "Modifier l'événement",
     "quick_stats": "Statistiques rapides",
     "stat_rsvps": "RSVPs",
+    "stat_guest_count": "Nombre d'invités",
     "stat_status": "Statut",
     "stat_capacity": "Capacité",
     "stat_role": "Votre rôle",
